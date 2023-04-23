@@ -28,4 +28,9 @@ public class BasketService {
     public void deleteBasket(Long id) {
         basketRepository.deleteById(id);
     }
+
+    public Basket addNewBasket(Basket basket) {
+
+        return basketRepository.save(basket);
+    }
 }

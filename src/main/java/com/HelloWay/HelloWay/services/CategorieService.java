@@ -1,7 +1,9 @@
 package com.HelloWay.HelloWay.services;
 
+import com.HelloWay.HelloWay.entities.Board;
 import com.HelloWay.HelloWay.entities.Categorie;
 import com.HelloWay.HelloWay.entities.Space;
+import com.HelloWay.HelloWay.entities.Zone;
 import com.HelloWay.HelloWay.repos.CategorieRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -16,6 +18,8 @@ public class CategorieService {
     CategorieRepository categorieRepository ;
     @Autowired
     SpaceService spaceService;
+    @Autowired
+    BoardService boardService;
 
     public Optional<Categorie> addCategorie(Categorie categorie) throws Exception{
         if (!categorieRepository.existsByCategoryTitle(categorie.getCategoryTitle()))
@@ -60,6 +64,13 @@ public class CategorieService {
 
         Space space = spaceService.findSpaceById(idSpace);
         return space.getCategories();
+    }
+
+    public List<Categorie> getCategoriesByQrCodeTable(String qrCode){
+
+       Board board = boardService.getBoardByQrCode(qrCode);
+        Zone zone = board.getZone();
+        return zone.getSpace().getCategories();
     }
 
 

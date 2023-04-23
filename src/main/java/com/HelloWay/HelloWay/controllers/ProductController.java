@@ -1,8 +1,11 @@
 package com.HelloWay.HelloWay.controllers;
 
+import com.HelloWay.HelloWay.entities.Basket;
 import com.HelloWay.HelloWay.entities.Image;
 import com.HelloWay.HelloWay.entities.Space;
 import com.HelloWay.HelloWay.repos.ImageRepository;
+import com.HelloWay.HelloWay.services.BasketProductService;
+import com.HelloWay.HelloWay.services.BasketService;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.HelloWay.HelloWay.entities.Product;
 import com.HelloWay.HelloWay.services.ProductService;
@@ -22,10 +25,16 @@ public class ProductController {
     ProductService productService;
     ImageRepository imageRepository;
 
+    BasketService   basketService;
+    BasketProductService basketProductService;
+
     @Autowired
-    public ProductController(ProductService productService, ImageRepository imageRepository) {
+    public ProductController(ProductService productService, ImageRepository imageRepository,
+                             BasketService   basketService, BasketProductService basketProductService) {
         this.productService = productService;
         this.imageRepository = imageRepository;
+        this.basketService = basketService;
+        this.basketProductService = basketProductService;
     }
 
     @PostMapping("/add")
@@ -94,5 +103,24 @@ public class ProductController {
             throw new RuntimeException("Error uploading file", ex);
         }
 
+    }
+    @PostMapping("/add/productToBasket/{id_basket}")
+    @ResponseBody
+    public void addProductToBasket(@RequestBody Product product, @PathVariable Long id_basket, int quantity) {
+        Basket basket = basketService.findBasketById(id_basket);
+         basketProductService.addProductToBasket(basket, product, quantity);
+    }
+
+    @PostMapping("/add/productToBasket/{id_basket}/{id_product}")
+    @ResponseBody
+    public void addProductToBasketByIds(@PathVariable Long id_basket, int quantity, @PathVariable Long id_product) {
+        Basket basket = basketService.findBasketById(id_basket);
+        Product product = productService.findProductById(id_product);
+        basketProductService.addProductToBasket(basket, product, quantity);
+    }
+    @DeleteMapping("/deleteProductFromBasket/{id_product}/{id_basket}")
+    @ResponseBody
+    public void deleteProductFromBasket(@PathVariable("id_product") long id_product, @PathVariable("id_basket") Long id_basket) {
+        basketProductService.deleteProductFromBasket(id_basket,id_product);
     }
 }

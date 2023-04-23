@@ -57,4 +57,9 @@ public class BoardService {
         Zone zone = zoneService.findZoneById(id_zone);
         return  zone.getBoards();
     }
+
+    public Board getBoardByQrCode(String s) {
+
+        return  boardRepository.findByQrCode(s);
+    }
 }
