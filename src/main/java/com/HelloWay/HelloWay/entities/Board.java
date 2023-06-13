@@ -22,7 +22,7 @@ public class Board {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long idTable ;
 
-
+    //Unique
     @Positive
     private int numTable ;
 
@@ -30,6 +30,8 @@ public class Board {
     @Column(length = 20)
     private boolean availability ;
 
+
+    //Unique
     @NotBlank
     @Column(length = 50)
     private String qrCode;

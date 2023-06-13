@@ -24,8 +24,23 @@ public class SignupRequest {
     private Long salaire ;
 
     private String password ;
+
     private  String email ;
     private Set<String> role;
+
+    public SignupRequest(String username, String name, String lastname, LocalDate birthday, String phone, LocalDate hiring_date, LocalDate contract_end_date, Long salaire, String password, String email, Set<String> role) {
+        this.username = username;
+        this.name = name;
+        this.lastname = lastname;
+        this.birthday = birthday;
+        this.phone = phone;
+        this.hiring_date = hiring_date;
+        this.contract_end_date = contract_end_date;
+        this.salaire = salaire;
+        this.password = password;
+        this.email = email;
+        this.role = role;
+    }
 
     public String getName() {
         return name;

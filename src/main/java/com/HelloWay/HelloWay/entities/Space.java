@@ -10,6 +10,7 @@ import lombok.ToString;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import java.util.List;
 
 @Data
@@ -37,6 +38,11 @@ public class Space {
     @Column(length = 40)
     private String longitude;
 
+
+    @NotNull
+    private Long phoneNumber;
+
+
     @NotBlank
     @Column(length = 40)
     private String description;
@@ -44,6 +50,25 @@ public class Space {
 
     @Column(length = 40)
     private Float rating;
+
+    @Column(length = 20)
+    private double surfaceEnM2;
+
+    public Long getPhoneNumber() {
+        return phoneNumber;
+    }
+
+    public void setPhoneNumber(Long phoneNumber) {
+        this.phoneNumber = phoneNumber;
+    }
+
+    public double getSurfaceEnM2() {
+        return surfaceEnM2;
+    }
+
+    public void setSurfaceEnM2(double surfaceEnM2) {
+        this.surfaceEnM2 = surfaceEnM2;
+    }
 
     public SpaceCategorie getSpaceCategorie() {
         return spaceCategorie;

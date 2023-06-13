@@ -8,6 +8,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseCookie;
 import org.springframework.stereotype.Component;
+import org.springframework.util.StringUtils;
 import org.springframework.web.util.WebUtils;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
@@ -28,12 +29,28 @@ public class JwtUtils {
 
     public String getJwtFromCookies(HttpServletRequest request) {
         Cookie cookie = WebUtils.getCookie(request, jwtCookie);
-        if (cookie != null) {
+        if (cookie != null && StringUtils.hasText(cookie.getValue())) {
             return cookie.getValue();
         } else {
             return null;
         }
     }
+
+
+    // my it s a related problem there :
+
+   /* public String getJwtFromCookies(HttpServletRequest request) {
+        Cookie[] cookies = request.getCookies();
+        if (cookies != null) {
+            for (Cookie cookie : cookies) {
+                if (cookie.getName().equals(jwtCookie)) {
+                    return cookie.getValue();
+                }
+            }
+        }
+        return null;
+    } */
+
 
     public ResponseCookie generateJwtCookie(UserDetailsImpl userPrincipal) {
         String jwt = generateTokenFromUsername(userPrincipal.getUsername());
@@ -77,4 +94,40 @@ public class JwtUtils {
                 .signWith(SignatureAlgorithm.HS512, jwtSecret)
                 .compact();
     }
+
+  /*  public String generateTemporaryToken(String username, String tableIdentifier) {
+        // Create a new claims object
+        Claims claims = Jwts.claims().setSubject(username);
+
+        // Set the additional claims
+        claims.put("tableIdentifier", tableIdentifier);
+
+        // Generate the temporary token with the specified expiration time
+        Date expiration = new Date(System.currentTimeMillis() + jwtExpirationMs);
+        return Jwts.builder()
+                .setClaims(claims)
+                .setIssuedAt(new Date())
+                .setExpiration(expiration)
+                .signWith(SignatureAlgorithm.HS512, jwtSecret)
+                .compact();
+    } */
+
+  /*  public String generateTokenFromTableIdentifier(String tableIdentifier) {
+        Claims claims = Jwts.claims().setSubject(tableIdentifier);
+        claims.put("role", "GUEST"); // Set the user role as needed
+
+        Date now = new Date();
+        Date expirationDate = new Date(now.getTime() + jwtExpirationMs);
+
+        return Jwts.builder()
+                .setClaims(claims)
+                .setIssuedAt(now)
+                .setExpiration(expirationDate)
+                .signWith(SignatureAlgorithm.HS512, jwtSecret)
+                .compact();
+    } */
+   /* public String getTableIdentifierFromJwtToken(String token) {
+        Claims claims = Jwts.parser().setSigningKey(jwtSecret).parseClaimsJws(token).getBody();
+        return claims.get("tableIdentifier", String.class);
+    } */
 }

@@ -1,21 +1,43 @@
 package com.HelloWay.HelloWay.controllers;
 
+import com.HelloWay.HelloWay.entities.Role;
+import com.HelloWay.HelloWay.entities.User;
+import com.HelloWay.HelloWay.entities.Zone;
+import com.HelloWay.HelloWay.payload.request.SignupRequest;
+import com.HelloWay.HelloWay.repos.RoleRepository;
+import com.HelloWay.HelloWay.repos.UserRepository;
+import com.HelloWay.HelloWay.services.ZoneService;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.HelloWay.HelloWay.entities.Board;
 import com.HelloWay.HelloWay.services.BoardService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDate;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
+
+import static com.HelloWay.HelloWay.entities.ERole.ROLE_GUEST;
 
 @RestController
 @RequestMapping("/api/boards")
 public class BoardController {
     BoardService boardService;
+    ZoneService zoneService;
 
     @Autowired
-    public BoardController( BoardService boardService) {
+    PasswordEncoder encoder;
+    @Autowired
+    RoleRepository roleRepository;
+    @Autowired
+    UserRepository userRepository;
+    @Autowired
+    public BoardController( BoardService boardService,ZoneService zoneService) {
+
         this.boardService = boardService;
+        this.zoneService = zoneService;
     }
 
     @PostMapping("/add")
@@ -52,7 +74,22 @@ public class BoardController {
     @PostMapping("/add/id_zone/{id_zone}")
     @ResponseBody
     public Board addNewBoardByIdZone(@RequestBody Board board, @PathVariable Long id_zone) {
-        return boardService.addBoardByIdZone(board, id_zone);
+        Zone zone = zoneService.findZoneById(id_zone);
+        Board boardObj =  boardService.addBoardByIdZone(board, id_zone);
+        User user = new User("Board"+boardObj.getIdTable()
+                ,"Temp",
+                zone.getSpace().getId_space().toString(),
+                LocalDate.now(),
+                null,
+                "email"+boardObj.getIdTable()+LocalDate.now()+"@HelloWay.com"
+                ,encoder.encode("Pass"+boardObj.getIdTable()+"*"+id_zone));
+        Set<Role> roles = new HashSet<>();
+        Role guestRole = roleRepository.findByName(ROLE_GUEST)
+                .orElseThrow(() -> new RuntimeException("Error: Role Guest is not found."));
+        roles.add(guestRole);
+        user.setRoles(roles);
+        userRepository.save(user);
+        return boardObj;
     }
 
     @GetMapping("/id_zone/{id_zone}")

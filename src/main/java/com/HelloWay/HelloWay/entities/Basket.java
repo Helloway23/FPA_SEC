@@ -1,5 +1,6 @@
 package com.HelloWay.HelloWay.entities;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
 
 import javax.persistence.*;
@@ -22,6 +23,7 @@ public class Basket {
     @OneToMany
     List<BasketProduct> basketProducts;
 
+    @JsonIgnore
     @OneToOne
     Board board;
 
