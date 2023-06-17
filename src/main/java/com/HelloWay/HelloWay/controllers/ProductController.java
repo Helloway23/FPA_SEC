@@ -1,13 +1,11 @@
 package com.HelloWay.HelloWay.controllers;
 
-import com.HelloWay.HelloWay.entities.Basket;
-import com.HelloWay.HelloWay.entities.Image;
-import com.HelloWay.HelloWay.entities.Space;
+import com.HelloWay.HelloWay.entities.*;
+import com.HelloWay.HelloWay.payload.response.MessageResponse;
 import com.HelloWay.HelloWay.repos.ImageRepository;
 import com.HelloWay.HelloWay.services.BasketProductService;
 import com.HelloWay.HelloWay.services.BasketService;
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.HelloWay.HelloWay.entities.Product;
 import com.HelloWay.HelloWay.services.ProductService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.crossstore.ChangeSetPersister;
@@ -72,8 +70,14 @@ public class ProductController {
 
     @PostMapping("/add/id_categorie/{id_categorie}")
     @ResponseBody
-    public Product addNewProductByIdCategorie(@RequestBody Product product, @PathVariable Long id_categorie) {
-        return productService.addProductByIdCategorie(product, id_categorie);
+    public ResponseEntity<?> addNewProductByIdCategorie(@RequestBody Product product, @PathVariable Long id_categorie) {
+        if (productService.productExistsByTitleInCategorie(product, id_categorie)){
+            return ResponseEntity.badRequest().body(new MessageResponse("Error: Product title is already taken! in this Categorie"));
+        }else
+        {
+            Product productObject =  productService.addProductByIdCategorie(product, id_categorie);
+            return ResponseEntity.ok().body(productObject);
+        }
     }
 
     @GetMapping("/all/id_categorie/{id_categorie}")

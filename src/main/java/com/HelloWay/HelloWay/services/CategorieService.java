@@ -44,22 +44,24 @@ public class CategorieService {
         categorieRepository.deleteById(id);
     }
     // exist Exeption
-    public Categorie addCategorieByIdSpace(Categorie categorie,Long idSpace){
+    public Categorie addCategorieByIdSpace(Categorie categorie,Long idSpace)  {
 
         Space space = spaceService.findSpaceById(idSpace);
+        List<Categorie> categories = new ArrayList<Categorie>();
+        categories = space.getCategories();
         Categorie categorieObject = new Categorie();
         categorieObject = categorie;
-        List<Categorie> categories = new ArrayList<Categorie>();
         categorieObject.setSpace(space);
         categorieRepository.save(categorieObject);
-        categories = space.getCategories();
+
         categories.add(categorieObject);
         space.setCategories(categories);
         spaceService.updateSpace(space);
 
-
-        return categorieObject ;
+            return categorieObject;
     }
+
+
     public List<Categorie> getCategoriesByIdSpace(Long idSpace){
 
         Space space = spaceService.findSpaceById(idSpace);
@@ -71,6 +73,24 @@ public class CategorieService {
        Board board = boardService.getBoardByQrCode(qrCode);
         Zone zone = board.getZone();
         return zone.getSpace().getCategories();
+    }
+
+    public Boolean categorieExistsByTitle(Categorie categorie){
+        return categorieRepository.existsByCategoryTitle(categorie.getCategoryTitle());
+    }
+
+    public Boolean categorieExistsByTitleInSpace(Categorie categorie, Long idSpace) {
+
+        Boolean result = false;
+        Space space = spaceService.findSpaceById(idSpace);
+        List<Categorie> categories = new ArrayList<Categorie>();
+        categories = space.getCategories();
+        for (Categorie cat : categories) {
+            if (cat.getCategoryTitle().equals(categorie.getCategoryTitle())) {
+                result = true;
+            }
+        }
+        return result ;
     }
 
 

@@ -4,6 +4,7 @@ import com.HelloWay.HelloWay.entities.Role;
 import com.HelloWay.HelloWay.entities.User;
 import com.HelloWay.HelloWay.entities.Zone;
 import com.HelloWay.HelloWay.payload.request.SignupRequest;
+import com.HelloWay.HelloWay.payload.response.MessageResponse;
 import com.HelloWay.HelloWay.repos.RoleRepository;
 import com.HelloWay.HelloWay.repos.UserRepository;
 import com.HelloWay.HelloWay.services.ZoneService;
@@ -11,6 +12,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.HelloWay.HelloWay.entities.Board;
 import com.HelloWay.HelloWay.services.BoardService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
@@ -75,7 +77,10 @@ public class BoardController {
     // exist exeption for num table
     @PostMapping("/add/id_zone/{id_zone}")
     @ResponseBody
-    public Board addNewBoardByIdZone(@RequestBody Board board, @PathVariable Long id_zone) {
+    public ResponseEntity<?> addNewBoardByIdZone(@RequestBody Board board, @PathVariable Long id_zone) {
+        if (boardService.boardExistsByNumInZone(board, id_zone)){
+            return ResponseEntity.badRequest().body(new MessageResponse("Error: num table title is already taken! in this Zone"));
+        }
         Zone zone = zoneService.findZoneById(id_zone);
         Board boardObj =  boardService.addBoardByIdZone(board, id_zone);
         User user = new User("Board"+boardObj.getIdTable()
@@ -91,7 +96,7 @@ public class BoardController {
         roles.add(guestRole);
         user.setRoles(roles);
         userRepository.save(user);
-        return boardObj;
+        return ResponseEntity.ok().body(boardObj);
     }
 
     @GetMapping("/id_zone/{id_zone}")

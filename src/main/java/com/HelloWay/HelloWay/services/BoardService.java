@@ -1,6 +1,8 @@
 package com.HelloWay.HelloWay.services;
 
 import com.HelloWay.HelloWay.entities.Board;
+import com.HelloWay.HelloWay.entities.Categorie;
+import com.HelloWay.HelloWay.entities.Space;
 import com.HelloWay.HelloWay.entities.Zone;
 import com.HelloWay.HelloWay.repos.BoardRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -51,6 +53,20 @@ public class BoardService {
         zoneService.updateZone(zone);
         return boardObject;
 
+    }
+
+    public Boolean boardExistsByNumInZone(Board board, Long idZone) {
+
+        Boolean result = false;
+        Zone zone = zoneService.findZoneById(idZone);
+        List<Board> boards = new ArrayList<Board>();
+        boards = zone.getBoards();
+        for (Board boa : boards) {
+            if (boa.getNumTable() == board.getNumTable()) {
+                result = true;
+            }
+        }
+        return result ;
     }
 
     public List<Board> getBoardsByIdZone(Long id_zone) {

@@ -2,6 +2,7 @@ package com.HelloWay.HelloWay.services;
 
 import com.HelloWay.HelloWay.entities.Categorie;
 import com.HelloWay.HelloWay.entities.Product;
+import com.HelloWay.HelloWay.entities.Space;
 import com.HelloWay.HelloWay.repos.ProductRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -61,5 +62,18 @@ public class ProductService {
     public List<Product> getProductsByIdCategorie(Long id_categorie){
         Categorie categorie = categorieService.findCategorieById(id_categorie);
         return categorie.getProducts();
+    }
+    public Boolean productExistsByTitleInCategorie(Product product, Long idCategorie) {
+
+        Boolean result = false;
+        Categorie categorie = categorieService.findCategorieById(idCategorie);
+        List<Product> products = new ArrayList<Product>();
+        products = categorie.getProducts();
+        for (Product prod : products) {
+            if (prod.getProductTitle().equals(product.getProductTitle())) {
+                result = true;
+            }
+        }
+        return result ;
     }
 }
