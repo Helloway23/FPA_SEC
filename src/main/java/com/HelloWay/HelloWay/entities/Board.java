@@ -49,8 +49,6 @@ public class Board {
     private User user;
 
 
-    @OneToMany(mappedBy = "board")
-    List<Command> commands ;
 
     @JsonIgnore
     @ManyToOne

@@ -7,6 +7,7 @@ import com.HelloWay.HelloWay.entities.ERole;
 import com.HelloWay.HelloWay.entities.Space;
 import com.HelloWay.HelloWay.entities.User;
 import com.HelloWay.HelloWay.entities.Role;
+import com.HelloWay.HelloWay.payload.Value;
 import com.HelloWay.HelloWay.payload.request.LoginRequest;
 import com.HelloWay.HelloWay.payload.request.QrCodeAuthenticationRequest;
 import com.HelloWay.HelloWay.payload.request.SignupRequest;
@@ -271,8 +272,8 @@ public class AuthController {
         UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
         String sessionId =  RequestContextHolder.currentRequestAttributes().getSessionId();
 
-        customSessionRegistry.registerNewSession(sessionId,userDetails);
-        customSessionRegistry.setNewUserOnTable(sessionId,idTable);
+      //  customSessionRegistry.registerNewSession(sessionId,userDetails);
+      //  customSessionRegistry.setNewUserOnTable(sessionId,idTable);
 
 
         ResponseCookie jwtCookie = jwtUtils.generateJwtCookie(userDetails);
@@ -281,7 +282,11 @@ public class AuthController {
                 .map(item -> item.getAuthority())
                 .collect(Collectors.toList());
 
-        return ResponseEntity.ok().header(HttpHeaders.SET_COOKIE, jwtCookie.toString())
+            Value value = new Value(idTable, roles.get(0));
+        customSessionRegistry.setNewUserOnTableWithRole(sessionId,value);
+
+
+            return ResponseEntity.ok().header(HttpHeaders.SET_COOKIE, jwtCookie.toString())
                 .body(new UserInfoResponse(userDetails.getId(),
                         userDetails.getName(),
                         userDetails.getLastname(),
@@ -309,8 +314,9 @@ public class AuthController {
         {
 
             String sessionId =  RequestContextHolder.currentRequestAttributes().getSessionId();
-
-            customSessionRegistry.setNewUserOnTable(sessionId,idTable);
+            Value  value     = new Value(idTable, ROLE_USER.toString());
+          //  customSessionRegistry.setNewUserOnTable(sessionId,idTable);
+            customSessionRegistry.setNewUserOnTableWithRole(sessionId,value);
             return ResponseEntity.ok()
                     .body("user is sated on this table");
         }

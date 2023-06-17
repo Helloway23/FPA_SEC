@@ -62,7 +62,17 @@ public class BasketProductService {
         basketProductRepository.delete(basketProduct);
     }
 
-    
+
+    public List<Product> getProductsByBasketId(Long id) {
+        Basket basket = basketService.findBasketById(id);
+        List<BasketProduct> basketProducts = new ArrayList<>();
+               basketProducts =  basketProductRepository.findAllByBasket(basket);
+        List<Product> products = new ArrayList<>();
+        for (BasketProduct basketProduct : basketProducts){
+            products.add(basketProduct.getProduct());
+        }
+        return products;
+    }
 
 
 }

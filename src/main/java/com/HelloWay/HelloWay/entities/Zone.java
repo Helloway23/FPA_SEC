@@ -5,6 +5,7 @@ import lombok.*;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
+import java.util.ArrayList;
 import java.util.List;
 
 @Data
@@ -32,4 +33,7 @@ public class Zone {
 
     @OneToMany(mappedBy = "zone")
     List<Board> boards ;
+
+    @OneToMany(mappedBy = "zone")
+    private List<User> servers = new ArrayList<>();
 }

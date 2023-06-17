@@ -1,8 +1,10 @@
 package com.HelloWay.HelloWay.services;
 
+import com.HelloWay.HelloWay.exception.ResourceNotFoundException;
 import com.HelloWay.HelloWay.exception.UserNotFoundException;
 import com.HelloWay.HelloWay.entities.User;
 import com.HelloWay.HelloWay.repos.UserRepository;
+import com.google.zxing.NotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -56,6 +58,15 @@ public class UserService implements UserDetailsService {
                 .orElseThrow(() -> new UsernameNotFoundException("User Not Found with username: " + username));
 
         return UserDetailsImpl.build(user);
+    }
+
+
+    @Transactional
+    public User loadUserByIdAndRole(Long userId, String role) throws NotFoundException {
+        User user = UserRepo.findByIdAndRolesContaining(userId, role)
+                .orElseThrow(() -> new ResourceNotFoundException("User Not Found with this id and role : " + role));
+
+        return user;
     }
 
 }

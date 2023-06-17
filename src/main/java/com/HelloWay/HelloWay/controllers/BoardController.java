@@ -71,6 +71,8 @@ public class BoardController {
     public void deleteBoard(@PathVariable("id") long id){
         boardService.deleteBoard(id); }
 
+
+    // exist exeption for num table
     @PostMapping("/add/id_zone/{id_zone}")
     @ResponseBody
     public Board addNewBoardByIdZone(@RequestBody Board board, @PathVariable Long id_zone) {

@@ -48,6 +48,9 @@ public  class User implements Serializable {
     @OneToMany(mappedBy="user")
     private List<Command> commands;
 
+    @OneToMany(mappedBy="server" )
+    private List<Command> server_commands;
+
     @OneToMany(mappedBy="user")
     private List<Board> boards;
 
@@ -58,8 +61,12 @@ public  class User implements Serializable {
 
     @JsonIgnore
     @ManyToOne
-    @JoinColumn(name="id_space", insertable = false, updatable = false)
+    @JoinColumn(name="id_space_for_server")
     private Space serversSpace;
+
+    @ManyToOne
+    @JoinColumn(name = "zone_id")
+    private Zone zone;
 
     @OneToOne
     private Space moderatorSpace ;

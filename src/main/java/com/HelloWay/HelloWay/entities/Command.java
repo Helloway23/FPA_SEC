@@ -25,14 +25,17 @@ public class Command {
 
     @JsonIgnore
     @ManyToOne
-    @JoinColumn(name="id")
+    @JoinColumn(name="id_user")
     private User user;
 
-    @OneToMany
-    List<CommandProduct> commandProducts;
-
+    // the server how will manage this command
     @JsonIgnore
     @ManyToOne
-    @JoinColumn(name="id_board")
-    private Board board;
+    @JoinColumn(name="id_server", insertable = false, updatable = false)
+    private User server;
+
+
+
+    @OneToOne(mappedBy = "command")
+    private Basket basket;
 }

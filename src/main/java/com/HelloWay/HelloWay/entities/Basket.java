@@ -23,6 +23,9 @@ public class Basket {
     @OneToMany
     List<BasketProduct> basketProducts;
 
+    @OneToOne
+    Command command;
+
     @JsonIgnore
     @OneToOne
     Board board;

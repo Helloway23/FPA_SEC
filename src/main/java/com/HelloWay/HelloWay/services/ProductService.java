@@ -43,6 +43,8 @@ public class ProductService {
         productRepository.deleteById(id);
     }
 
+    // exist exeption
+    // generation du code table auto increment
     public Product addProductByIdCategorie(Product product, Long id_categorie){
         Categorie categorie = categorieService.findCategorieById(id_categorie);
         Product productObject = new Product();

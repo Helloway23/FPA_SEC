@@ -1,6 +1,8 @@
 package com.HelloWay.HelloWay.services;
 
 import com.HelloWay.HelloWay.entities.Basket;
+import com.HelloWay.HelloWay.entities.Command;
+import com.HelloWay.HelloWay.exception.ResourceNotFoundException;
 import com.HelloWay.HelloWay.repos.BasketRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -32,5 +34,11 @@ public class BasketService {
     public Basket addNewBasket(Basket basket) {
 
         return basketRepository.save(basket);
+    }
+
+    public void assignCommandToBasket(Long basketId, Command command) {
+        Basket basket = basketRepository.findById(basketId).orElseThrow(()->new ResourceNotFoundException("basket not found"));
+        basket.setCommand(command);
+        command.setBasket(basketRepository.save(basket));
     }
 }

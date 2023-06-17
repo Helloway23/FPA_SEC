@@ -9,8 +9,10 @@ import com.HelloWay.HelloWay.repos.ProductRepository;
 import com.HelloWay.HelloWay.repos.SpaceRepository;
 import com.HelloWay.HelloWay.services.ImageService;
 import com.HelloWay.HelloWay.services.SpaceService;
+import com.google.zxing.NotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.crossstore.ChangeSetPersister;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -190,7 +192,38 @@ public class SpaceController {
     }
 
 
+    @PostMapping("/moderatorUserId/{moderatorUserId}/{spaceId}/servers/{serverId}/zones/{zoneId}")
+    public ResponseEntity<String> setServerInZone(
+            @PathVariable Long spaceId,
+            @PathVariable Long moderatorUserId,
+            @PathVariable Long serverId,
+            @PathVariable Long zoneId) {
+        try {
+            spaceService.setServerInZone(spaceId, moderatorUserId, serverId, zoneId);
+            return ResponseEntity.ok("Server successfully assigned to the zone.");
+        } catch (NotFoundException e) {
+            // Handle the exception
+            // For example, return an appropriate error response
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Resource not found.");
+        }
 
+    }
+
+    @PostMapping("/moderatorUserId/{moderatorUserId}/{spaceId}/servers/{serverId}")
+    public ResponseEntity<String> addServerInSpace(
+            @PathVariable Long spaceId,
+            @PathVariable Long moderatorUserId,
+            @PathVariable Long serverId) {
+        try {
+            spaceService.addServerInSpace(spaceId, moderatorUserId, serverId);
+            return ResponseEntity.ok("Server successfully assigned to the Space.");
+        } catch (NotFoundException e) {
+            // Handle the exception
+            // For example, return an appropriate error response
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Resource not found.");
+        }
+
+    }
 
 
 

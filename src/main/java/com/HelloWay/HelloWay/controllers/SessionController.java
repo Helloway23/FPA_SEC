@@ -2,10 +2,8 @@ package com.HelloWay.HelloWay.controllers;
 
 import com.HelloWay.HelloWay.Security.Jwt.CustomSessionRegistry;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Bean;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.session.SessionInformation;
-import org.springframework.security.core.session.SessionRegistry;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -48,6 +46,19 @@ public class SessionController {
         }
     }
 
+    @GetMapping("/validate-session/latest/{tableId}")
+    public String validateSessionLatestWithRole(@PathVariable String tableId) {
+        String sessionId = getSessionId();
+
+        if (isFirstUserSatedInThisTableWithRole(tableId, sessionId)) {
+            // This is the first session for the user
+            return "First session";
+        } else {
+            // This is not the first session for the user
+            return "Not the first session";
+        }
+    }
+
     private String getUsername() {
         Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         if (principal instanceof UserDetails) {
@@ -78,4 +89,28 @@ public class SessionController {
                 .map(id -> id.equals(sessionId))
                 .orElse(false);
     }
+
+    private boolean isFirstUserSatedInThisTableWithRole(String tableId, String sessionId) {
+        List<String> usersSessions = sessionRegistry.getOurUsersSessionsIdSatedInThisTable(tableId);
+        List<String> guestSessions = sessionRegistry.getGuestsSessionsIdSatedInThisTable(tableId);
+
+        Boolean result = false;
+
+        if (!usersSessions.isEmpty()) {
+           result =  usersSessions.stream()
+                    .findFirst()
+                    .map(id -> id.equals(sessionId))
+                    .orElse(false);
+        } else {
+
+            result =  guestSessions.stream()
+                    .findFirst()
+                    .map(id -> id.equals(sessionId))
+                    .orElse(false);
+        }
+        return result ;
+    }
 }
+
+
+

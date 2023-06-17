@@ -36,8 +36,7 @@ public class Product {
 
 
 
-    @OneToMany
-    List<CommandProduct> commandProducts;
+
 
     @OneToMany
     List<BasketProduct> basketProducts;

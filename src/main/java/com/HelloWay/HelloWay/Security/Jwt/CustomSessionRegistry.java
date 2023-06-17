@@ -1,5 +1,6 @@
 package com.HelloWay.HelloWay.Security.Jwt;
 
+import com.HelloWay.HelloWay.payload.Value;
 import com.HelloWay.HelloWay.services.UserDetailsImpl;
 import org.springframework.security.core.session.SessionInformation;
 import org.springframework.security.core.session.SessionRegistry;
@@ -9,13 +10,17 @@ import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
-import static java.lang.System.in;
+import static com.HelloWay.HelloWay.entities.ERole.ROLE_GUEST;
+import static com.HelloWay.HelloWay.entities.ERole.ROLE_USER;
+
 
 @Component
 public class CustomSessionRegistry implements SessionRegistry {
 
     private final ConcurrentMap<String, SessionInformation> sessionInformationMap = new ConcurrentHashMap<>();
     private final Map<String, String> usersInformationMap = new LinkedHashMap<>();
+
+    private final Map<String, Value> usersConnectedWithTablesMap = new LinkedHashMap<>();
 
 
     @Override
@@ -32,6 +37,10 @@ public class CustomSessionRegistry implements SessionRegistry {
             usersInformationMap.put(sessionId, tableId);
     }
 
+    public void setNewUserOnTableWithRole(String sessionId,Value table_role) {
+        usersConnectedWithTablesMap.put(sessionId, table_role);
+    }
+
     @Override
     public void removeSessionInformation(String sessionId) {
         SessionInformation sessionInformation = sessionInformationMap.get(sessionId);
@@ -46,6 +55,13 @@ public class CustomSessionRegistry implements SessionRegistry {
     public void removeUserFromTable(String sessionId) {
         if (usersInformationMap.containsKey(sessionId)) {
             sessionInformationMap.remove(sessionId);
+        }
+        else System.out.println("user not sated in this table");
+    }
+
+    public void removeUserFromTableWithRole(String sessionId) {
+        if (usersConnectedWithTablesMap.containsKey(sessionId)) {
+            usersConnectedWithTablesMap.remove(sessionId);
         }
         else System.out.println("user not sated in this table");
     }
@@ -80,10 +96,42 @@ public class CustomSessionRegistry implements SessionRegistry {
         return sessions;
     }
 
+
+
     public List<String> getAllUsersSessionsIdSatedInThisTable(String tableId){
         List<String> sessionsInThisTable = new ArrayList<>();
         for (String sessionId : usersInformationMap.keySet()){
             if (sessionId != null && usersInformationMap.get(sessionId).equals(tableId)){
+                sessionsInThisTable.add(sessionId);
+            }
+        }
+        return sessionsInThisTable;
+    }
+
+    public List<String> getAllUsersSessionsIdSatedInThisTableWithRole(String tableId){
+        List<String> sessionsInThisTable = new ArrayList<>();
+        for (String sessionId : usersConnectedWithTablesMap.keySet()){
+            if (sessionId != null && (usersConnectedWithTablesMap.get(sessionId).getTableId()).equals(tableId)){
+                sessionsInThisTable.add(sessionId);
+            }
+        }
+        return sessionsInThisTable;
+    }
+
+    public List<String> getOurUsersSessionsIdSatedInThisTable(String tableId){
+        List<String> sessionsInThisTable = new ArrayList<>();
+        for (String sessionId : usersConnectedWithTablesMap.keySet()){
+            if (sessionId != null && (usersConnectedWithTablesMap.get(sessionId).getTableId()).equals(tableId) && (usersConnectedWithTablesMap.get(sessionId).getRole().equals(ROLE_USER.toString()))){
+                sessionsInThisTable.add(sessionId);
+            }
+        }
+        return sessionsInThisTable;
+    }
+
+    public List<String> getGuestsSessionsIdSatedInThisTable(String tableId){
+        List<String> sessionsInThisTable = new ArrayList<>();
+        for (String sessionId : usersConnectedWithTablesMap.keySet()){
+            if (sessionId != null && (usersConnectedWithTablesMap.get(sessionId).getTableId()).equals(tableId) && (usersConnectedWithTablesMap.get(sessionId).getRole().equals(ROLE_GUEST.toString()))){
                 sessionsInThisTable.add(sessionId);
             }
         }

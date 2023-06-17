@@ -43,7 +43,7 @@ public class CategorieService {
     public void deleteCategorie(Long id) {
         categorieRepository.deleteById(id);
     }
-
+    // exist Exeption
     public Categorie addCategorieByIdSpace(Categorie categorie,Long idSpace){
 
         Space space = spaceService.findSpaceById(idSpace);
