@@ -318,7 +318,7 @@ public class AuthController {
           //  customSessionRegistry.setNewUserOnTable(sessionId,idTable);
             customSessionRegistry.setNewUserOnTableWithRole(sessionId,value);
             return ResponseEntity.ok()
-                    .body("user is sated on this table");
+                    .body(space.getId_space());
         }
         else {
             return ResponseEntity.ok().body("the user not in the space so we are sorry you cant be sated in this table");
