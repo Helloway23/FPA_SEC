@@ -6,6 +6,9 @@ import com.HelloWay.HelloWay.repos.SpaceRepository;
 import com.HelloWay.HelloWay.repos.ZoneRepository;
 import com.google.zxing.NotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
@@ -175,6 +178,11 @@ public class SpaceService {
         spaceServers.add(server);
         space.setServers(spaceServers);
         spaceRepository.save(space);
+    }
+
+    public Page<Space> getSpaces(int pageNumber, int pageSize) {
+        Pageable pageable = PageRequest.of(pageNumber, pageSize);
+        return spaceRepository.findAll(pageable);
     }
 
 

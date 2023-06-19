@@ -6,6 +6,9 @@ import com.HelloWay.HelloWay.entities.User;
 import com.HelloWay.HelloWay.repos.UserRepository;
 import com.google.zxing.NotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -67,6 +70,11 @@ public class UserService implements UserDetailsService {
                 .orElseThrow(() -> new ResourceNotFoundException("User Not Found with this id and role : " + role));
 
         return user;
+    }
+
+    public Page<User> getUsers(int pageNumber, int pageSize) {
+        Pageable pageable = PageRequest.of(pageNumber, pageSize);
+        return UserRepo.findAll(pageable);
     }
 
 }

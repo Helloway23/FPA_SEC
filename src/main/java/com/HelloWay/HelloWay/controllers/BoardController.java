@@ -1,16 +1,15 @@
 package com.HelloWay.HelloWay.controllers;
 
+import com.HelloWay.HelloWay.entities.Board;
 import com.HelloWay.HelloWay.entities.Role;
 import com.HelloWay.HelloWay.entities.User;
 import com.HelloWay.HelloWay.entities.Zone;
-import com.HelloWay.HelloWay.payload.request.SignupRequest;
 import com.HelloWay.HelloWay.payload.response.MessageResponse;
 import com.HelloWay.HelloWay.repos.RoleRepository;
 import com.HelloWay.HelloWay.repos.UserRepository;
+import com.HelloWay.HelloWay.services.BoardService;
 import com.HelloWay.HelloWay.services.ZoneService;
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.HelloWay.HelloWay.entities.Board;
-import com.HelloWay.HelloWay.services.BoardService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;

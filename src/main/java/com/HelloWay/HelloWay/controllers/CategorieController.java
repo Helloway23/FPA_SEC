@@ -1,10 +1,12 @@
 package com.HelloWay.HelloWay.controllers;
 
+import com.HelloWay.HelloWay.entities.Space;
 import com.HelloWay.HelloWay.payload.response.MessageResponse;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.HelloWay.HelloWay.entities.Categorie;
 import com.HelloWay.HelloWay.services.CategorieService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -78,7 +80,13 @@ public class CategorieController {
         return categorieService.getCategoriesByQrCodeTable(qr_code);
     }
 
-
+    @GetMapping("/all/paging")
+    public Page<Categorie> getCategories(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size
+    ) {
+        return categorieService.getCategories(page, size);
+    }
 
 
 

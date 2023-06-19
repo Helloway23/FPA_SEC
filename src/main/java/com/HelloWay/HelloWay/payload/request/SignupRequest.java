@@ -1,7 +1,5 @@
 package com.HelloWay.HelloWay.payload.request;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
-
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
 import java.time.LocalDate;
@@ -19,8 +17,6 @@ public class SignupRequest {
     private String phone;
     private LocalDate hiring_date;
     private LocalDate contract_end_date;
-
-
     private Long salaire ;
 
     private String password ;

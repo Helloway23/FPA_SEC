@@ -1,8 +1,6 @@
 package com.HelloWay.HelloWay.services;
 
 import com.HelloWay.HelloWay.entities.Board;
-import com.HelloWay.HelloWay.entities.Categorie;
-import com.HelloWay.HelloWay.entities.Space;
 import com.HelloWay.HelloWay.entities.Zone;
 import com.HelloWay.HelloWay.repos.BoardRepository;
 import org.springframework.beans.factory.annotation.Autowired;

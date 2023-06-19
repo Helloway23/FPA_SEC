@@ -1,14 +1,17 @@
 package com.HelloWay.HelloWay.controllers;
 
-import com.HelloWay.HelloWay.entities.*;
+import com.HelloWay.HelloWay.entities.Basket;
+import com.HelloWay.HelloWay.entities.Image;
+import com.HelloWay.HelloWay.entities.Product;
+import com.HelloWay.HelloWay.entities.Space;
 import com.HelloWay.HelloWay.payload.response.MessageResponse;
 import com.HelloWay.HelloWay.repos.ImageRepository;
 import com.HelloWay.HelloWay.services.BasketProductService;
 import com.HelloWay.HelloWay.services.BasketService;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.HelloWay.HelloWay.services.ProductService;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.crossstore.ChangeSetPersister;
+import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -126,5 +129,13 @@ public class ProductController {
     @ResponseBody
     public void deleteProductFromBasket(@PathVariable("id_product") long id_product, @PathVariable("id_basket") Long id_basket) {
         basketProductService.deleteProductFromBasket(id_basket,id_product);
+    }
+
+    @GetMapping("/all/paging")
+    public Page<Product> getProducts(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size
+    ) {
+        return productService.getProducts(page, size);
     }
 }

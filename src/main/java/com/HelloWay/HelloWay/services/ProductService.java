@@ -5,6 +5,9 @@ import com.HelloWay.HelloWay.entities.Product;
 import com.HelloWay.HelloWay.entities.Space;
 import com.HelloWay.HelloWay.repos.ProductRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -75,5 +78,10 @@ public class ProductService {
             }
         }
         return result ;
+    }
+
+    public Page<Product> getProducts(int pageNumber, int pageSize) {
+        Pageable pageable = PageRequest.of(pageNumber, pageSize);
+        return productRepository.findAll(pageable);
     }
 }

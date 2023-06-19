@@ -1,25 +1,29 @@
 package com.HelloWay.HelloWay.controllers;
 
+import com.HelloWay.HelloWay.entities.*;
+import com.HelloWay.HelloWay.payload.request.SignupRequest;
+import com.HelloWay.HelloWay.payload.response.MessageResponse;
+import com.HelloWay.HelloWay.repos.*;
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.HelloWay.HelloWay.entities.Image;
-import com.HelloWay.HelloWay.entities.Product;
-import com.HelloWay.HelloWay.entities.Space;
-import com.HelloWay.HelloWay.repos.ImageRepository;
-import com.HelloWay.HelloWay.repos.ProductRepository;
-import com.HelloWay.HelloWay.repos.SpaceRepository;
 import com.HelloWay.HelloWay.services.ImageService;
 import com.HelloWay.HelloWay.services.SpaceService;
 import com.google.zxing.NotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.crossstore.ChangeSetPersister;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
+
+import static com.HelloWay.HelloWay.entities.ERole.ROLE_WAITER;
 
 @RestController
 @RequestMapping("/api/spaces")
@@ -29,6 +33,16 @@ public class SpaceController {
 
     @Autowired
     ImageService imageService;
+
+    @Autowired
+    RoleRepository roleRepository;
+
+    @Autowired
+    UserRepository userRepository;
+
+    @Autowired
+    PasswordEncoder encoder;
+
     @Autowired
     SpaceRepository spaceRepository;
 
@@ -225,6 +239,53 @@ public class SpaceController {
 
     }
 
+    @PostMapping("/moderatorUserId/{moderatorUserId}/{spaceId}/servers")
+    @ResponseBody
+    public ResponseEntity<?> createServerForSpace(
+            @PathVariable Long spaceId,
+            @PathVariable Long moderatorUserId,
+            @RequestBody SignupRequest signupRequest) {
+        if (userRepository.existsByUsername(signupRequest.getUsername())) {
+            return ResponseEntity.badRequest().body(new MessageResponse("Error: Username is already taken!"));
+        }
 
+        if (userRepository.existsByEmail(signupRequest.getEmail())) {
+            return ResponseEntity.badRequest().body(new MessageResponse("Error: Email is already in use!"));
+        }
+
+        // Create new user's account ya 3loulou
+        User user = new User(signupRequest.getUsername(),
+                signupRequest.getName(),
+                signupRequest.getLastname(),
+                signupRequest.getBirthday(),
+                signupRequest.getPhone(),
+                signupRequest.getEmail(),
+                encoder.encode(signupRequest.getPassword()));
+
+        Set<String> strRoles = signupRequest.getRole();
+        Set<Role> roles = new HashSet<>();
+        Role assistantRole = roleRepository.findByName(ROLE_WAITER)
+                .orElseThrow(() -> new RuntimeException("Error: Role is not found."));
+        roles.add(assistantRole);
+        user.setRoles(roles);
+        User userSaved = userRepository.save(user);
+        try {
+            spaceService.addServerInSpace(spaceId, moderatorUserId, userSaved.getId());
+            return ResponseEntity.ok("Server successfully assigned to the Space.");
+        } catch (NotFoundException e) {
+            // Handle the exception
+            // For example, return an appropriate error response
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Resource not found.");
+        }
+
+    }
+
+    @GetMapping("/all/paging")
+    public Page<Space> getSpaces(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size
+    ) {
+        return spaceService.getSpaces(page, size);
+    }
 
 }
