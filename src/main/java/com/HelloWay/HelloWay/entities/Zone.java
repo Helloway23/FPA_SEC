@@ -34,6 +34,7 @@ public class Zone {
     @OneToMany(mappedBy = "zone")
     List<Board> boards ;
 
+    @JsonIgnore
     @OneToMany(mappedBy = "zone")
     private List<User> servers = new ArrayList<>();
 }

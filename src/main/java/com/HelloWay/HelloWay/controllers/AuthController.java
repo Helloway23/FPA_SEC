@@ -10,6 +10,7 @@ import com.HelloWay.HelloWay.entities.User;
 import com.HelloWay.HelloWay.payload.Value;
 import com.HelloWay.HelloWay.payload.request.LoginRequest;
 import com.HelloWay.HelloWay.payload.request.SignupRequest;
+import com.HelloWay.HelloWay.payload.response.InformationAfterScan;
 import com.HelloWay.HelloWay.payload.response.MessageResponse;
 import com.HelloWay.HelloWay.payload.response.UserInfoResponse;
 import com.HelloWay.HelloWay.repos.RoleRepository;
@@ -311,8 +312,10 @@ public class AuthController {
             Value  value     = new Value(idTable, ROLE_USER.toString());
           //  customSessionRegistry.setNewUserOnTable(sessionId,idTable);
             customSessionRegistry.setNewUserOnTableWithRole(sessionId,value);
+
+            InformationAfterScan informationAfterScan = new InformationAfterScan(space.getId_space().toString(),idTable) ;
             return ResponseEntity.ok()
-                    .body(space.getId_space());
+                    .body( informationAfterScan);
         }
         else {
             return ResponseEntity.ok().body("the user not in the space so we are sorry you cant be sated in this table");

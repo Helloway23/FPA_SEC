@@ -146,8 +146,6 @@ public class SpaceService {
             throw new ResourceNotFoundException("User is not a server in  the space");
         }
 
-
-
         Zone zone = zoneRepository.findById(zoneId)
                 .orElseThrow(() -> new ResourceNotFoundException("Zone not found"));
 
@@ -183,6 +181,33 @@ public class SpaceService {
     public Page<Space> getSpaces(int pageNumber, int pageSize) {
         Pageable pageable = PageRequest.of(pageNumber, pageSize);
         return spaceRepository.findAll(pageable);
+    }
+
+    public void deleteServerFromZone(Long spaceId, Long moderatorUserId, Long serverId, Long zoneId) throws NotFoundException {
+        Space space = spaceRepository.findById(spaceId)
+                .orElseThrow(() -> new ResourceNotFoundException("Space not found"));
+
+        User moderator = userService.findUserById(moderatorUserId);
+
+
+        // Check if the user is the moderator of the space
+        if (!space.getModerator().equals(moderator)) {
+            throw new ResourceNotFoundException("User is not the moderator of the space");
+        }
+
+        User server = userService.findUserById(serverId);
+
+        // Check if the user is the moderator of the space
+        if (!space.getServers().contains(server)) {
+            throw new ResourceNotFoundException("User is not a server in  the space");
+        }
+
+        Zone zone = zoneRepository.findById(zoneId)
+                .orElseThrow(() -> new ResourceNotFoundException("Zone not found"));
+
+        // Update the server's zone
+        server.setZone(null);
+        userService.addUser(server);
     }
 
 
