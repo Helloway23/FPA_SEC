@@ -288,4 +288,13 @@ public class SpaceController {
         return spaceService.getSpaces(page, size);
     }
 
+    @GetMapping("/servers/{spaceId}")
+    @ResponseBody
+    public ResponseEntity<?> getServersByIdSpace(@PathVariable long spaceId){
+        Space space = spaceService.findSpaceById(spaceId);
+        if (space == null){
+            return ResponseEntity.badRequest().body("space doesn't exist");
+        }
+        return ResponseEntity.ok().body(spaceService.getServersBySpace(space));
+    }
 }

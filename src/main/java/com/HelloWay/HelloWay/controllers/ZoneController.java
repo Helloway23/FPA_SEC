@@ -6,6 +6,7 @@ import com.HelloWay.HelloWay.entities.Zone;
 import com.HelloWay.HelloWay.services.SpaceService;
 import com.HelloWay.HelloWay.services.ZoneService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
@@ -78,6 +79,16 @@ public class ZoneController {
     public List<Zone> getZonesByIdSpace(@PathVariable Long id_space){
         Space space = spaceService.findSpaceById(id_space);
         return space.getZones();
+    }
+
+    @GetMapping("/servers/{zoneId}")
+    @ResponseBody
+    public ResponseEntity<?> getServersByIdZone(@PathVariable long zoneId){
+        Zone zone = zoneService.findZoneById(zoneId);
+        if (zone == null){
+            return ResponseEntity.badRequest().body("zone doesn't exist with zone id : " + zoneId);
+        }
+        return ResponseEntity.ok().body(zoneService.getServersByZone(zone));
     }
 
 }

@@ -210,5 +210,9 @@ public class SpaceService {
         userService.addUser(server);
     }
 
+    public List<User> getServersBySpace(Space space){
+        return space.getServers();
+    }
+
 
 }

@@ -29,6 +29,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.context.request.RequestContextHolder;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 import java.util.HashSet;
 import java.util.List;
@@ -152,7 +154,7 @@ public class AuthController {
         return ResponseEntity.ok(new MessageResponse("User registered successfully!"));
     }
 
-    @PostMapping("/signout")
+   /* @PostMapping("/signout")
     public ResponseEntity<?> logoutUser() {
         String sessionId =  RequestContextHolder.currentRequestAttributes().getSessionId();
         customSessionRegistry.removeSessionInformation(sessionId);
@@ -160,6 +162,21 @@ public class AuthController {
         return ResponseEntity.ok().header(HttpHeaders.SET_COOKIE, cookie.toString())
                 .body(new MessageResponse("You've been signed out!"));
     }
+
+    */
+
+    @PostMapping("/signout")
+    public ResponseEntity<?> logoutUser(HttpServletRequest request, HttpServletResponse response) {
+        String sessionId = request.getSession(false).getId();
+        if (sessionId != null) {
+            customSessionRegistry.removeSessionInformation(sessionId);
+            request.getSession().invalidate();
+        }
+        ResponseCookie cookie = jwtUtils.getCleanJwtCookie();
+        response.setHeader(HttpHeaders.SET_COOKIE, cookie.toString());
+        return ResponseEntity.ok().body(new MessageResponse("You've been signed out!"));
+    }
+
 
 
     //EzzzabWakahw

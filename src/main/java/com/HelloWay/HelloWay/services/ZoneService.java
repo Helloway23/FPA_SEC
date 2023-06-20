@@ -1,5 +1,6 @@
 package com.HelloWay.HelloWay.services;
 
+import com.HelloWay.HelloWay.entities.User;
 import com.HelloWay.HelloWay.entities.Zone;
 import com.HelloWay.HelloWay.repos.ZoneRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,6 +34,10 @@ public class ZoneService {
 
     public void deleteZone(Long id) {
         zoneRepository.deleteById(id);
+    }
+
+    public List<User> getServersByZone(Zone zone){
+        return  zone.getServers();
     }
 
 
