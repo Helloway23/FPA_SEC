@@ -77,6 +77,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers("/api/auth/**").permitAll()
                 .antMatchers("/api/test/**").permitAll()
                 .antMatchers(HttpMethod.POST, "/api/auth/login-qr").permitAll() // Allow QR code authentication endpoint
+                .antMatchers(HttpMethod.POST, "/api/spaces/all").permitAll() // Allow QR code authentication endpoint
                 .anyRequest().authenticated();
 
         http.addFilterBefore(authenticationJwtTokenFilter(), UsernamePasswordAuthenticationFilter.class);

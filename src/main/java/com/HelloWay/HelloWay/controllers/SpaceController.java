@@ -3,11 +3,13 @@ package com.HelloWay.HelloWay.controllers;
 import com.HelloWay.HelloWay.entities.*;
 import com.HelloWay.HelloWay.payload.request.SignupRequest;
 import com.HelloWay.HelloWay.payload.response.MessageResponse;
+import com.HelloWay.HelloWay.payload.response.SpaceDTO;
 import com.HelloWay.HelloWay.repos.*;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.HelloWay.HelloWay.services.ImageService;
 import com.HelloWay.HelloWay.services.SpaceService;
 import com.google.zxing.NotFoundException;
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.crossstore.ChangeSetPersister;
 import org.springframework.data.domain.Page;
@@ -30,6 +32,9 @@ import static com.HelloWay.HelloWay.entities.ERole.ROLE_WAITER;
 public class SpaceController {
 
     SpaceService spaceService;
+
+    @Autowired
+    private ModelMapper modelMapper;
 
     @Autowired
     ImageService imageService;
@@ -66,7 +71,28 @@ public class SpaceController {
     @GetMapping("/all")
     @ResponseBody
     public List<Space> allSpaces(){
+
         return spaceService.findAllSpaces();
+    }
+
+    @GetMapping("/all/dto")
+    @ResponseBody
+    public ResponseEntity<?> allSpacesDto() {
+        List<Space> spaces = spaceService.findAllSpaces();
+        List<SpaceDTO> spaceDtos = new ArrayList<>();
+
+        for (Space space : spaces) {
+
+            // Map other properties as needed
+
+            spaceDtos.add(modelMapper.map(space, SpaceDTO.class));
+        }
+
+        return ResponseEntity.ok().body(spaceDtos);
+    }
+
+    public SpaceDTO convertToDto(Space entity) {
+        return modelMapper.map(entity, SpaceDTO.class);
     }
 
 
