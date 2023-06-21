@@ -20,7 +20,7 @@ public class Command {
 
     @Enumerated
     @Column(length = 20)
-    private Status status;
+    private Status status = Status.NOT_YET;
 
     @JsonIgnore
     @ManyToOne

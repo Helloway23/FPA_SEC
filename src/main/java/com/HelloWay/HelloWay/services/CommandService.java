@@ -1,34 +1,45 @@
 package com.HelloWay.HelloWay.services;
 
-import com.HelloWay.HelloWay.entities.Basket;
-import com.HelloWay.HelloWay.entities.Command;
-import com.HelloWay.HelloWay.entities.User;
+import com.HelloWay.HelloWay.entities.*;
 import com.HelloWay.HelloWay.repos.CommandRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import static com.HelloWay.HelloWay.entities.Status.CONFIRMED;
 import static com.HelloWay.HelloWay.entities.Status.REFUSED;
 
 @Service
 public class CommandService {
-    @Autowired
+
+     private  Map<String, String> lastServerWithBoardIdForCommand = new HashMap<>();
+
+
+     @Autowired
+     UserService userService ;
+
+     @Autowired
     CommandRepository commandRepository ;
 
     @Autowired
     BasketService basketService;
 
+    @Autowired
+    BasketProductService basketProductService;
+
     public List<Command> findAllCommands() {
         return commandRepository.findAll();
     }
 
-    public Command updateCommand(Command event) {
-        return commandRepository.save(event);
+    public Command updateCommand(Command command) {
+        return commandRepository.save(command);
     }
-    public Command createCommand(Command event) {
-        return commandRepository.save(event);
+    public Command createCommand(Command command) {
+        return commandRepository.save(command);
     }
 
     public Command findCommandById(Long id) {
@@ -64,7 +75,36 @@ public class CommandService {
 
     public void setServerForCommand(Long commandId, User server) {
         Command command = findCommandById(commandId);
-        command.setServer(server);
-        commandRepository.save(command);
+        Zone zone = command.getBasket().getBoard().getZone();
+        List<User> servers = new ArrayList<>();
+        servers = zone.getServers();
+        List<Command> commands = new ArrayList<>();
+        if (servers.contains(server)){
+            command.setServer(server);
+            commandRepository.save(command);
+            commands = server.getCommands();
+            commands.add(command);
+            userService.updateUser(server);
+            lastServerWithBoardIdForCommand.put(command.getBasket().getBoard().getIdTable().toString(),server.getId().toString());
+        }
+
+    }
+
+    public double CalculateSum(Command command) {
+        double result = 0 ;
+        Basket basket = command.getBasket();
+        Map<Product,Integer> products_Quantity = basketProductService.getProducts_PriceByBasketId(basket.getId_basket());
+        for (Product product : products_Quantity.keySet()){
+            result += product.getPrice() * products_Quantity.get(product);
+        }
+        return  result;
+    }
+
+    public Map<String, String> getLastServerWithBoardIdForCommand() {
+        return lastServerWithBoardIdForCommand;
+    }
+
+    public void setLastServerWithBoardIdForCommand(Map<String, String> lastServerWithBoardIdForCommand) {
+        this.lastServerWithBoardIdForCommand = lastServerWithBoardIdForCommand;
     }
 }

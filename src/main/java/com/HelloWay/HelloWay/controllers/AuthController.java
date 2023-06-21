@@ -256,7 +256,8 @@ public class AuthController {
                         userDetails.getPhone(),
                         userDetails.getUsername(),
                         userDetails.getEmail(),
-                        roles));
+                        roles,
+                        sessionId));
     }
 
 
@@ -306,7 +307,8 @@ public class AuthController {
                         userDetails.getPhone(),
                         userDetails.getUsername(),
                         userDetails.getEmail(),
-                        roles));
+                        roles,
+                        sessionId));
     }
         else {
             return ResponseEntity.ok().body("the user not in the space so we are sorry you cant be connected");
@@ -330,7 +332,7 @@ public class AuthController {
           //  customSessionRegistry.setNewUserOnTable(sessionId,idTable);
             customSessionRegistry.setNewUserOnTableWithRole(sessionId,value);
 
-            InformationAfterScan informationAfterScan = new InformationAfterScan(space.getId_space().toString(),idTable) ;
+            InformationAfterScan informationAfterScan = new InformationAfterScan(space.getId_space().toString(),idTable, sessionId) ;
             return ResponseEntity.ok()
                     .body( informationAfterScan);
         }

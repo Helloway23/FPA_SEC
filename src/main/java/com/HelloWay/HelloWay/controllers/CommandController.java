@@ -32,6 +32,9 @@ public class CommandController {
    then we must create the command with the server and the user then the basket id
     with getCommandsOfTheServer
     the server can see all his commands and can accept or refuse then will be payed
-    so there we will play with the status also server must list the commands with status only not yet in the other side the creation of a command will be by default not yet
+    so there we will play with the status also server must list the commands with status
+     only not yet in the other side the creation of a command will be by default not yet
     */
+
+
 }

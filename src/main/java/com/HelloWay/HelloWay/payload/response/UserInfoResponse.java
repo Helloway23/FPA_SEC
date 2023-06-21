@@ -14,6 +14,19 @@ public class UserInfoResponse {
     private String username;
     private String email;
     private List<String> roles;
+    private String sessionId;
+
+    public UserInfoResponse(Long id, String name, String lastname, LocalDate birthday, String phone, String username, String email, List<String> roles, String sessionId) {
+        this.id = id;
+        this.name = name;
+        this.lastname = lastname;
+        this.birthday = birthday;
+        this.phone = phone;
+        this.username = username;
+        this.email = email;
+        this.roles = roles;
+        this.sessionId = sessionId;
+    }
 
     public UserInfoResponse(Long id, String name, String lastname, LocalDate birthday, String phone, String username, String email, List<String> roles) {
         this.id = id;
@@ -52,5 +65,49 @@ public class UserInfoResponse {
 
     public List<String> getRoles() {
         return roles;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getLastname() {
+        return lastname;
+    }
+
+    public void setLastname(String lastname) {
+        this.lastname = lastname;
+    }
+
+    public LocalDate getBirthday() {
+        return birthday;
+    }
+
+    public void setBirthday(LocalDate birthday) {
+        this.birthday = birthday;
+    }
+
+    public String getPhone() {
+        return phone;
+    }
+
+    public void setPhone(String phone) {
+        this.phone = phone;
+    }
+
+    public void setRoles(List<String> roles) {
+        this.roles = roles;
+    }
+
+    public String getSessionId() {
+        return sessionId;
+    }
+
+    public void setSessionId(String sessionId) {
+        this.sessionId = sessionId;
     }
 }

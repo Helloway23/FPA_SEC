@@ -10,7 +10,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Service
 public class BasketProductService {
@@ -73,6 +75,19 @@ public class BasketProductService {
         }
         return products;
     }
+
+    public Map<Product,Integer> getProducts_PriceByBasketId(Long id) {
+        Basket basket = basketService.findBasketById(id);
+        List<BasketProduct> basketProducts = new ArrayList<>();
+        basketProducts =  basketProductRepository.findAllByBasket(basket);
+        Map<Product,Integer> products_Quantity = new HashMap<>();
+        for (BasketProduct basketProduct : basketProducts){
+            products_Quantity.put(basketProduct.getProduct(), basketProduct.getQuantity());
+        }
+        return products_Quantity;
+    }
+
+
 
 
 }

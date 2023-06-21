@@ -23,6 +23,7 @@ public class Basket {
     @OneToMany
     List<BasketProduct> basketProducts;
 
+    @JsonIgnore
     @OneToOne
     Command command;
 

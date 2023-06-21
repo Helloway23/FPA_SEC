@@ -14,6 +14,9 @@ public class BasketService {
     @Autowired
     BasketRepository basketRepository ;
 
+    @Autowired
+    CommandService commandService;
+
     public List<Basket> findAllBaskets() {
         return basketRepository.findAll();
     }
@@ -40,5 +43,7 @@ public class BasketService {
         Basket basket = basketRepository.findById(basketId).orElseThrow(()->new ResourceNotFoundException("basket not found"));
         basket.setCommand(command);
         command.setBasket(basketRepository.save(basket));
+        commandService.updateCommand(command);
+        basketRepository.save(basket);
     }
 }
