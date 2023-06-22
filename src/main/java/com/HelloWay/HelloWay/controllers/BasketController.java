@@ -48,9 +48,9 @@ public class BasketController {
         }
 
         basket.setBoard(table);
-        basketService.addNewBasket(basket);
+        Basket basketObject = basketService.addNewBasket(basket);
 
-        return ResponseEntity.ok("Basket added to the table successfully");
+        return ResponseEntity.ok(basketObject);
     }
 
 
