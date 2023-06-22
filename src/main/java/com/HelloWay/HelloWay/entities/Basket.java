@@ -28,7 +28,7 @@ public class Basket {
     Command command;
 
     @JsonIgnore
-    @OneToOne
+    @ManyToOne
     Board board;
 
 }

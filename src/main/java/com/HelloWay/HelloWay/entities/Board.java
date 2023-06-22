@@ -6,6 +6,7 @@ import lombok.*;
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Positive;
+import java.util.List;
 
 @Data
 @Getter
@@ -35,8 +36,8 @@ public class Board {
     @Column(length = 50)
     private String qrCode;
 
-    @OneToOne(mappedBy = "board")
-    Basket basket ;
+    @OneToMany(mappedBy = "board")
+    List<Basket> baskets ;
 
     @JsonIgnore
     @ManyToOne
