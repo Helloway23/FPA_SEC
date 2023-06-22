@@ -30,7 +30,7 @@ public class Command {
     // the server how will manage this command
     @JsonIgnore
     @ManyToOne
-    @JoinColumn(name="id_server", insertable = false, updatable = false)
+    @JoinColumn(name="id_server", insertable = true, updatable = true)
     private User server;
 
 

@@ -10,8 +10,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static com.HelloWay.HelloWay.entities.Status.CONFIRMED;
-import static com.HelloWay.HelloWay.entities.Status.REFUSED;
+import static com.HelloWay.HelloWay.entities.Status.*;
 
 @Service
 public class CommandService {
@@ -106,5 +105,17 @@ public class CommandService {
 
     public void setLastServerWithBoardIdForCommand(Map<String, String> lastServerWithBoardIdForCommand) {
         this.lastServerWithBoardIdForCommand = lastServerWithBoardIdForCommand;
+    }
+
+    public List<Command> getServerCommands(User server){
+
+        List<Command> serverCommands = server.getServer_commands();
+        List<Command> actualServerCommand = new ArrayList<>();
+        for (Command command : serverCommands){
+            if (command.getStatus().equals(NOT_YET)){
+                actualServerCommand.add(command);
+            }
+        }
+    return actualServerCommand;
     }
 }

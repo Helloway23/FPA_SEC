@@ -34,8 +34,6 @@ public class Product {
     @Column(length = 100)
     private String description;
 
-
-
     private Boolean available = true ;
 
     @OneToMany

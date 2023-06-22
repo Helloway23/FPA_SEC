@@ -107,18 +107,38 @@ public class BasketController {
         return ResponseEntity.ok(command);
     }
 
-    @PostMapping("/{basketId}/commands/add")
-    public ResponseEntity<Command> createCommandWithServer(@PathVariable Long basketId) {
+    @PostMapping("/{basketId}/commands/add/user/{userId}")
+    public ResponseEntity<Command> createCommandWithServer(@PathVariable Long basketId, @PathVariable long userId) {
         Basket basket = basketService.findBasketById(basketId);
         Board board = basket.getBoard();
+        User user = userService.findUserById(userId);
         List<User> servers = board.getZone().getServers();
-        int indexOfTheLastServer = servers.indexOf(commandService.getLastServerWithBoardIdForCommand().get(board.getIdTable()));
-        User currentAvailableServer = servers.get(indexOfTheLastServer + 1);
+        User currentAvailableServer = servers.get(0);
+        if (commandService.getLastServerWithBoardIdForCommand().get(board.getIdTable().toString()) != null){
+        User lastServer = userService.findUserById(Long.parseLong(commandService.getLastServerWithBoardIdForCommand().get(board.getIdTable().toString())));
+        int indexOfTheLastServer = servers.indexOf(lastServer);
+        if (indexOfTheLastServer != servers.size() - 1) {
+            currentAvailableServer = servers.get(indexOfTheLastServer + 1);
+        }
+        }
+
         Command command = commandService.createCommand(new Command());
         basketService.assignCommandToBasket(basketId, command);
         commandService.setServerForCommand(command.getIdCommand(), currentAvailableServer);
+        command.setUser(user);
         commandService.updateCommand(command);
         return ResponseEntity.ok(command);
     }
 
+    //Get products by id basket ToDo
+    @GetMapping("/products/by_basket/{basketId}")
+    public ResponseEntity<?> getProductsByIdBasket(@PathVariable long basketId){
+        Basket basket = basketService.findBasketById(basketId);
+        if (basket == null){
+            return  ResponseEntity.badRequest().body("basket doesn't exist with this id");
+        }
+        List<Product> products = basketProductService.getProductsByBasketId(basketId);
+        return ResponseEntity.ok(products);
+
+    }
 }

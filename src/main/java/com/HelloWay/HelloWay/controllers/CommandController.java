@@ -1,19 +1,23 @@
 package com.HelloWay.HelloWay.controllers;
 
+import com.HelloWay.HelloWay.entities.Command;
+import com.HelloWay.HelloWay.entities.User;
 import com.HelloWay.HelloWay.services.CommandService;
+import com.HelloWay.HelloWay.services.UserService;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/commands")
 public class CommandController {
     private final CommandService commandService;
+    private final UserService userService;
 
-    public CommandController(CommandService commandService) {
+    public CommandController(CommandService commandService, UserService userService) {
         this.commandService = commandService;
+        this.userService = userService;
     }
 
     @PostMapping("/{commandId}/accept")
@@ -37,4 +41,23 @@ public class CommandController {
     */
 
 
+    @GetMapping("/calculate/sum/{commandId}")
+    public ResponseEntity<?> getSumOfCommand(@PathVariable long commandId){
+        Command command = commandService.findCommandById(commandId);
+        if (command == null){
+            return ResponseEntity.badRequest().body("command doesn't exist with this id");
+        }
+        double sum = commandService.CalculateSum(command);
+        return ResponseEntity.ok(sum);
+    }
+
+    @GetMapping("/for/server/{serverId}")
+    public ResponseEntity<?> getServersCommand(@PathVariable long serverId){
+        User server = userService.findUserById(serverId);
+        if (server == null){
+            return ResponseEntity.badRequest().body("server doesn't exist with this id");
+        }
+        List<Command> commands = commandService.getServerCommands(server);
+        return ResponseEntity.ok(commands);
+    }
 }
