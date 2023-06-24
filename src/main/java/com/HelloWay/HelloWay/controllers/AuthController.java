@@ -3,6 +3,7 @@ package com.HelloWay.HelloWay.controllers;
 import com.HelloWay.HelloWay.DistanceLogic.DistanceCalculator;
 import com.HelloWay.HelloWay.Security.Jwt.CustomSessionRegistry;
 import com.HelloWay.HelloWay.Security.Jwt.JwtUtils;
+import com.HelloWay.HelloWay.Security.Jwt.SessionUtils;
 import com.HelloWay.HelloWay.entities.ERole;
 import com.HelloWay.HelloWay.entities.Role;
 import com.HelloWay.HelloWay.entities.Space;
@@ -17,7 +18,9 @@ import com.HelloWay.HelloWay.repos.RoleRepository;
 import com.HelloWay.HelloWay.repos.UserRepository;
 import com.HelloWay.HelloWay.services.UserDetailsImpl;
 import com.HelloWay.HelloWay.services.ZoneService;
+import org.apache.coyote.Request;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.web.servlet.server.Session;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
@@ -31,6 +34,7 @@ import org.springframework.web.context.request.RequestContextHolder;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
 import java.util.HashSet;
 import java.util.List;
@@ -60,6 +64,9 @@ public class AuthController {
 
     @Autowired
     CustomSessionRegistry customSessionRegistry;
+
+    @Autowired
+    SessionUtils  sessionUtils;
 
     @Autowired
     ZoneService zoneService;
@@ -262,7 +269,7 @@ public class AuthController {
 
 
     @PostMapping("/signin/qr_Code/{qr_Code}/userLatitude/{userLatitude}/userLongitude/{userLongitude}")
-    public ResponseEntity<?> authenticateUser(@PathVariable String qr_Code, @PathVariable String userLatitude, @PathVariable String userLongitude) {
+    public ResponseEntity<?> authenticateUser(@PathVariable String qr_Code, @PathVariable String userLatitude, @PathVariable String userLongitude, HttpServletRequest request) {
         String[] splitArray = qr_Code.split("-"); // Splitting using the hyphen character "-"
 
         String idTable = splitArray[0];
@@ -297,6 +304,8 @@ public class AuthController {
 
             Value value = new Value(idTable, roles.get(0));
         customSessionRegistry.setNewUserOnTableWithRole(sessionId,value);
+            HttpSession session =  request.getSession();
+        sessionUtils.addSession(request.getSession());
 
 
             return ResponseEntity.ok().header(HttpHeaders.SET_COOKIE, jwtCookie.toString())

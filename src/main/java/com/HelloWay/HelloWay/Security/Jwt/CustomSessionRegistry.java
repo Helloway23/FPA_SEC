@@ -2,6 +2,7 @@ package com.HelloWay.HelloWay.Security.Jwt;
 
 import com.HelloWay.HelloWay.payload.Value;
 import com.HelloWay.HelloWay.services.UserDetailsImpl;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.session.SessionInformation;
 import org.springframework.security.core.session.SessionRegistry;
 import org.springframework.stereotype.Component;
@@ -21,6 +22,9 @@ public class CustomSessionRegistry implements SessionRegistry {
     private final Map<String, String> usersInformationMap = new LinkedHashMap<>();
 
     private final Map<String, Value> usersConnectedWithTablesMap = new LinkedHashMap<>();
+
+    @Autowired
+    private    SessionUtils sessionUtils;
 
 
     @Override
@@ -144,5 +148,36 @@ public class CustomSessionRegistry implements SessionRegistry {
         if (sessionInformation != null) {
             sessionInformation.refreshLastRequest();
         }
+    }
+
+    // remove users connected or sated with this tableId
+ /*   public void removeUsersWhenCommandIsPayed(String tableId){
+        List<String> sessionIds = new ArrayList<>();
+        for (String key : usersConnectedWithTablesMap.keySet()){
+            if (usersConnectedWithTablesMap.get(key).getTableId().equals(tableId)){
+                if (usersConnectedWithTablesMap.get(key).getRole().equals(ROLE_GUEST)){
+                    sessionIds.add(key);
+                }
+                usersConnectedWithTablesMap.remove(key);
+            }
+        }
+        sessionUtils.disconnectUsers(sessionIds);
+    }
+
+  */
+    // remove users connected or seated with this tableId
+    public void removeUsersWhenCommandIsPayed(String tableId) {
+        List<String> sessionIds = new ArrayList<>();
+        Iterator<Map.Entry<String, Value>> iterator = usersConnectedWithTablesMap.entrySet().iterator();
+        while (iterator.hasNext()) {
+            Map.Entry<String, Value> entry = iterator.next();
+            String sessionId = entry.getKey();
+            Value value = entry.getValue();
+            if (value.getTableId().equals(tableId) && value.getRole().equals(ROLE_GUEST.toString())) {
+                sessionIds.add(sessionId);
+                iterator.remove();
+            }
+        }
+        sessionUtils.disconnectUsers(sessionIds);
     }
 }

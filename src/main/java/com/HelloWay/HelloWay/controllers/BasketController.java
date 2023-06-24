@@ -114,8 +114,8 @@ public class BasketController {
         User user = userService.findUserById(userId);
         List<User> servers = board.getZone().getServers();
         User currentAvailableServer = servers.get(0);
-        if (commandService.getLastServerWithBoardIdForCommand().get(board.getIdTable().toString()) != null){
-        User lastServer = userService.findUserById(Long.parseLong(commandService.getLastServerWithBoardIdForCommand().get(board.getIdTable().toString())));
+        if (commandService.getLastServerWithBoardIdForCommand().get(board.getZone().getIdZone().toString()) != null){
+        User lastServer = userService.findUserById(Long.parseLong(commandService.getLastServerWithBoardIdForCommand().get(board.getZone().getIdZone().toString())));
         int indexOfTheLastServer = servers.indexOf(lastServer);
         if (indexOfTheLastServer != servers.size() - 1) {
             currentAvailableServer = servers.get(indexOfTheLastServer + 1);
@@ -130,7 +130,7 @@ public class BasketController {
         return ResponseEntity.ok(command);
     }
 
-    //Get products by id basket ToDo
+    //Get products by id basket : done
     @GetMapping("/products/by_basket/{basketId}")
     public ResponseEntity<?> getProductsByIdBasket(@PathVariable long basketId){
         Basket basket = basketService.findBasketById(basketId);
@@ -140,5 +140,17 @@ public class BasketController {
         List<Product> products = basketProductService.getProductsByBasketId(basketId);
         return ResponseEntity.ok(products);
 
+    }
+
+    @GetMapping("/by_table/{tableId}")
+    public ResponseEntity<?> getLatestBasketByIdTable(@PathVariable long tableId){
+        Board board = boardService.findBoardById(tableId);
+        if (board == null){
+            return  ResponseEntity.badRequest().body("board doesn't exist with this id");
+        }
+        List<Basket> baskets = board.getBaskets();
+        Basket basket = baskets.get(baskets.size() - 1);
+
+        return ResponseEntity.ok(basket);
     }
 }

@@ -58,6 +58,14 @@ public class CommandService {
         commandRepository.save(command);
     }
 
+    public void payCommand(Long commandId) {
+        Command command = findCommandById(commandId);
+        // Logic to accept the command and process it accordingly
+        // For example, update the status of the command or trigger external operations
+        command.setStatus(PAYED);
+        commandRepository.save(command);
+    }
+
     public void refuseCommand(Long commandId) {
         Command command = findCommandById(commandId);
         // Logic to refuse the command
@@ -84,7 +92,7 @@ public class CommandService {
             commands = server.getCommands();
             commands.add(command);
             userService.updateUser(server);
-            lastServerWithBoardIdForCommand.put(command.getBasket().getBoard().getIdTable().toString(),server.getId().toString());
+            lastServerWithBoardIdForCommand.put(zone.getIdZone().toString(),server.getId().toString());
         }
 
     }

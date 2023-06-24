@@ -14,7 +14,7 @@ import java.io.IOException;
 public class ImageServiceImp implements ImageService {
     private final ImageRepository imageRepository;
 
-    //TODO Complete this method
+    // Complete this method :: done
     @Override
     public Image getImage(String id) {
         return imageRepository.findById(id).orElse(null);

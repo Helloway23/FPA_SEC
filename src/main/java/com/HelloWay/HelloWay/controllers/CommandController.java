@@ -1,7 +1,11 @@
 package com.HelloWay.HelloWay.controllers;
 
+import com.HelloWay.HelloWay.Security.Jwt.CustomSessionRegistry;
+import com.HelloWay.HelloWay.entities.Basket;
+import com.HelloWay.HelloWay.entities.Board;
 import com.HelloWay.HelloWay.entities.Command;
 import com.HelloWay.HelloWay.entities.User;
+import com.HelloWay.HelloWay.services.BasketService;
 import com.HelloWay.HelloWay.services.CommandService;
 import com.HelloWay.HelloWay.services.UserService;
 import org.springframework.http.ResponseEntity;
@@ -15,9 +19,15 @@ public class CommandController {
     private final CommandService commandService;
     private final UserService userService;
 
-    public CommandController(CommandService commandService, UserService userService) {
+    private final BasketService basketService;
+
+    private final CustomSessionRegistry customSessionRegistry;
+
+    public CommandController(CommandService commandService, UserService userService, BasketService basketService, CustomSessionRegistry customSessionRegistry) {
         this.commandService = commandService;
         this.userService = userService;
+        this.basketService = basketService;
+        this.customSessionRegistry = customSessionRegistry;
     }
 
     @PostMapping("/{commandId}/accept")
@@ -26,10 +36,29 @@ public class CommandController {
         return ResponseEntity.ok("Command accepted");
     }
 
+
     @PostMapping("/{commandId}/refuse")
     public ResponseEntity<String> refuseCommand(@PathVariable Long commandId) {
         commandService.refuseCommand(commandId);
         return ResponseEntity.ok("Command refused");
+    }
+
+    // there we must remove users from the table, and disconnect the guests :: ?? TODo :: done
+    // we must remove they from the list of connected users in this table :: done
+    // then we must implement the creation of a new basket with this fucking table :: done
+    @PostMapping("/{commandId}/pay")
+    public ResponseEntity<String> payCommand(@PathVariable Long commandId) {
+        Command command = commandService.findCommandById(commandId);
+        if (command == null){
+            return ResponseEntity.badRequest().body("command not found");
+        }
+        Board board = command.getBasket().getBoard();
+        commandService.payCommand(commandId);
+        customSessionRegistry.removeUsersWhenCommandIsPayed(board.getIdTable().toString());
+        Basket basket = new Basket();
+        basket.setBoard(board);
+        basketService.addNewBasket(basket);
+        return ResponseEntity.ok("Command payed");
     }
 
    /*
@@ -60,4 +89,21 @@ public class CommandController {
         List<Command> commands = commandService.getServerCommands(server);
         return ResponseEntity.ok(commands);
     }
+
+    // we will use this after update the basket (after adding a product to the basket)
+    @PutMapping("/update/{commandId}/basket/{basketId}")
+    public ResponseEntity<?> updateCommand(@PathVariable long basketId, @PathVariable long commandId){
+        Command command = commandService.findCommandById(commandId);
+        if (command == null){
+            return ResponseEntity.badRequest().body("command doesn't exist with this id");
+        }
+        Basket basket = basketService.findBasketById(basketId);
+        if (basket == null){
+            return ResponseEntity.badRequest().body("basket doesn't exist with id");
+        }
+        command.setBasket(basket);
+        commandService.updateCommand(command);
+        return ResponseEntity.ok("command updated");
+    }
+
 }
