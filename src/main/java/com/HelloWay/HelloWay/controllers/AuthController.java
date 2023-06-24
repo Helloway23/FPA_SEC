@@ -176,7 +176,7 @@ public class AuthController {
     public ResponseEntity<?> logoutUser(HttpServletRequest request, HttpServletResponse response) {
         String sessionId = request.getSession(false).getId();
         if (sessionId != null) {
-            customSessionRegistry.removeSessionInformation(sessionId);
+            customSessionRegistry.removeUserFromTableWithRole(sessionId);
             request.getSession().invalidate();
         }
         ResponseCookie cookie = jwtUtils.getCleanJwtCookie();
