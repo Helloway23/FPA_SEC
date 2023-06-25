@@ -101,9 +101,17 @@ public class BasketController {
         return ResponseEntity.ok().body(productQuantities);
     }
 
+    // with update of the quantity
+    @PostMapping("/delete/one/product/{productId}/from_basket/{basketId}")
+    public ResponseEntity<?> deleteOneProductFromBasket(@PathVariable long basketId, @PathVariable long productId) {
+        basketProductService.deleteProductFromBasket(basketId, productId);
+        return ResponseEntity.ok().body("product deleted with success");
+    }
+
+    // delete the product from the basket what ever the quantity
     @PostMapping("/delete/product/{productId}/from_basket/{basketId}")
     public ResponseEntity<?> deleteProductFromBasket(@PathVariable long basketId, @PathVariable long productId) {
-        basketProductService.deleteProductFromBasket(basketId, productId);
+        basketProductService.deleteProductFromBasketV2(basketId, productId);
         return ResponseEntity.ok().body("product deleted with success");
     }
 
@@ -145,12 +153,15 @@ public class BasketController {
         if (basket == null){
             return  ResponseEntity.badRequest().body("basket doesn't exist with this id");
         }
-        List<Product> products = basketProductService.getProductsByBasketId(basketId);
-        return ResponseEntity.ok(products);
-
+        Map<Product,Integer> productQuantityMap= basketProductService.getProductsQuantityByBasketId(basketId);
+        List<ProductQuantity> productQuantities = new ArrayList<>() ;
+        for (Product p : productQuantityMap.keySet()){
+            productQuantities.add(new ProductQuantity(p, productQuantityMap.get(p)));
+        }
+        return ResponseEntity.ok().body(productQuantities);
     }
 
-    @GetMapping("/by_table/{tableId}")
+    @GetMapping("/latest/basket/by_table/{tableId}")
     public ResponseEntity<?> getLatestBasketByIdTable(@PathVariable long tableId){
         Board board = boardService.findBoardById(tableId);
         if (board == null){

@@ -83,6 +83,12 @@ public class BasketProductService {
         }
     }
 
+    public void deleteProductFromBasketV2(Long bid, Long pid) {
+        BasketProduct basketProduct =basketProductRepository.findById_IdBasketAndId_IdProduct(bid, pid);
+
+            basketProductRepository.delete(basketProduct);
+    }
+
 
     public List<Product> getProductsByBasketId(Long id) {
         Basket basket = basketService.findBasketById(id);
