@@ -90,7 +90,7 @@ public class BasketController {
             return ResponseEntity.badRequest().body("product doesn't exist");
         }
         basketProductService.addProductToBasket(basket, product,quantity);
-        return ResponseEntity.ok().body("product added with success");
+        return ResponseEntity.ok().body(basketProductService.getProductsQuantityByBasketId(basketId));
     }
 
     @PostMapping("/delete/product/{productId}/from_basket/{basketId}")

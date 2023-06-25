@@ -1,6 +1,7 @@
 package com.HelloWay.HelloWay.entities;
 
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import lombok.*;
 
@@ -36,13 +37,18 @@ public class Product {
 
     private Boolean available = true ;
 
+    @ToString.Exclude
+    @JsonIgnore
     @OneToMany
     List<BasketProduct> basketProducts;
 
+    @ToString.Exclude
+    @JsonIgnore
     @ManyToOne
     @JoinColumn(name = "id_categorie")
     private Categorie categorie;
 
+    @ToString.Exclude
     @OneToMany(mappedBy="product")
     private List<Image> images;
 

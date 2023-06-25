@@ -100,7 +100,7 @@ public class CommandService {
     public double CalculateSum(Command command) {
         double result = 0 ;
         Basket basket = command.getBasket();
-        Map<Product,Integer> products_Quantity = basketProductService.getProducts_PriceByBasketId(basket.getId_basket());
+        Map<Product,Integer> products_Quantity = basketProductService.getProductsQuantityByBasketId(basket.getId_basket());
         for (Product product : products_Quantity.keySet()){
             result += product.getPrice() * products_Quantity.get(product);
         }

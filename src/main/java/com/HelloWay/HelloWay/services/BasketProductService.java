@@ -40,12 +40,26 @@ public class BasketProductService {
     }
 
     public void addProductToBasket(Basket basket, Product product, int quantity) {
-        basketProductRepository.save(new BasketProduct(
-                new BasketProductKey(basket.getId_basket(),product.getIdProduct()),
-                basket,
-                product,
-                quantity
-        ));
+        // if the product exist in this basket we must update the quantity
+        List<Product> products = new ArrayList<>();
+        products = getProductsByBasketId(basket.getId_basket());
+        if (products.contains(product)) {
+            List<BasketProduct> basketProducts = new ArrayList<>();
+            basketProducts = getBasketProductsByBasketId(basket.getId_basket());
+            for (BasketProduct basketProduct : basketProducts) {
+                if (basketProduct.getProduct().equals(product)) {
+                    basketProduct.setQuantity(basketProduct.getQuantity() + quantity);
+                    basketProductRepository.save(basketProduct);
+                }
+            }
+        } else {
+            basketProductRepository.save(new BasketProduct(
+                    new BasketProductKey(basket.getId_basket(), product.getIdProduct()),
+                    basket,
+                    product,
+                    quantity
+            ));
+        }
     }
 
 
@@ -61,7 +75,12 @@ public class BasketProductService {
 
     public void deleteProductFromBasket(Long bid, Long pid) {
         BasketProduct basketProduct =basketProductRepository.findById_IdBasketAndId_IdProduct(bid, pid);
+        if (basketProduct.getQuantity() != 1){
+            basketProduct.setQuantity(basketProduct.getQuantity() - 1);
+            basketProductRepository.save(basketProduct);
+        }else {
         basketProductRepository.delete(basketProduct);
+        }
     }
 
 
@@ -76,7 +95,7 @@ public class BasketProductService {
         return products;
     }
 
-    public Map<Product,Integer> getProducts_PriceByBasketId(Long id) {
+    public Map<Product,Integer> getProductsQuantityByBasketId(Long id) {
         Basket basket = basketService.findBasketById(id);
         List<BasketProduct> basketProducts = new ArrayList<>();
         basketProducts =  basketProductRepository.findAllByBasket(basket);
@@ -86,8 +105,6 @@ public class BasketProductService {
         }
         return products_Quantity;
     }
-
-
 
 
 }
