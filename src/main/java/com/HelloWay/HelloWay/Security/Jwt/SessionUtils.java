@@ -1,6 +1,8 @@
 package com.HelloWay.HelloWay.Security.Jwt;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.ResponseCookie;
 import org.springframework.stereotype.Component;
 import org.springframework.web.context.ServletContextAware;
 
@@ -20,6 +22,9 @@ public class SessionUtils  {
     @Autowired
     private HttpServletResponse response;
 
+    @Value("${employeemanager.app.jwtCookieName}")
+    private String jwtCookie;
+
     private static final Map<String, HttpSession> activeSessions = new HashMap<>();
 
     public void disconnectUsers(List<String> sessionIds) {
@@ -35,10 +40,17 @@ public class SessionUtils  {
     }
 
     private void removeSessionCookie(String sessionId) {
+
+        ResponseCookie cookie = ResponseCookie.from(jwtCookie, null).path("/api").build();
         Cookie sessionCookie = new Cookie("alaeddine", sessionId);
         sessionCookie.setMaxAge(0);
-        sessionCookie.setPath("/");
+        sessionCookie.setPath("/api");
         response.addCookie(sessionCookie);
+
+        Cookie sessionCookie1 = new Cookie("JSESSIONID", sessionId);
+        sessionCookie1.setMaxAge(0);
+        sessionCookie1.setPath("/api");
+        response.addCookie(sessionCookie1);
     }
 
     public HttpSession getSessionById(String sessionId) {

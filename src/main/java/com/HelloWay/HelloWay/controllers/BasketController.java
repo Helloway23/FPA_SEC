@@ -1,6 +1,7 @@
 package com.HelloWay.HelloWay.controllers;
 
 import com.HelloWay.HelloWay.entities.*;
+import com.HelloWay.HelloWay.payload.response.ProductQuantity;
 import com.HelloWay.HelloWay.repos.UserRepository;
 import com.HelloWay.HelloWay.services.*;
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -8,7 +9,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/baskets")
@@ -90,7 +93,12 @@ public class BasketController {
             return ResponseEntity.badRequest().body("product doesn't exist");
         }
         basketProductService.addProductToBasket(basket, product,quantity);
-        return ResponseEntity.ok().body(basketProductService.getProductsQuantityByBasketId(basketId));
+        Map<Product,Integer> productQuantityMap= basketProductService.getProductsQuantityByBasketId(basketId);
+        List<ProductQuantity> productQuantities = new ArrayList<>() ;
+        for (Product p : productQuantityMap.keySet()){
+            productQuantities.add(new ProductQuantity(p, productQuantityMap.get(p)));
+        }
+        return ResponseEntity.ok().body(productQuantities);
     }
 
     @PostMapping("/delete/product/{productId}/from_basket/{basketId}")

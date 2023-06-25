@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/commands")
+@RequestMapping("/api/commands")
 public class CommandController {
     private final CommandService commandService;
     private final UserService userService;
