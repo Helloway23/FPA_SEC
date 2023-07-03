@@ -74,11 +74,7 @@ public class CategorieController {
         return categorieService.getCategoriesByIdSpace( id_space);
     }
 
-    @GetMapping("/qr_code/{qr_code}")
-    @ResponseBody
-    public List<Categorie> getCategoriesByQrCodeTable( @PathVariable String qr_code) {
-        return categorieService.getCategoriesByQrCodeTable(qr_code);
-    }
+
 
     @GetMapping("/all/paging")
     public Page<Categorie> getCategories(

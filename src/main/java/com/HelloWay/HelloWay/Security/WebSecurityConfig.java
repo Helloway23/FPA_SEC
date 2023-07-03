@@ -1,9 +1,6 @@
 package com.HelloWay.HelloWay.Security;
 
-import com.HelloWay.HelloWay.Security.Jwt.AuthEntryPointJwt;
-import com.HelloWay.HelloWay.Security.Jwt.AuthTokenFilter;
-import com.HelloWay.HelloWay.Security.Jwt.JwtUtils;
-import com.HelloWay.HelloWay.Security.Jwt.QrCodeAuthFilter;
+import com.HelloWay.HelloWay.Security.Jwt.*;
 import com.HelloWay.HelloWay.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
@@ -77,11 +74,13 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers("/api/auth/**").permitAll()
                 .antMatchers("/api/test/**").permitAll()
                 .antMatchers(HttpMethod.POST, "/api/auth/login-qr").permitAll() // Allow QR code authentication endpoint
-                .antMatchers(HttpMethod.POST, "/api/spaces/all").permitAll() // Allow QR code authentication endpoint
+                .antMatchers(HttpMethod.GET, "/api/spaces/all/dto").permitAll() // Allow QR code authentication endpoint
                 .anyRequest().authenticated();
 
         http.addFilterBefore(authenticationJwtTokenFilter(), UsernamePasswordAuthenticationFilter.class);
-      //  http.addFilterAfter(qrCodeAuthFilter(), UsernamePasswordAuthenticationFilter.class);
 
+
+        // ...
     }
+        //  http.addFilterAfter(qrCodeAuthFilter(), UsernamePasswordAuthenticationFilter.class);
 }

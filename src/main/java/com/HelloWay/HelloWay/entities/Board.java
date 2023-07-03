@@ -2,9 +2,9 @@ package com.HelloWay.HelloWay.entities;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
+import org.checkerframework.common.aliasing.qual.Unique;
 
 import javax.persistence.*;
-import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Positive;
 import java.util.List;
 
@@ -24,6 +24,7 @@ public class Board {
 
     //Unique
     @Positive
+    @Unique
     private int numTable ;
 
 
@@ -31,10 +32,9 @@ public class Board {
     private boolean availability ;
 
 
-    //Unique
-    @NotBlank
-    @Column(length = 50)
-    private String qrCode;
+
+    @Positive
+    private int placeNumber;
 
     @OneToMany(mappedBy = "board")
     List<Basket> baskets ;

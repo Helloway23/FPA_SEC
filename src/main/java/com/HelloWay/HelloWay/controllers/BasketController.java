@@ -2,6 +2,7 @@ package com.HelloWay.HelloWay.controllers;
 
 import com.HelloWay.HelloWay.entities.*;
 import com.HelloWay.HelloWay.payload.response.ProductQuantity;
+import com.HelloWay.HelloWay.payload.response.QuantitysProduct;
 import com.HelloWay.HelloWay.repos.UserRepository;
 import com.HelloWay.HelloWay.services.*;
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -93,10 +94,10 @@ public class BasketController {
             return ResponseEntity.badRequest().body("product doesn't exist");
         }
         basketProductService.addProductToBasket(basket, product,quantity);
-        Map<Product,Integer> productQuantityMap= basketProductService.getProductsQuantityByBasketId(basketId);
+        Map<Product, QuantitysProduct> productQuantityMap= basketProductService.getProductsQuantityByBasketId(basketId);
         List<ProductQuantity> productQuantities = new ArrayList<>() ;
         for (Product p : productQuantityMap.keySet()){
-            productQuantities.add(new ProductQuantity(p, productQuantityMap.get(p)));
+            productQuantities.add(new ProductQuantity(p, productQuantityMap.get(p).getOldQuantity(), productQuantityMap.get(p).getQuantity()));
         }
         return ResponseEntity.ok().body(productQuantities);
     }
@@ -153,10 +154,10 @@ public class BasketController {
         if (basket == null){
             return  ResponseEntity.badRequest().body("basket doesn't exist with this id");
         }
-        Map<Product,Integer> productQuantityMap= basketProductService.getProductsQuantityByBasketId(basketId);
+        Map<Product,QuantitysProduct> productQuantityMap= basketProductService.getProductsQuantityByBasketId(basketId);
         List<ProductQuantity> productQuantities = new ArrayList<>() ;
         for (Product p : productQuantityMap.keySet()){
-            productQuantities.add(new ProductQuantity(p, productQuantityMap.get(p)));
+            productQuantities.add(new ProductQuantity(p, productQuantityMap.get(p).getOldQuantity(), productQuantityMap.get(p).getQuantity()));
         }
         return ResponseEntity.ok().body(productQuantities);
     }
@@ -171,5 +172,45 @@ public class BasketController {
         Basket basket = baskets.get(baskets.size() - 1);
 
         return ResponseEntity.ok(basket);
+    }
+
+    @GetMapping("/product/quantity/{productId}/by_basket/{basketId}")
+    public ResponseEntity<?> getProductQuantityByIdBasketAndIdProduct(@PathVariable long basketId, @PathVariable long productId){
+        Basket basket = basketService.findBasketById(basketId);
+        QuantitysProduct quantity = new QuantitysProduct(0, 0) ;
+        if (basket == null){
+            return  ResponseEntity.badRequest().body("basket doesn't exist with this id");
+        }
+        Product product = productService.findProductById(productId);
+        if (product == null){
+            return  ResponseEntity.badRequest().body("product doesn't exist in this basket");
+        }
+        Map<Product,QuantitysProduct> productQuantityMap= basketProductService.getProductsQuantityByBasketId(basketId);
+        List<ProductQuantity> productQuantities = new ArrayList<>() ;
+        for (Product p : productQuantityMap.keySet()){
+            if (p.equals(product)){
+                quantity = productQuantityMap.get(p) ;
+            }
+        }
+        return ResponseEntity.ok().body(quantity);
+    }
+
+    //TODO : getProductsByIdCommand() : product , oldQuantity , Quantity :: Done
+    @GetMapping("/products/by_command/{commandId}")
+    public ResponseEntity<?> getProductsByIdCommand(@PathVariable long commandId){
+        Command command = commandService.findCommandById(commandId);
+        if (command == null){
+            return  ResponseEntity.badRequest().body("command doesn't exist with this id");
+        }
+        Basket basket = command.getBasket();
+        if (basket == null){
+            return  ResponseEntity.badRequest().body("basket doesn't exist with this id");
+        }
+        Map<Product,QuantitysProduct> productQuantityMap= basketProductService.getProductsQuantityByBasketId(basket.getId_basket());
+        List<ProductQuantity> productQuantities = new ArrayList<>() ;
+        for (Product p : productQuantityMap.keySet()){
+            productQuantities.add(new ProductQuantity(p, productQuantityMap.get(p).getOldQuantity(), productQuantityMap.get(p).getQuantity()));
+        }
+        return ResponseEntity.ok().body(productQuantities);
     }
 }

@@ -170,7 +170,7 @@ public class SpaceService {
 
         // Update the server's space
         server.setServersSpace(space);
-        userService.addUser(server);
+       // userService.addUser(server);
         List<User> spaceServers = new ArrayList<>();
         spaceServers = space.getServers();
         spaceServers.add(server);

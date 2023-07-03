@@ -5,6 +5,7 @@ import com.HelloWay.HelloWay.entities.Basket;
 import com.HelloWay.HelloWay.entities.BasketProduct;
 import com.HelloWay.HelloWay.entities.BasketProductKey;
 import com.HelloWay.HelloWay.entities.Product;
+import com.HelloWay.HelloWay.payload.response.QuantitysProduct;
 import com.HelloWay.HelloWay.repos.BasketProductRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -39,6 +40,7 @@ public class BasketProductService {
         basketProductRepository.deleteById(id);
     }
 
+    //TODO : add the attribute of oldQuantity :: Done
     public void addProductToBasket(Basket basket, Product product, int quantity) {
         // if the product exist in this basket we must update the quantity
         List<Product> products = new ArrayList<>();
@@ -48,6 +50,7 @@ public class BasketProductService {
             basketProducts = getBasketProductsByBasketId(basket.getId_basket());
             for (BasketProduct basketProduct : basketProducts) {
                 if (basketProduct.getProduct().equals(product)) {
+                    basketProduct.setOldQuantity(basketProduct.getQuantity());
                     basketProduct.setQuantity(basketProduct.getQuantity() + quantity);
                     basketProductRepository.save(basketProduct);
                 }
@@ -57,6 +60,7 @@ public class BasketProductService {
                     new BasketProductKey(basket.getId_basket(), product.getIdProduct()),
                     basket,
                     product,
+                    quantity,
                     quantity
             ));
         }
@@ -73,6 +77,7 @@ public class BasketProductService {
         return new ArrayList<>(basketProductRepository.findAllByProduct(product));
     }
 
+    //TODO : add the old quantity :: we dont need to update this method
     public void deleteProductFromBasket(Long bid, Long pid) {
         BasketProduct basketProduct =basketProductRepository.findById_IdBasketAndId_IdProduct(bid, pid);
         if (basketProduct.getQuantity() != 1){
@@ -82,6 +87,7 @@ public class BasketProductService {
         basketProductRepository.delete(basketProduct);
         }
     }
+
 
     public void deleteProductFromBasketV2(Long bid, Long pid) {
         BasketProduct basketProduct =basketProductRepository.findById_IdBasketAndId_IdProduct(bid, pid);
@@ -101,13 +107,14 @@ public class BasketProductService {
         return products;
     }
 
-    public Map<Product,Integer> getProductsQuantityByBasketId(Long id) {
+    public Map<Product, QuantitysProduct> getProductsQuantityByBasketId(Long id) {
         Basket basket = basketService.findBasketById(id);
         List<BasketProduct> basketProducts = new ArrayList<>();
         basketProducts =  basketProductRepository.findAllByBasket(basket);
-        Map<Product,Integer> products_Quantity = new HashMap<>();
+        Map<Product,QuantitysProduct> products_Quantity = new HashMap<>();
         for (BasketProduct basketProduct : basketProducts){
-            products_Quantity.put(basketProduct.getProduct(), basketProduct.getQuantity());
+            QuantitysProduct quantitysProduct = new QuantitysProduct(basketProduct.getOldQuantity(),basketProduct.getQuantity());
+            products_Quantity.put(basketProduct.getProduct(), quantitysProduct);
         }
         return products_Quantity;
     }

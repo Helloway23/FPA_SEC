@@ -5,12 +5,14 @@ import com.HelloWay.HelloWay.entities.Basket;
 import com.HelloWay.HelloWay.entities.Board;
 import com.HelloWay.HelloWay.entities.Command;
 import com.HelloWay.HelloWay.entities.User;
+import com.HelloWay.HelloWay.payload.response.Command_NumTableDTO;
 import com.HelloWay.HelloWay.services.BasketService;
 import com.HelloWay.HelloWay.services.CommandService;
 import com.HelloWay.HelloWay.services.UserService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @RestController
@@ -80,14 +82,20 @@ public class CommandController {
         return ResponseEntity.ok(sum);
     }
 
+    // output : command : num table  : list<Command,numTable> :: Done
+    // wissal will test (my dataBase effected) TODO ::
     @GetMapping("/for/server/{serverId}")
     public ResponseEntity<?> getServersCommand(@PathVariable long serverId){
         User server = userService.findUserById(serverId);
         if (server == null){
             return ResponseEntity.badRequest().body("server doesn't exist with this id");
         }
+        List<Command_NumTableDTO> commandNumTableDTOS = new ArrayList<>();
         List<Command> commands = commandService.getServerCommands(server);
-        return ResponseEntity.ok(commands);
+        for (Command command : commands){
+            commandNumTableDTOS.add(new Command_NumTableDTO(command, command.getBasket().getBoard().getNumTable()));
+        }
+        return ResponseEntity.ok(commandNumTableDTOS);
     }
 
     // we will use this after update the basket (after adding a product to the basket)

@@ -4,6 +4,8 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
 
 import javax.persistence.*;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 @Data
 @Getter
@@ -21,6 +23,12 @@ public class Command {
     @Enumerated
     @Column(length = 20)
     private Status status = Status.NOT_YET;
+
+    @Column
+    private LocalDateTime localDate;
+
+    @Column
+    private double sum = 0;
 
     @JsonIgnore
     @ManyToOne

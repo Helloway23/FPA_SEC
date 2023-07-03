@@ -1,10 +1,14 @@
 package com.HelloWay.HelloWay.services;
 
 import com.HelloWay.HelloWay.entities.*;
+import com.HelloWay.HelloWay.payload.response.QuantitysProduct;
 import com.HelloWay.HelloWay.repos.CommandRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -38,6 +42,7 @@ public class CommandService {
         return commandRepository.save(command);
     }
     public Command createCommand(Command command) {
+        command.setLocalDate(LocalDateTime.now());
         return commandRepository.save(command);
     }
 
@@ -63,6 +68,7 @@ public class CommandService {
         // Logic to accept the command and process it accordingly
         // For example, update the status of the command or trigger external operations
         command.setStatus(PAYED);
+        command.setSum(CalculateSum(command));
         commandRepository.save(command);
     }
 
@@ -100,9 +106,9 @@ public class CommandService {
     public double CalculateSum(Command command) {
         double result = 0 ;
         Basket basket = command.getBasket();
-        Map<Product,Integer> products_Quantity = basketProductService.getProductsQuantityByBasketId(basket.getId_basket());
+        Map<Product, QuantitysProduct> products_Quantity = basketProductService.getProductsQuantityByBasketId(basket.getId_basket());
         for (Product product : products_Quantity.keySet()){
-            result += product.getPrice() * products_Quantity.get(product);
+            result += product.getPrice() * products_Quantity.get(product).getQuantity();
         }
         return  result;
     }
@@ -117,10 +123,13 @@ public class CommandService {
 
     public List<Command> getServerCommands(User server){
 
+        LocalTime currentTime = LocalTime.now();
         List<Command> serverCommands = server.getServer_commands();
         List<Command> actualServerCommand = new ArrayList<>();
         for (Command command : serverCommands){
-            if (command.getStatus().equals(NOT_YET)){
+            if (command.getStatus().equals(NOT_YET) || command.getStatus().equals(CONFIRMED)
+                && command.getLocalDate().getHour() >= currentTime.getHour()
+                    && command.getLocalDate().getHour() < currentTime.getHour() + 1){
                 actualServerCommand.add(command);
             }
         }

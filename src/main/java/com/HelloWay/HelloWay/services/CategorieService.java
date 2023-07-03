@@ -71,12 +71,7 @@ public class CategorieService {
         return space.getCategories();
     }
 
-    public List<Categorie> getCategoriesByQrCodeTable(String qrCode){
 
-       Board board = boardService.getBoardByQrCode(qrCode);
-        Zone zone = board.getZone();
-        return zone.getSpace().getCategories();
-    }
 
     public Boolean categorieExistsByTitle(Categorie categorie){
         return categorieRepository.existsByCategoryTitle(categorie.getCategoryTitle());

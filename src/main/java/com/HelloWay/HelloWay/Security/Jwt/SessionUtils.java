@@ -1,17 +1,11 @@
 package com.HelloWay.HelloWay.Security.Jwt;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.ResponseCookie;
 import org.springframework.stereotype.Component;
-import org.springframework.web.context.ServletContextAware;
 
-
-import javax.servlet.ServletContext;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
-import javax.servlet.http.HttpSessionContext;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -22,8 +16,7 @@ public class SessionUtils  {
     @Autowired
     private HttpServletResponse response;
 
-    @Value("${employeemanager.app.jwtCookieName}")
-    private String jwtCookie;
+
 
     private static final Map<String, HttpSession> activeSessions = new HashMap<>();
 
@@ -34,14 +27,13 @@ public class SessionUtils  {
                 // Perform actions to disconnect the user
                 session.invalidate();
                 removeSession(session);
-                removeSessionCookie(sessionId);
+        //    removeSessionCookie(sessionId);
             }
         }
     }
 
-    private void removeSessionCookie(String sessionId) {
+   private void removeSessionCookie(String sessionId) {
 
-        ResponseCookie cookie = ResponseCookie.from(jwtCookie, null).path("/api").build();
         Cookie sessionCookie = new Cookie("alaeddine", sessionId);
         sessionCookie.setMaxAge(0);
         sessionCookie.setPath("/api");
@@ -49,7 +41,7 @@ public class SessionUtils  {
 
         Cookie sessionCookie1 = new Cookie("JSESSIONID", sessionId);
         sessionCookie1.setMaxAge(0);
-        sessionCookie1.setPath("/api");
+        sessionCookie1.setPath("/");
         response.addCookie(sessionCookie1);
     }
 
