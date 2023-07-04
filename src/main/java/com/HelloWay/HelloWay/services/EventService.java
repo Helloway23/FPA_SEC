@@ -4,6 +4,7 @@ package com.HelloWay.HelloWay.services;
 import com.HelloWay.HelloWay.entities.Event;
 import com.HelloWay.HelloWay.entities.Party;
 import com.HelloWay.HelloWay.entities.Promotion;
+import com.HelloWay.HelloWay.entities.Space;
 import com.HelloWay.HelloWay.repos.EventRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
@@ -17,6 +18,9 @@ public class EventService {
 
     @Autowired
     EventRepository eventRepository ;
+
+    @Autowired
+    SpaceService spaceService ;
 
     public Event createEvent(Event event){
         return eventRepository.save(event);
@@ -64,7 +68,8 @@ public class EventService {
     }
 
     public List<Event> getEventsBySpaceId(Long spaceId) {
-        return eventRepository.findBySpaceId(spaceId);
+        Space space = spaceService.findSpaceById(spaceId);
+        return eventRepository.findBySpace(space);
     }
 
     public List<Event> getEventsByDateRange(LocalDate startDate, LocalDate endDate) {

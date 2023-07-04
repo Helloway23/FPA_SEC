@@ -108,7 +108,7 @@ public class CommandService {
         Basket basket = command.getBasket();
         Map<Product, QuantitysProduct> products_Quantity = basketProductService.getProductsQuantityByBasketId(basket.getId_basket());
         for (Product product : products_Quantity.keySet()){
-            result += product.getPrice() * products_Quantity.get(product).getQuantity();
+            result += product.getPrice() * products_Quantity.get(product).getOldQuantity();
         }
         return  result;
     }

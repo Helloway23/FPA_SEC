@@ -32,7 +32,7 @@ public class UserService implements UserDetailsService {
     }
 
     public User addUser(User employee) {
-        employee.setPassword(passwordEncoder.encode(employee.getPassword()));
+    //    employee.setPassword(passwordEncoder.encode(employee.getPassword()));
         return UserRepo.save(employee);
     }
 

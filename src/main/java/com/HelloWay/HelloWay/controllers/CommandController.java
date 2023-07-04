@@ -1,11 +1,9 @@
 package com.HelloWay.HelloWay.controllers;
 
 import com.HelloWay.HelloWay.Security.Jwt.CustomSessionRegistry;
-import com.HelloWay.HelloWay.entities.Basket;
-import com.HelloWay.HelloWay.entities.Board;
-import com.HelloWay.HelloWay.entities.Command;
-import com.HelloWay.HelloWay.entities.User;
+import com.HelloWay.HelloWay.entities.*;
 import com.HelloWay.HelloWay.payload.response.Command_NumTableDTO;
+import com.HelloWay.HelloWay.services.BasketProductService;
 import com.HelloWay.HelloWay.services.BasketService;
 import com.HelloWay.HelloWay.services.CommandService;
 import com.HelloWay.HelloWay.services.UserService;
@@ -25,15 +23,25 @@ public class CommandController {
 
     private final CustomSessionRegistry customSessionRegistry;
 
-    public CommandController(CommandService commandService, UserService userService, BasketService basketService, CustomSessionRegistry customSessionRegistry) {
+    private final BasketProductService basketProductService ;
+
+    public CommandController(CommandService commandService, BasketProductService basketProductService, UserService userService, BasketService basketService, CustomSessionRegistry customSessionRegistry) {
         this.commandService = commandService;
         this.userService = userService;
         this.basketService = basketService;
         this.customSessionRegistry = customSessionRegistry;
+        this.basketProductService = basketProductService;
     }
 
     @PostMapping("/{commandId}/accept")
     public ResponseEntity<String> acceptCommand(@PathVariable Long commandId) {
+        Command command = commandService.findCommandById(commandId);
+        Basket basket = command.getBasket();
+        List<BasketProduct> basketProducts = basketProductService.getBasketProductsByBasketId(basket.getId_basket());
+        for (BasketProduct basketProduct : basketProducts){
+            basketProduct.setOldQuantity(basketProduct.getQuantity());
+            basketProductService.updateBasketProduct(basketProduct);
+        }
         commandService.acceptCommand(commandId);
         return ResponseEntity.ok("Command accepted");
     }
@@ -110,6 +118,7 @@ public class CommandController {
             return ResponseEntity.badRequest().body("basket doesn't exist with id");
         }
         command.setBasket(basket);
+        command.setStatus(Status.NOT_YET);
         commandService.updateCommand(command);
         return ResponseEntity.ok("command updated");
     }

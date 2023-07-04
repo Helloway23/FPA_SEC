@@ -127,6 +127,12 @@ public class BasketController {
     @PostMapping("/{basketId}/commands/add/user/{userId}")
     public ResponseEntity<Command> createCommandWithServer(@PathVariable Long basketId, @PathVariable long userId) {
         Basket basket = basketService.findBasketById(basketId);
+       /* List<BasketProduct> basketProducts = basketProductService.getBasketProductsByBasketId(basketId);
+        for (BasketProduct basketProduct : basketProducts){
+           basketProduct.setOldQuantity(basketProduct.getQuantity());
+            basketProductService.updateBasketProduct(basketProduct);
+        }
+        */
         Board board = basket.getBoard();
         User user = userService.findUserById(userId);
         List<User> servers = board.getZone().getServers();

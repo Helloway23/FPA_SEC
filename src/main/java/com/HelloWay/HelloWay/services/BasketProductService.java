@@ -50,7 +50,7 @@ public class BasketProductService {
             basketProducts = getBasketProductsByBasketId(basket.getId_basket());
             for (BasketProduct basketProduct : basketProducts) {
                 if (basketProduct.getProduct().equals(product)) {
-                    basketProduct.setOldQuantity(basketProduct.getQuantity());
+               //     basketProduct.setOldQuantity(basketProduct.getQuantity());
                     basketProduct.setQuantity(basketProduct.getQuantity() + quantity);
                     basketProductRepository.save(basketProduct);
                 }
@@ -60,9 +60,9 @@ public class BasketProductService {
                     new BasketProductKey(basket.getId_basket(), product.getIdProduct()),
                     basket,
                     product,
-                    // we add 0 there place of old quantity TODO :: ??
+                    // we add 0 there place of old quantity TODO :: Done
                     quantity,
-                    quantity
+                    0
             ));
         }
     }
