@@ -60,6 +60,7 @@ public class BasketProductService {
                     new BasketProductKey(basket.getId_basket(), product.getIdProduct()),
                     basket,
                     product,
+                    // we add 0 there place of old quantity TODO :: ??
                     quantity,
                     quantity
             ));

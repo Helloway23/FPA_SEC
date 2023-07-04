@@ -8,13 +8,16 @@ import lombok.ToString;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
-import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.List;
 
 @Data
 @ToString
 @Getter
 @Setter
 @Entity
+@Inheritance(strategy = InheritanceType.SINGLE_TABLE)
+@DiscriminatorColumn(name = "event_type")
 @Table(name = "events")
 public class Event {
 
@@ -27,28 +30,16 @@ public class Event {
     private String eventTitle;
 
     @NotBlank
-    @Column(length = 20)
-    private LocalDate startDate ;
+    @Column()
+    private LocalDateTime startDate ;
 
     @NotBlank
-    @Column(length = 20)
-    private LocalDate endDate ;
+    @Column()
+    private LocalDateTime endDate ;
 
     @NotBlank
     @Column(length = 40)
     private String description;
-
-    @NotBlank
-    @Column(length = 40)
-    private double price ;
-
-    @NotBlank
-    @Column(length = 40)
-    private int nbParicpants ;
-
-    @NotBlank
-    @Column(length = 40)
-    private Boolean promotion ;
 
 
 
@@ -57,8 +48,63 @@ public class Event {
     @JoinColumn(name="idSpace")
     private Space space;
 
+    @ToString.Exclude
+    @OneToMany(mappedBy="event")
+    private List<Image> images;
 
+    public Long getIdEvent() {
+        return idEvent;
+    }
 
+    public void setIdEvent(Long idEvent) {
+        this.idEvent = idEvent;
+    }
 
+    public String getEventTitle() {
+        return eventTitle;
+    }
 
+    public void setEventTitle(String eventTitle) {
+        this.eventTitle = eventTitle;
+    }
+
+    public LocalDateTime getStartDate() {
+        return startDate;
+    }
+
+    public void setStartDate(LocalDateTime startDate) {
+        this.startDate = startDate;
+    }
+
+    public LocalDateTime getEndDate() {
+        return endDate;
+    }
+
+    public void setEndDate(LocalDateTime endDate) {
+        this.endDate = endDate;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public Space getSpace() {
+        return space;
+    }
+
+    public void setSpace(Space space) {
+        this.space = space;
+    }
+
+    public List<Image> getImages() {
+        return images;
+    }
+
+    public void setImages(List<Image> images) {
+        this.images = images;
+    }
 }

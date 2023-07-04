@@ -124,4 +124,15 @@ public class Product {
     public void setImages(List<Image> images) {
         this.images = images;
     }
+
+    @OneToMany(mappedBy="product")
+    private List<Promotion> promotions;
+
+    public List<Promotion> getPromotions() {
+        return promotions;
+    }
+
+    public void setPromotions(List<Promotion> promotions) {
+        this.promotions = promotions;
+    }
 }

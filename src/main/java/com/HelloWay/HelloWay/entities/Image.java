@@ -36,6 +36,11 @@ public class Image {
     @ManyToOne
     @JoinColumn(name="id_product")
     private Product product;
+
+    @JsonIgnore
+    @ManyToOne
+    @JoinColumn(name="idEvent")
+    private Event event;
     public Image(Object o, String fileName, String fileType, byte[] data) {
         this.id = o.toString();
         this.fileName = fileName;
