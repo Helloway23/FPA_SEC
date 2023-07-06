@@ -14,6 +14,7 @@ import org.springframework.stereotype.Service;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class SpaceService {
@@ -213,6 +214,7 @@ public class SpaceService {
     public List<User> getServersBySpace(Space space){
         return space.getServers();
     }
+    public Space getSpaceByWaiterId(User waiter){return waiter.getServersSpace();}
 
 
 }

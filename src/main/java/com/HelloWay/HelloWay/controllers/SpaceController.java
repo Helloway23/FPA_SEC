@@ -20,10 +20,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 import static com.HelloWay.HelloWay.entities.ERole.ROLE_WAITER;
 
@@ -323,4 +320,16 @@ public class SpaceController {
         }
         return ResponseEntity.ok().body(spaceService.getServersBySpace(space));
     }
+
+    @GetMapping("/server/{serverId}")
+    @ResponseBody
+    public ResponseEntity<?> getSpaceByIdServer(@PathVariable long serverId){
+        User waiter = userRepository.findById(serverId).orElse(null);
+        if (waiter == null){
+            return ResponseEntity.badRequest().body("waiter doesn't exist with this id : " + serverId);
+        }
+        return ResponseEntity.ok().body(spaceService.getSpaceByWaiterId(waiter));
+    }
+
+
 }

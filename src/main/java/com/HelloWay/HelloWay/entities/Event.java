@@ -1,13 +1,11 @@
 package com.HelloWay.HelloWay.entities;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import lombok.Data;
-import lombok.Getter;
-import lombok.Setter;
-import lombok.ToString;
+import lombok.*;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -29,11 +27,11 @@ public class Event {
     @Column(length = 20)
     private String eventTitle;
 
-    @NotBlank
+    @NotNull
     @Column()
     private LocalDateTime startDate ;
 
-    @NotBlank
+    @NotNull
     @Column()
     private LocalDateTime endDate ;
 
