@@ -71,6 +71,10 @@ public  class User implements Serializable {
     @OneToOne
     private Space moderatorSpace ;
 
+    @JsonIgnore
+    @OneToMany(mappedBy="user")
+    private List<Reservation> reservations;
+
     public List<Reclamation> getReclamation() {
         return reclamation;
     }

@@ -78,7 +78,7 @@ public class BasketProductService {
         return new ArrayList<>(basketProductRepository.findAllByProduct(product));
     }
 
-    //TODO : add the old quantity :: we dont need to update this method
+    //TODO : add the old quantity :: we dont need to update this method :: Done
     public void deleteProductFromBasket(Long bid, Long pid) {
         BasketProduct basketProduct =basketProductRepository.findById_IdBasketAndId_IdProduct(bid, pid);
         if (basketProduct.getQuantity() != 1){

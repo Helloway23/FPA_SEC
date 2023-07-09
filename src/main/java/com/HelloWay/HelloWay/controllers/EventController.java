@@ -1,16 +1,17 @@
 package com.HelloWay.HelloWay.controllers;
 
-import com.HelloWay.HelloWay.entities.Event;
-import com.HelloWay.HelloWay.entities.Party;
-import com.HelloWay.HelloWay.entities.Promotion;
-import com.HelloWay.HelloWay.entities.Space;
+import com.HelloWay.HelloWay.entities.*;
+import com.HelloWay.HelloWay.repos.ImageRepository;
 import com.HelloWay.HelloWay.services.EventService;
 import com.HelloWay.HelloWay.services.SpaceService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.crossstore.ChangeSetPersister;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
@@ -24,6 +25,9 @@ public class EventController {
 
     @Autowired
     private SpaceService spaceService;
+
+    @Autowired
+    ImageRepository imageRepository;
 
     @GetMapping
     public List<Event> getAllEvents() {
@@ -129,6 +133,28 @@ public class EventController {
     @GetMapping("/upcoming")
     public List<Event> getUpcomingEvents(@RequestParam("limit") int limit) {
         return eventService.getUpcomingEvents(limit);
+    }
+
+    @PostMapping("/{id}/images")
+    public ResponseEntity<String> addImage(@PathVariable("id") Long id,
+                                           @RequestParam("file") MultipartFile file) {
+        try {
+            Event event = eventService.findEventById(id);
+
+            // Create the Image entity and set the reference to the event entity
+            Image image = new Image();
+            image.setEvent(event);
+            image.setFileName(file.getOriginalFilename());
+            image.setFileType(file.getContentType());
+            image.setData(file.getBytes());
+
+            // Persist the Image entity to the database
+            imageRepository.save(image);
+
+            return ResponseEntity.ok().body("Image uploaded successfully");
+        } catch (IOException ex) {
+            throw new RuntimeException("Error uploading file", ex);
+        }
     }
 
 }

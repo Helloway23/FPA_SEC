@@ -123,4 +123,40 @@ public class CommandController {
         return ResponseEntity.ok("command updated");
     }
 
+    @GetMapping("/by/basket/{basketId}")
+    public ResponseEntity<?> getCommandByBasketId(@PathVariable long basketId){
+        Basket basket = basketService.findBasketById(basketId);
+        if (basket == null){
+            return ResponseEntity.badRequest().body("basket doesn't exist with this id " + basketId);
+        }
+        Command command = basket.getCommand();
+        return ResponseEntity.ok(command);
+    }
+
+    @GetMapping("/by/user/{userId}")
+    public ResponseEntity<?> getCommandsByUserId(@PathVariable long userId){
+        User user = userService.findUserById(userId);
+        if (user == null){
+            return ResponseEntity.badRequest().body("user doesn't exist with this id " + userId);
+        }
+        List<Command> commands = user.getCommands();
+        if (commands.isEmpty()){
+            return ResponseEntity.badRequest().body("our user does not have any command");
+        }
+        return ResponseEntity.ok(commands);
+    }
+
+    @GetMapping("/latest/by/user/{userId}")
+    public ResponseEntity<?> getLatestCommandByUserId(@PathVariable long userId){
+        User user = userService.findUserById(userId);
+        if (user == null){
+            return ResponseEntity.badRequest().body("user doesn't exist with this id " + userId);
+        }
+        List<Command> commands = user.getCommands();
+        if (commands.isEmpty()){
+            return ResponseEntity.badRequest().body("our user does not have any command");
+        }
+        return ResponseEntity.ok(commands.get(0));
+    }
+
 }
