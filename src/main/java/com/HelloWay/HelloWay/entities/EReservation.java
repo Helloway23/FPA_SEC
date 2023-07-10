@@ -4,7 +4,7 @@ public enum EReservation {
     NOT_YET,
     CONFIRMED,
     REFUSED,
-    ANNULATED
+    CANCELED
 
 
 }
