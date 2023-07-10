@@ -3,6 +3,8 @@ package com.HelloWay.HelloWay.payload.response;
 import com.HelloWay.HelloWay.entities.Image;
 import com.HelloWay.HelloWay.entities.SpaceCategorie;
 
+import java.util.List;
+
 public class SpaceDTO {
     private Long id_space;
     private String titleSpace;
@@ -14,17 +16,15 @@ public class SpaceDTO {
     private double surfaceEnM2;
     private int numberOfRating;
     private SpaceCategorie spaceCategorie ;
+    private List<Image> images;
 
-    public Image getImage() {
-        return image;
+    public List<Image> getImages() {
+        return images;
     }
 
-    public void setImage(Image image) {
-        this.image = image;
+    public void setImages(List<Image> images) {
+        this.images = images;
     }
-
-    private Image image;
-
     //TODO : add the image :: Done
 
     public SpaceDTO(Long id_space,

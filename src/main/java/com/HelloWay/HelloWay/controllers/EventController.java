@@ -83,20 +83,34 @@ public class EventController {
     }
 
     @PostMapping("/party/space/{spaceId}")
-    public ResponseEntity<?> createParty(@RequestBody Party party, @PathVariable long spaceId) {
+    public ResponseEntity<Party> createParty(@PathVariable Long spaceId, @RequestBody Party party) {
+        // Retrieve the space
         Space space = spaceService.findSpaceById(spaceId);
-        if (space == null){
-            return ResponseEntity.badRequest().body("space does not exist with this id " + spaceId);
+
+        // Check if the space exists
+        if (space == null) {
+            return ResponseEntity.notFound().build();
         }
+
+        // Initialize the events list if it's null
+        if (space.getEvents() == null) {
+            space.setEvents(new ArrayList<>());
+        }
+
+        // Set the space for the party
         party.setSpace(space);
-        Event eventObject = eventService.createParty(party);
-        List<Event> events = new ArrayList<>();
-        events = space.getEvents();
-        events.add(eventObject);
-        space.setEvents(events);
+
+        // Save the party
+        Party createdParty = eventService.createParty(party);
+
+        // Add the party to the events list
+        space.getEvents().add(party);
         spaceService.updateSpace(space);
-        return ResponseEntity.ok().body(eventObject);
+
+        return ResponseEntity.ok(createdParty);
     }
+
+
 
     @PostMapping("/party")
     public Party createParty(@RequestBody Party party) {

@@ -201,6 +201,21 @@ public class SpaceController {
             throw new RuntimeException(e);
         }
     }
+    @DeleteMapping("{idImage}/images/{idSpace}")
+    public ResponseEntity<?> deleteImage(@PathVariable String idImage, @PathVariable Long idSpace){
+        Image image = imageService.getImage(idImage);
+        if (image == null){
+            return ResponseEntity.notFound().build();
+        }
+        Space space = spaceService.findSpaceById(idSpace);
+        if (space == null){
+            return ResponseEntity.notFound().build();
+        }
+        space.getImages().remove(image);
+        spaceService.updateSpace(space);
+        imageRepository.delete(image);
+        return ResponseEntity.ok("image deleted successfully for the space");
+    }
 
 
     @PostMapping("/{idSpace}/images/{idProduct}")

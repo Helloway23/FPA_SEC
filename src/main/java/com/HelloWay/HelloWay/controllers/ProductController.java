@@ -111,6 +111,22 @@ public class ProductController {
         }
 
     }
+
+    @DeleteMapping("{idImage}/images/{idSpace}")
+    public ResponseEntity<?> deleteImage(@PathVariable String idImage, @PathVariable Long idSpace){
+        Image image = imageRepository.findById(idImage).orElse(null);
+        if (image == null){
+            return ResponseEntity.notFound().build();
+        }
+        Product product = productService.findProductById(idSpace);
+        if (product == null){
+            return ResponseEntity.notFound().build();
+        }
+        product.getImages().remove(image);
+        productService.updateProduct(product);
+        imageRepository.delete(image);
+        return ResponseEntity.ok("image deleted successfully for the product");
+    }
     @PostMapping("/add/productToBasket/{id_basket}")
     @ResponseBody
     public void addProductToBasket(@RequestBody Product product, @PathVariable Long id_basket, int quantity) {

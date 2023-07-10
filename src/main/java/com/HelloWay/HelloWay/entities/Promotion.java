@@ -8,6 +8,7 @@ import javax.persistence.*;
 @Entity
 @DiscriminatorValue("promotion")
 public class Promotion extends Event{
+    @Column
     private  int percentage ;
     @JsonIgnore
     @ManyToOne

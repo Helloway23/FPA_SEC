@@ -1,14 +1,17 @@
 package com.HelloWay.HelloWay.entities;
 
+import javax.persistence.Column;
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
 
 @Entity
 @DiscriminatorValue("party")
 public class Party extends Event {
+    @Column
     private int nbParticipant ;
+    @Column
     private double price ;
-
+    @Column
     private Boolean allInclusive ;
 
     public Party(int nbParticipant, double price, Boolean allInclusive) {
