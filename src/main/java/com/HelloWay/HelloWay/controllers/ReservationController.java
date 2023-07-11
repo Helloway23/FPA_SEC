@@ -2,6 +2,7 @@ package com.HelloWay.HelloWay.controllers;
 
 import com.HelloWay.HelloWay.entities.EReservation;
 import com.HelloWay.HelloWay.entities.Reservation;
+import com.HelloWay.HelloWay.services.NotificationService;
 import com.HelloWay.HelloWay.services.ReservationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -15,10 +16,13 @@ import java.util.List;
 @RequestMapping("/api/reservations")
 public class ReservationController {
     private final ReservationService reservationService;
+    private final NotificationService notificationService;
 
     @Autowired
-    public ReservationController(ReservationService reservationService) {
+    public ReservationController(ReservationService reservationService,
+                                 NotificationService notificationService) {
         this.reservationService = reservationService;
+        this.notificationService = notificationService;
     }
 
     @GetMapping
@@ -104,6 +108,12 @@ public class ReservationController {
         reservation.setStatus(EReservation.CONFIRMED);
 
         Reservation updatedReservation = reservationService.updateReservation(reservation);
+
+        // Create in-app notification for users
+
+        String messageForTheUser = "congratulation " + reservation.getUser().getName()+ " your reservation have been Confirmed  , To  :   " + reservation.getStartDate()  + " , for your : " + reservation.getEventTitle() + ", with board of number : " + reservation.getBoards().get(0).getNumTable();
+        notificationService.createNotification("Reservation Notification",messageForTheUser, reservation.getUser());
+
         return ResponseEntity.ok(updatedReservation);
     }
 
@@ -118,6 +128,12 @@ public class ReservationController {
         reservation.setStatus(EReservation.REFUSED);
 
         Reservation updatedReservation = reservationService.updateReservation(reservation);
+
+        // Create in-app notification for users
+
+        String messageForTheUser = "Sorry " + reservation.getUser().getName()+ " your reservation have been Refused  , To  :   " + reservation.getStartDate()  + " , for your : " + reservation.getEventTitle() + ", with board of number : " + reservation.getBoards().get(0).getNumTable();
+        notificationService.createNotification("Reservation Notification",messageForTheUser, reservation.getUser());
+
         return ResponseEntity.ok(updatedReservation);
     }
 
@@ -130,6 +146,12 @@ public class ReservationController {
 
         // Update the reservation status to "CANCELED" (assuming you have an appropriate enumeration for status)
         reservation.setStatus(EReservation.CANCELED);
+
+        // Create in-app notification for users
+
+        String messageForTheUser = "HI" + reservation.getUser().getName()+ " your reservation have been Canceled  , To  :   " + reservation.getStartDate()  + " , for your : " + reservation.getEventTitle() ;
+        notificationService.createNotification("Reservation Notification",messageForTheUser, reservation.getUser());
+
 
         Reservation updatedReservation = reservationService.updateReservation(reservation);
         return ResponseEntity.ok(updatedReservation);

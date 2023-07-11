@@ -75,6 +75,43 @@ public  class User implements Serializable {
     @OneToMany(mappedBy="user")
     private List<Reservation> reservations;
 
+
+    @JsonIgnore
+    @OneToMany(mappedBy="recipient")
+    private List<Notification> notifications;
+
+    public List<Command> getServer_commands() {
+        return server_commands;
+    }
+
+    public void setServer_commands(List<Command> server_commands) {
+        this.server_commands = server_commands;
+    }
+
+    public Zone getZone() {
+        return zone;
+    }
+
+    public void setZone(Zone zone) {
+        this.zone = zone;
+    }
+
+    public List<Reservation> getReservations() {
+        return reservations;
+    }
+
+    public void setReservations(List<Reservation> reservations) {
+        this.reservations = reservations;
+    }
+
+    public List<Notification> getNotifications() {
+        return notifications;
+    }
+
+    public void setNotifications(List<Notification> notifications) {
+        this.notifications = notifications;
+    }
+
     public List<Reclamation> getReclamation() {
         return reclamation;
     }

@@ -30,6 +30,9 @@ public class ReservationService {
     @Autowired
     private static UserService userService;
 
+    @Autowired
+    NotificationService notificationService;
+
 
 
     public List<Reservation> findAllReservations() {
@@ -133,6 +136,14 @@ public class ReservationService {
 
         board.setReservation(reservationObject);
         boardService.updateBoard(board);
+
+        // Create in-app notification for users
+        String messageForTheModerator = "A new reservation has been made for your space: " + space.getTitleSpace() + " for  : " + reservation.getStartDate() + "by " + user.getName() + " with email : " +
+                user.getEmail() + " , PhoneNumber : " + user.getPhone();
+        String messageForTheUser = "Hello" + user.getName()+ " your reservation have been submitted successfully , you will be contacted by the Space :   " + space.getTitleSpace()  + " , PhoneNumber : " + space.getPhoneNumber();
+        notificationService.createNotification("Reservation Notification", messageForTheModerator, space.getModerator());
+        notificationService.createNotification("Reservation Notification",messageForTheUser, user);
+
 
         return reservationObject;
     }

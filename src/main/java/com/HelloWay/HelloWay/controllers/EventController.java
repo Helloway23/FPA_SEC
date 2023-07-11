@@ -3,6 +3,7 @@ package com.HelloWay.HelloWay.controllers;
 import com.HelloWay.HelloWay.entities.*;
 import com.HelloWay.HelloWay.repos.ImageRepository;
 import com.HelloWay.HelloWay.services.EventService;
+import com.HelloWay.HelloWay.services.ProductService;
 import com.HelloWay.HelloWay.services.SpaceService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.crossstore.ChangeSetPersister;
@@ -28,6 +29,9 @@ public class EventController {
 
     @Autowired
     ImageRepository imageRepository;
+
+    @Autowired
+    ProductService productService;
 
     @GetMapping
     public List<Event> getAllEvents() {
@@ -61,20 +65,31 @@ public class EventController {
         return ResponseEntity.ok().body(eventObject);
     }
 
-    @PostMapping("/promotion/space/{spaceId}")
-    public ResponseEntity<?> createPromotionForSpace(@RequestBody Promotion promotion, @PathVariable long spaceId) {
+    @PostMapping("/promotion/space/{spaceId}/{productId}")
+    public ResponseEntity<?> createPromotionForSpaceAndProduct(@RequestBody Promotion promotion,
+                                                     @PathVariable long spaceId,
+                                                     @PathVariable long productId) {
         Space space = spaceService.findSpaceById(spaceId);
         if (space == null){
             return ResponseEntity.badRequest().body("space does not exist with this id " + spaceId);
         }
+        Product product = productService.findProductById(productId);
+        if (product == null){
+            return ResponseEntity.badRequest().body("product does not exist with this id " + productId);
+        }
         promotion.setSpace(space);
-        Event eventObject = eventService.createPromotion(promotion);
+        promotion.setProduct(product);
+        Promotion promotionObject = eventService.createPromotion(promotion);
         List<Event> events = new ArrayList<>();
         events = space.getEvents();
-        events.add(eventObject);
+        events.add(promotionObject);
         space.setEvents(events);
         spaceService.updateSpace(space);
-        return ResponseEntity.ok().body(eventObject);
+        List<Promotion> productEvents = new ArrayList<>();
+        productEvents = product.getPromotions();
+        productEvents.add(promotionObject);
+        productService.updateProduct(product);
+        return ResponseEntity.ok().body(promotionObject);
     }
 
     @PostMapping("/promotion")
@@ -135,6 +150,16 @@ public class EventController {
     @GetMapping("/spaces/{spaceId}")
     public List<Event> getEventsBySpaceId(@PathVariable Long spaceId) {
         return eventService.getEventsBySpaceId(spaceId);
+    }
+
+    @GetMapping("/promotions/product/{productId}")
+    public ResponseEntity<?> getPromotionsByProductId(@PathVariable Long productId) {
+        Product product = productService.findProductById(productId);
+        if (product == null){
+            return ResponseEntity.notFound().build();
+        }
+        List<Promotion> promotions = product.getPromotions();
+        return ResponseEntity.ok().body(promotions);
     }
 
     @GetMapping("/date-range")
