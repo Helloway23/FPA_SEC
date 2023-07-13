@@ -243,15 +243,14 @@ public class Space {
     @OneToMany(mappedBy="space")
     private List<Image> images;
 
+    @OneToMany(mappedBy="space")
+    private List<PrimaryMaterial> primaryMaterials;
 
+    public List<PrimaryMaterial> getPrimaryMaterials() {
+        return primaryMaterials;
+    }
 
-
-
-
-
-
-
-
-
-
+    public void setPrimaryMaterials(List<PrimaryMaterial> primaryMaterials) {
+        this.primaryMaterials = primaryMaterials;
+    }
 }
