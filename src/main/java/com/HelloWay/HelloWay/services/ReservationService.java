@@ -4,6 +4,7 @@ import com.HelloWay.HelloWay.entities.Board;
 import com.HelloWay.HelloWay.entities.Reservation;
 import com.HelloWay.HelloWay.entities.Space;
 import com.HelloWay.HelloWay.entities.User;
+import com.HelloWay.HelloWay.exception.ResourceNotFoundException;
 import com.HelloWay.HelloWay.repos.ReservationRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -19,16 +20,16 @@ import java.util.stream.Collectors;
 public class ReservationService {
 
     @Autowired
-    private static ReservationRepository reservationRepository;
+     ReservationRepository reservationRepository;
 
     @Autowired
-    private static SpaceService spaceService;
+    SpaceService spaceService;
 
     @Autowired
     BoardService boardService;
 
     @Autowired
-    private static UserService userService;
+    private  UserService userService;
 
     @Autowired
     NotificationService notificationService;
@@ -71,7 +72,12 @@ public class ReservationService {
         userReservations.add(reservationObject);
         userService.updateUser(user);
 
-
+        // Create in-app notification for users
+        String messageForTheModerator = "A new reservation has been made for your space: " + space.getTitleSpace() + " for  : " + reservation.getStartDate() + "by " + user.getName() + " with email : " +
+                user.getEmail() + " , PhoneNumber : " + user.getPhone();
+        String messageForTheUser = "Hello" + user.getName()+ " your reservation have been submitted successfully , you will be contacted by the Space :   " + space.getTitleSpace()  + " , PhoneNumber : " + space.getPhoneNumber();
+        notificationService.createNotification("Reservation Notification", messageForTheModerator, space.getModerator());
+        notificationService.createNotification("Reservation Notification",messageForTheUser, user);
 
         return reservationObject;
     }
@@ -146,5 +152,24 @@ public class ReservationService {
 
 
         return reservationObject;
+    }
+
+    public Reservation assignReservationToTables(List<Long> tablesIds , Reservation reservation){
+    List<Board> boards = new ArrayList<>();
+    for (long i :tablesIds){
+        Board board = boardService.findBoardById(i);
+        if (board == null){
+            throw new ResourceNotFoundException("board does not exist with this id :  " + i);
+        }
+        else {
+            board.setReservation(reservation);
+            boards.add(boardService.updateBoard(board));
+        }
+    }
+    List<Board> reservationBoards = new ArrayList<>();
+    reservationBoards = reservation.getBoards();
+    reservationBoards.addAll(boards);
+    reservation.setBoards(reservationBoards);
+    return reservationRepository.save(reservation);
     }
 }

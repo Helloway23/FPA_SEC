@@ -33,24 +33,24 @@ public class Reservation {
     @Column(name="eventTitle")
     private String eventTitle;
 
-    @NotBlank
-    @Size(max = 20)
+    @NotNull
+    @Column
     private int numberOfGuests ;
 
     @NotNull
     @Column(length = 20)
     private LocalDateTime bookingDate ;
 
-    @NotNull
-    @Column(length = 20)
+
+    @Column()
     private LocalDateTime cancelDate ;
 
     @NotNull
-    @Column(length = 20)
+    @Column()
     private LocalDateTime startDate ;
 
-    @NotNull
-    @Column(length = 20)
+
+    @Column()
     private LocalDateTime confirmedDate ;
 
     @NotBlank

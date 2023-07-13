@@ -27,14 +27,23 @@ public class BasketController {
     private  UserService userService;
 
     private BoardService boardService ;
+
+    private NotificationService notificationService;
     @Autowired
-    public BasketController(UserService userService, BasketService basketService, BasketProductService basketProductService, ProductService productService, CommandService commandService, BoardService boardService) {
+    public BasketController(UserService userService,
+                            BasketService basketService,
+                            BasketProductService basketProductService,
+                            ProductService productService,
+                            CommandService commandService,
+                            BoardService boardService,
+                            NotificationService notificationService) {
         this.basketService = basketService;
         this.basketProductService = basketProductService;
         this.productService = productService;
         this.commandService = commandService;
         this.boardService = boardService;
         this.userService = userService;
+        this.notificationService = notificationService;
     }
 
     @PostMapping("/add")
@@ -150,6 +159,13 @@ public class BasketController {
         commandService.setServerForCommand(command.getIdCommand(), currentAvailableServer);
         command.setUser(user);
         commandService.updateCommand(command);
+
+        String messageForTheServer = "New command placed by the table number : " + command.getBasket().getBoard().getNumTable();
+        String messageForTheUser = "Your command has been placed successfully";
+        notificationService.createNotification("Command Notification", messageForTheServer, command.getServer());
+        notificationService.createNotification("Command Notification",messageForTheUser, command.getUser());
+
+
         return ResponseEntity.ok(command);
     }
 

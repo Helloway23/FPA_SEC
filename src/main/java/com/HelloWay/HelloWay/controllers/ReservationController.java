@@ -61,6 +61,18 @@ public class ReservationController {
         return ResponseEntity.ok(createdReservation);
     }
 
+    @PostMapping("/assign/reservation/{reservationId}")
+    public ResponseEntity<Reservation> assignReservationToTables(
+            @RequestBody List<Long> boardIds,
+            @PathVariable long reservationId) {
+        Reservation reservation = reservationService.findReservationById(reservationId);
+        if (reservation == null){
+            return ResponseEntity.notFound().build();
+        }
+        Reservation createdReservation = reservationService.assignReservationToTables(boardIds, reservation);
+        return ResponseEntity.ok(createdReservation);
+    }
+
     @PutMapping("/{id}")
     public ResponseEntity<Reservation> updateReservation(
             @PathVariable Long id,
@@ -170,6 +182,7 @@ public class ReservationController {
         List<Reservation> reservations = reservationService.findUpcomingReservations(limit);
         return ResponseEntity.ok(reservations);
     }
+
 
 
 }

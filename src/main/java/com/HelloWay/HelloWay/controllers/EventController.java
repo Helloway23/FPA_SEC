@@ -3,10 +3,10 @@ package com.HelloWay.HelloWay.controllers;
 import com.HelloWay.HelloWay.entities.*;
 import com.HelloWay.HelloWay.repos.ImageRepository;
 import com.HelloWay.HelloWay.services.EventService;
+import com.HelloWay.HelloWay.services.NotificationService;
 import com.HelloWay.HelloWay.services.ProductService;
 import com.HelloWay.HelloWay.services.SpaceService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.crossstore.ChangeSetPersister;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -14,6 +14,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -32,6 +33,9 @@ public class EventController {
 
     @Autowired
     ProductService productService;
+
+    @Autowired
+    NotificationService notificationService;
 
     @GetMapping
     public List<Event> getAllEvents() {
@@ -89,6 +93,25 @@ public class EventController {
         productEvents = product.getPromotions();
         productEvents.add(promotionObject);
         productService.updateProduct(product);
+
+        List<User> spaceUsers = new ArrayList<>();
+        spaceUsers = space.getUsers();
+        for (User user : spaceUsers) {
+            String message = String.format("Dear %s,\n\n", user.getName()) +
+                    String.format("We have an exciting promotion at %s!\n\n", space.getTitleSpace()) +
+                    "Promotion Details:\n" +
+                    String.format("- Product: %s\n", product.getProductTitle()) +
+                    String.format("- Discount: %.2f%% off\n\n", promotion.getPercentage()) +
+                    String.format("- Date: %s\n", promotion.getStartDate().format(DateTimeFormatter.ofPattern("yyyy-MM-dd"))) +
+                    String.format("- Time: %s - %s\n\n", promotion.getStartDate().format(DateTimeFormatter.ofPattern("HH:mm")), promotion.getEndDate().format(DateTimeFormatter.ofPattern("HH:mm"))) +
+                    "We hope to see you there!\n\n" +
+                    "Don't miss out on this amazing deal!\n\n" +
+                    "Best regards,\n" +
+                    space.getTitleSpace() + " Team";
+            notificationService.createNotification("New Promotion Announcement",message, user);
+
+        }
+
         return ResponseEntity.ok().body(promotionObject);
     }
 
@@ -122,6 +145,25 @@ public class EventController {
         space.getEvents().add(party);
         spaceService.updateSpace(space);
 
+        List<User> spaceUsers = new ArrayList<>();
+        spaceUsers = space.getUsers();
+        for (User user : spaceUsers) {
+            String message =  String.format("Dear %s,\n\n", user.getName()) +
+                    String.format("You are invited to a party at %s!\n\n", space.getTitleSpace()) +
+                    "Party Details:\n" +
+                    String.format("- Event: %s\n", party.getEventTitle()) +
+                    String.format("- Price: %s\n", party.getPrice()) +
+                    String.format("- Participant Number: %s\n", party.getNbParticipant()) +
+                    String.format("- Date: %s\n", party.getStartDate().format(DateTimeFormatter.ofPattern("yyyy-MM-dd"))) +
+                    String.format("- Time: %s - %s\n\n", party.getStartDate().format(DateTimeFormatter.ofPattern("HH:mm")), party.getEndDate().format(DateTimeFormatter.ofPattern("HH:mm"))) +
+                    "We hope to see you there!\n\n" +
+                    "Best regards,\n" +
+                    space.getTitleSpace() + " Team";
+            notificationService.createNotification("Party Invitation",message, user);
+
+        }
+
+        party.setNbParticipant(party.getNbParticipant() - 1);
         return ResponseEntity.ok(createdParty);
     }
 
