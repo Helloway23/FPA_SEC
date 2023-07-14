@@ -1,0 +1,4 @@
+com\HelloWay\HelloWay\services\PrimaryMaterialService.class
+com\HelloWay\HelloWay\controllers\PrimaryMaterialController.class
+com\HelloWay\HelloWay\services\MailService.class
+com\HelloWay\HelloWay\repos\PrimaryMaterialRepository.class

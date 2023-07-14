@@ -7,6 +7,7 @@ import com.HelloWay.HelloWay.repos.SpaceRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
@@ -53,8 +54,8 @@ public class PrimaryMaterialService {
     public void deletePrimaryMaterial(Long id) {
         primaryMaterialRepository.deleteById(id);
     }
-    public List<PrimaryMaterial> getPrimaryMaterialsBySpaceId(Long spaceId) {
-        return primaryMaterialRepository.findBySpaceId(spaceId);
+    public List<PrimaryMaterial> getPrimaryMaterialsBySpace(Space space) {
+        return primaryMaterialRepository.findBySpace(space);
     }
 
     public PrimaryMaterial addPrimaryMaterialToSpace(Long spaceId, PrimaryMaterial primaryMaterial) {
@@ -73,7 +74,7 @@ public class PrimaryMaterialService {
         Space space = spaceRepository.findById(spaceId).orElse(null);
         if (space != null) {
             // Check if the primary material exists in the given space
-            PrimaryMaterial existingPrimaryMaterial = primaryMaterialRepository.findByIdAndSpaceId(primaryMaterialId, spaceId).orElse(null);
+            PrimaryMaterial existingPrimaryMaterial = primaryMaterialRepository.findByIdAndSpace(primaryMaterialId, space).orElse(null);
             if (existingPrimaryMaterial != null) {
                 // Update the primary material attributes
                 existingPrimaryMaterial.setName(updatedPrimaryMaterial.getName());
@@ -95,20 +96,25 @@ public class PrimaryMaterialService {
              Space space = spaceRepository.findById(spaceId).orElse(null);
              if (space != null) {
                  // Check if the primary material exists in the given space
-                 PrimaryMaterial primaryMaterial = primaryMaterialRepository.findByIdAndSpaceId(primaryMaterialId, spaceId).orElse(null);
+                 PrimaryMaterial primaryMaterial = primaryMaterialRepository.findByIdAndSpace(primaryMaterialId, space).orElse(null);
                  if (primaryMaterial != null) {
                      primaryMaterialRepository.delete(primaryMaterial);
                  }
              }
          }
 
-        public List<PrimaryMaterial> getPrimaryMaterialsBySpaceIdAndName(Long spaceId, String name) {
-            return primaryMaterialRepository.findBySpaceIdAndName(spaceId, name);
+        public List<PrimaryMaterial> getPrimaryMaterialsBySpaceAndName(Space space, String name) {
+            return primaryMaterialRepository.findBySpaceAndName(space, name);
         }
 
-        public List<PrimaryMaterial> getExpiredPrimaryMaterialsBySpaceId(Long spaceId) {
-            return primaryMaterialRepository.findExpiredBySpaceId(spaceId);
+        public List<PrimaryMaterial> getExpiredPrimaryMaterialsBySpace(Space space) {
+            return primaryMaterialRepository.findExpiredBySpace(space);
         }
+
+    public List<PrimaryMaterial> getExpiredPrimaryMaterialsBySpaceLatestVersion(Space space) {
+        LocalDateTime dateTime = LocalDateTime.now();
+        return primaryMaterialRepository.findExpiredBySpaceAndExpirationDateBefore(space, dateTime);
+    }
 
     public PrimaryMaterial updatePrimaryMaterialQuantity(Long primaryMaterialId, double quantity) {
         PrimaryMaterial primaryMaterial = getPrimaryMaterialById(primaryMaterialId);

@@ -1,7 +1,9 @@
 package com.HelloWay.HelloWay.controllers;
 
 import com.HelloWay.HelloWay.entities.PrimaryMaterial;
+import com.HelloWay.HelloWay.entities.Space;
 import com.HelloWay.HelloWay.services.PrimaryMaterialService;
+import com.HelloWay.HelloWay.services.SpaceService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -14,10 +16,12 @@ import java.util.List;
 public class PrimaryMaterialController {
 
     private final PrimaryMaterialService primaryMaterialService;
+    private final SpaceService spaceService;
 
     @Autowired
-    public PrimaryMaterialController(PrimaryMaterialService primaryMaterialService) {
+    public PrimaryMaterialController(PrimaryMaterialService primaryMaterialService, SpaceService spaceService) {
         this.primaryMaterialService = primaryMaterialService;
+        this.spaceService = spaceService;
     }
 
     @GetMapping
@@ -63,7 +67,8 @@ public class PrimaryMaterialController {
 
     @GetMapping("/space/{spaceId}")
     public ResponseEntity<List<PrimaryMaterial>> getPrimaryMaterialsBySpaceId(@PathVariable("spaceId") Long spaceId) {
-        List<PrimaryMaterial> primaryMaterials = primaryMaterialService.getPrimaryMaterialsBySpaceId(spaceId);
+        Space space = spaceService.findSpaceById(spaceId);
+        List<PrimaryMaterial> primaryMaterials = primaryMaterialService.getPrimaryMaterialsBySpace(space);
         return ResponseEntity.ok(primaryMaterials);
     }
 
@@ -103,9 +108,17 @@ public class PrimaryMaterialController {
         return ResponseEntity.noContent().build();
     }
 
-    @GetMapping("/space/{spaceId}/expiration")
+   @GetMapping("/space/{spaceId}/expiration")
     public ResponseEntity<List<PrimaryMaterial>> getExpiredPrimaryMaterialsBySpaceId(@PathVariable("spaceId") Long spaceId) {
-        List<PrimaryMaterial> expiredPrimaryMaterials = primaryMaterialService.getExpiredPrimaryMaterialsBySpaceId(spaceId);
+        Space space = spaceService.findSpaceById(spaceId);
+        List<PrimaryMaterial> expiredPrimaryMaterials = primaryMaterialService.getExpiredPrimaryMaterialsBySpace(space);
+        return ResponseEntity.ok(expiredPrimaryMaterials);
+    }
+
+    @GetMapping("/space/{spaceId}/expiration/expired")
+    public ResponseEntity<List<PrimaryMaterial>> getExpiredPrimaryMaterialsBySpaceIdLatestVersion(@PathVariable("spaceId") Long spaceId) {
+        Space space = spaceService.findSpaceById(spaceId);
+        List<PrimaryMaterial> expiredPrimaryMaterials = primaryMaterialService.getExpiredPrimaryMaterialsBySpaceLatestVersion(space);
         return ResponseEntity.ok(expiredPrimaryMaterials);
     }
 
@@ -127,7 +140,8 @@ public class PrimaryMaterialController {
             @PathVariable("spaceId") Long spaceId,
             @PathVariable("name") String name
     ) {
-        List<PrimaryMaterial> primaryMaterials = primaryMaterialService.getPrimaryMaterialsBySpaceIdAndName(spaceId, name);
+        Space space = spaceService.findSpaceById(spaceId);
+        List<PrimaryMaterial> primaryMaterials = primaryMaterialService.getPrimaryMaterialsBySpaceAndName(space, name);
         return ResponseEntity.ok(primaryMaterials);
     }
 }
