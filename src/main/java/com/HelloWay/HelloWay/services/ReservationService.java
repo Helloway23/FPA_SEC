@@ -1,9 +1,6 @@
 package com.HelloWay.HelloWay.services;
 
-import com.HelloWay.HelloWay.entities.Board;
-import com.HelloWay.HelloWay.entities.Reservation;
-import com.HelloWay.HelloWay.entities.Space;
-import com.HelloWay.HelloWay.entities.User;
+import com.HelloWay.HelloWay.entities.*;
 import com.HelloWay.HelloWay.exception.ResourceNotFoundException;
 import com.HelloWay.HelloWay.repos.ReservationRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -172,4 +169,33 @@ public class ReservationService {
     reservation.setBoards(reservationBoards);
     return reservationRepository.save(reservation);
     }
+
+    public List<Board> getTablesByDisponibilitiesDate(LocalDate date, long spaceId) {
+
+        Space space = spaceService.findSpaceById(spaceId);
+
+        List<Board> allBoards = new ArrayList<>();
+
+        List<Zone> zones = space.getZones();
+        for (Zone zone : zones){
+            allBoards.addAll(zone.getBoards());
+        }
+
+        List<Board> availableTables = allBoards.stream()
+                .filter(board -> isTableAvailable(board, date))
+                .collect(Collectors.toList());
+
+        return availableTables;
+    }
+
+    private boolean isTableAvailable(Board board, LocalDate date) {
+        if (board.getReservation() == null) {
+            return true;
+        }
+
+        LocalDate reservationDate = board.getReservation().getStartDate().toLocalDate();
+
+        return !date.equals(reservationDate);
+    }
+
 }

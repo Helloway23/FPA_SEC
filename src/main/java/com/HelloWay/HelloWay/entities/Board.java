@@ -36,6 +36,7 @@ public class Board {
     @Positive
     private int placeNumber;
 
+    @JsonIgnore
     @OneToMany(mappedBy = "board")
     List<Basket> baskets ;
 

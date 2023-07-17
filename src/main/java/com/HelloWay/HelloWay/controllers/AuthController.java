@@ -4,18 +4,18 @@ import com.HelloWay.HelloWay.DistanceLogic.DistanceCalculator;
 import com.HelloWay.HelloWay.Security.Jwt.CustomSessionRegistry;
 import com.HelloWay.HelloWay.Security.Jwt.JwtUtils;
 import com.HelloWay.HelloWay.Security.Jwt.SessionUtils;
-import com.HelloWay.HelloWay.entities.ERole;
-import com.HelloWay.HelloWay.entities.Role;
-import com.HelloWay.HelloWay.entities.Space;
-import com.HelloWay.HelloWay.entities.User;
+import com.HelloWay.HelloWay.entities.*;
 import com.HelloWay.HelloWay.payload.Value;
 import com.HelloWay.HelloWay.payload.request.LoginRequest;
+import com.HelloWay.HelloWay.payload.request.ResetPasswordRequest;
+import com.HelloWay.HelloWay.payload.request.ResetPasswordRequestIntern;
 import com.HelloWay.HelloWay.payload.request.SignupRequest;
 import com.HelloWay.HelloWay.payload.response.InformationAfterScan;
 import com.HelloWay.HelloWay.payload.response.MessageResponse;
 import com.HelloWay.HelloWay.payload.response.UserInfoResponse;
 import com.HelloWay.HelloWay.repos.RoleRepository;
 import com.HelloWay.HelloWay.repos.UserRepository;
+import com.HelloWay.HelloWay.services.EmailService;
 import com.HelloWay.HelloWay.services.UserDetailsImpl;
 import com.HelloWay.HelloWay.services.ZoneService;
 import org.apache.coyote.Request;
@@ -39,6 +39,7 @@ import javax.validation.Valid;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 import static com.HelloWay.HelloWay.entities.ERole.*;
@@ -70,6 +71,9 @@ public class AuthController {
 
     @Autowired
     ZoneService zoneService;
+
+    @Autowired
+    EmailService emailService;
 
     @PostMapping("/signin")
     public ResponseEntity<?> authenticateUser(@Valid @RequestBody LoginRequest loginRequest) {
@@ -244,7 +248,7 @@ public class AuthController {
         SecurityContextHolder.getContext().setAuthentication(authentication);
 
         UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
-       String sessionId =  RequestContextHolder.currentRequestAttributes().getSessionId();
+        String sessionId =  RequestContextHolder.currentRequestAttributes().getSessionId();
 
         customSessionRegistry.registerNewSession(sessionId,userDetails);
 
@@ -279,46 +283,46 @@ public class AuthController {
 
         if (DistanceCalculator.isTheUserInTheSpaCe(userLatitude, userLongitude, space))
         {
-        String userName = "Board"+ idTable;
-        String password = "Pass"+ idTable +"*"+idZone;
+            String userName = "Board"+ idTable;
+            String password = "Pass"+ idTable +"*"+idZone;
 
 
-        LoginRequest loginRequest = new LoginRequest(userName,password);
-        Authentication authentication = authenticationManager
-                .authenticate(new UsernamePasswordAuthenticationToken(loginRequest.getUsername(), loginRequest.getPassword()));
+            LoginRequest loginRequest = new LoginRequest(userName,password);
+            Authentication authentication = authenticationManager
+                    .authenticate(new UsernamePasswordAuthenticationToken(loginRequest.getUsername(), loginRequest.getPassword()));
 
-        SecurityContextHolder.getContext().setAuthentication(authentication);
+            SecurityContextHolder.getContext().setAuthentication(authentication);
 
-        UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
-        String sessionId =  RequestContextHolder.currentRequestAttributes().getSessionId();
+            UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
+            String sessionId =  RequestContextHolder.currentRequestAttributes().getSessionId();
 
-      //  customSessionRegistry.registerNewSession(sessionId,userDetails);
-      //  customSessionRegistry.setNewUserOnTable(sessionId,idTable);
+            //  customSessionRegistry.registerNewSession(sessionId,userDetails);
+            //  customSessionRegistry.setNewUserOnTable(sessionId,idTable);
 
 
-        ResponseCookie jwtCookie = jwtUtils.generateJwtCookie(userDetails);
+            ResponseCookie jwtCookie = jwtUtils.generateJwtCookie(userDetails);
 
-        List<String> roles = userDetails.getAuthorities().stream()
-                .map(item -> item.getAuthority())
-                .collect(Collectors.toList());
+            List<String> roles = userDetails.getAuthorities().stream()
+                    .map(item -> item.getAuthority())
+                    .collect(Collectors.toList());
 
             Value value = new Value(idTable, roles.get(0));
-        customSessionRegistry.setNewUserOnTableWithRole(sessionId,value);
+            customSessionRegistry.setNewUserOnTableWithRole(sessionId,value);
             HttpSession session =  request.getSession();
-        sessionUtils.addSession(request.getSession());
+            sessionUtils.addSession(request.getSession());
 
 
             return ResponseEntity.ok().header(HttpHeaders.SET_COOKIE, jwtCookie.toString())
-                .body(new UserInfoResponse(userDetails.getId(),
-                        userDetails.getName(),
-                        userDetails.getLastname(),
-                        userDetails.getBirthday(),
-                        userDetails.getPhone(),
-                        userDetails.getUsername(),
-                        userDetails.getEmail(),
-                        roles,
-                        sessionId));
-    }
+                    .body(new UserInfoResponse(userDetails.getId(),
+                            userDetails.getName(),
+                            userDetails.getLastname(),
+                            userDetails.getBirthday(),
+                            userDetails.getPhone(),
+                            userDetails.getUsername(),
+                            userDetails.getEmail(),
+                            roles,
+                            sessionId));
+        }
         else {
             return ResponseEntity.ok().body("the user not in the space so we are sorry you cant be connected");
         }
@@ -338,7 +342,7 @@ public class AuthController {
 
             String sessionId =  RequestContextHolder.currentRequestAttributes().getSessionId();
             Value  value     = new Value(idTable, ROLE_USER.toString());
-          //  customSessionRegistry.setNewUserOnTable(sessionId,idTable);
+            //  customSessionRegistry.setNewUserOnTable(sessionId,idTable);
             customSessionRegistry.setNewUserOnTableWithRole(sessionId,value);
 
             InformationAfterScan informationAfterScan = new InformationAfterScan(space.getId_space().toString(),idTable, sessionId) ;
@@ -348,6 +352,66 @@ public class AuthController {
         else {
             return ResponseEntity.ok().body("the user not in the space so we are sorry you cant be sated in this table");
         }
+    }
+
+    @PostMapping("/reset-password/email")
+    public MessageResponse resetPassword(@Valid @RequestBody ResetPasswordRequest resetPasswordRequest) {
+        String email = resetPasswordRequest.getEmail();
+
+        User user = userRepository.findByEmail(email).orElse(null);
+
+        if (!userRepository.existsByEmail(resetPasswordRequest.getEmail())) {
+             return new MessageResponse("Error: User not found with the provided email.");
+        }
+
+        // Generate a new password
+        String newPassword = generateRandomPassword();
+
+        // Update the user's password
+        String encodedPassword = encoder.encode(newPassword);
+        user.setPassword(encodedPassword);
+        userRepository.save(user);
+
+        // Send the new password to the user's email
+        sendNewPasswordEmail(user.getEmail(), newPassword);
+
+        return new MessageResponse("Password reset successfully. Please check your email for the new password.");
+    }
+
+    private String generateRandomPassword() {
+        // Generate a random password using UUID
+        return UUID.randomUUID().toString().substring(0, 8);
+    }
+
+    private void sendNewPasswordEmail(String email, String newPassword) {
+        String subject = "Password Reset";
+        String message = "Hello from HelloWay,\n\n"
+                + "You have requested to reset your password. Please use the following password to connect your account :\n"
+                + newPassword + "\n\n"
+                + "If you didn't request this password reset, you can ignore this email.\n\n"
+                + "Best regards,\n"
+                + "HelloWay Team";
+        EmailDetails details = new EmailDetails(email, message, subject);
+        emailService.sendSimpleMail(details);
+    }
+
+    @PostMapping("/reset-password")
+    public ResponseEntity<?> resetPassword(@Valid @RequestBody ResetPasswordRequestIntern resetPasswordRequest) {
+        String email = resetPasswordRequest.getEmail();
+        String newPassword = resetPasswordRequest.getNewPassword();
+
+        // Check if the user exists with the provided email
+        User user = userRepository.findByEmail(email).orElse(null);
+        if (user == null) {
+            return ResponseEntity.badRequest().body(new MessageResponse("Error: User not found with the provided email."));
+        }
+
+        // Update the user's password
+        String encodedPassword = encoder.encode(newPassword);
+        user.setPassword(encodedPassword);
+        userRepository.save(user);
+
+        return ResponseEntity.ok().body(new MessageResponse("Password reset successfully."));
     }
 
 

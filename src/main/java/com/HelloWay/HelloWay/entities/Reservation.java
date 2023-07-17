@@ -6,9 +6,7 @@ import lombok.*;
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
 
 @Data
@@ -51,11 +49,16 @@ public class Reservation {
 
 
     @Column()
+    private LocalDateTime endDate ;
+
+
+    @Column()
     private LocalDateTime confirmedDate ;
 
     @NotBlank
     @Column
     private String description;
+
 
 
     @JsonIgnore
@@ -207,5 +210,13 @@ public class Reservation {
 
     public void setUser(User user) {
         this.user = user;
+    }
+
+    public LocalDateTime getEndDate() {
+        return endDate;
+    }
+
+    public void setEndDate(LocalDateTime endDate) {
+        this.endDate = endDate;
     }
 }

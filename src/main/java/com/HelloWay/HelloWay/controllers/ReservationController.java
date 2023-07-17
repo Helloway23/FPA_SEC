@@ -1,5 +1,6 @@
 package com.HelloWay.HelloWay.controllers;
 
+import com.HelloWay.HelloWay.entities.Board;
 import com.HelloWay.HelloWay.entities.EReservation;
 import com.HelloWay.HelloWay.entities.Reservation;
 import com.HelloWay.HelloWay.services.NotificationService;
@@ -10,6 +11,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @RestController
@@ -38,6 +40,25 @@ public class ReservationController {
             return ResponseEntity.notFound().build();
         }
         return ResponseEntity.ok(reservation);
+    }
+
+    @GetMapping("/tables/{id}")
+    public ResponseEntity<?> getTablesByIdReservation(@PathVariable Long id) {
+        Reservation reservation = reservationService.findReservationById(id);
+        if (reservation == null) {
+            return ResponseEntity.notFound().build();
+        }
+
+        return ResponseEntity.ok(reservation.getBoards());
+    }
+
+    @GetMapping("/availability/{spaceId}")
+    public ResponseEntity<?> getTablesByDisponibilitiesDate(@RequestParam("date") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date, @PathVariable long spaceId) {
+        List<Board> availableTables = reservationService.getTablesByDisponibilitiesDate(date, spaceId);
+        if (availableTables.isEmpty()){
+            return ResponseEntity.notFound().build();
+        }
+        return ResponseEntity.ok(availableTables);
     }
 
     @PostMapping("/space/{spaceId}/user/{userId}")
@@ -119,6 +140,8 @@ public class ReservationController {
         // Update the reservation status to "ACCEPTED" (assuming you have an appropriate enumeration for status)
         reservation.setStatus(EReservation.CONFIRMED);
 
+        reservation.setConfirmedDate(LocalDateTime.now());
+
         Reservation updatedReservation = reservationService.updateReservation(reservation);
 
         // Create in-app notification for users
@@ -128,6 +151,7 @@ public class ReservationController {
 
         return ResponseEntity.ok(updatedReservation);
     }
+
 
     @PostMapping("/{id}/refuse")
     public ResponseEntity<Reservation> refuseReservation(@PathVariable Long id) {
@@ -143,7 +167,7 @@ public class ReservationController {
 
         // Create in-app notification for users
 
-        String messageForTheUser = "Sorry " + reservation.getUser().getName()+ " your reservation have been Refused  , To  :   " + reservation.getStartDate()  + " , for your : " + reservation.getEventTitle() + ", with board of number : " + reservation.getBoards().get(0).getNumTable();
+        String messageForTheUser = "Sorry " + reservation.getUser().getName()+ " your reservation have been Refused  , To  :   " + reservation.getStartDate()  + " , for your : " + reservation.getEventTitle();
         notificationService.createNotification("Reservation Notification",messageForTheUser, reservation.getUser());
 
         return ResponseEntity.ok(updatedReservation);
@@ -158,6 +182,8 @@ public class ReservationController {
 
         // Update the reservation status to "CANCELED" (assuming you have an appropriate enumeration for status)
         reservation.setStatus(EReservation.CANCELED);
+
+        reservation.setCancelDate(LocalDateTime.now());
 
         // Create in-app notification for users
 

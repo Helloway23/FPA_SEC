@@ -4,6 +4,7 @@ import com.HelloWay.HelloWay.Security.Jwt.JwtUtils;
 import com.HelloWay.HelloWay.controllers.EventController;
 import com.HelloWay.HelloWay.entities.Party;
 import com.HelloWay.HelloWay.entities.Space;
+import com.HelloWay.HelloWay.entities.User;
 import com.HelloWay.HelloWay.services.EventService;
 import com.HelloWay.HelloWay.services.SpaceService;
 import org.junit.jupiter.api.BeforeEach;
@@ -18,6 +19,8 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
@@ -51,6 +54,11 @@ public class EventControllerTest {
         // Mock the space
         Space space = new Space();
         space.setId_space(1L);
+
+        // Mock the spaceUsers
+        List<User> spaceUsers = new ArrayList<>(); // Initialize the spaceUsers list
+        space.setUsers(spaceUsers); // Set the spaceUsers list in the space object
+
 
         // Create a party object
         Party party = new Party();
