@@ -7,6 +7,8 @@ import com.HelloWay.HelloWay.services.NotificationService;
 import com.HelloWay.HelloWay.services.ReservationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -34,10 +36,14 @@ public class ReservationController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Reservation> getReservationById(@PathVariable Long id) {
+    public ResponseEntity<?> getReservationById(@PathVariable Long id) {
         Reservation reservation = reservationService.findReservationById(id);
         if (reservation == null) {
-            return ResponseEntity.notFound().build();
+            // Return a proper response with a JSON message when the reservation does not exist
+            String errorMessage = "{\"message\": \"Reservation not found\"}";
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .body(errorMessage);
         }
         return ResponseEntity.ok(reservation);
     }

@@ -33,7 +33,6 @@ public class Space {
     private String latitude ;
 
 
-
     @NotBlank
     @Column(length = 40)
     private String longitude;
@@ -41,6 +40,9 @@ public class Space {
 
     @NotNull
     private Long phoneNumber;
+
+    @NotNull
+    private Long numberOfRate;
 
 
     @NotBlank
@@ -252,5 +254,13 @@ public class Space {
 
     public void setPrimaryMaterials(List<PrimaryMaterial> primaryMaterials) {
         this.primaryMaterials = primaryMaterials;
+    }
+
+    public Long getNumberOfRate() {
+        return numberOfRate;
+    }
+
+    public void setNumberOfRate(Long numberOfRate) {
+        this.numberOfRate = numberOfRate;
     }
 }

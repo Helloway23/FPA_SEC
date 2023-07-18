@@ -346,5 +346,17 @@ public class SpaceController {
         return ResponseEntity.ok().body(spaceService.getSpaceByWaiterId(waiter));
     }
 
+    @PostMapping("/add/rate/{spaceId}")
+    @ResponseBody
+    public ResponseEntity<?> addNewSpace( float rate, @PathVariable long spaceId)  {
+
+        Space space = spaceService.findSpaceById(spaceId);
+        if (space == null){
+            return ResponseEntity.notFound().build();
+        }
+        space = spaceService.addNewRate(space, rate);
+        return  ResponseEntity.ok().body(space);
+    }
+
 
 }

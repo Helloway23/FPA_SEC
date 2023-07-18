@@ -216,5 +216,17 @@ public class SpaceService {
     }
     public Space getSpaceByWaiterId(User waiter){return waiter.getServersSpace();}
 
+    public Space addNewRate(Space space, Float newRate){
+
+        long numberOfRate = space.getNumberOfRate() + 1;
+        float rate = space.getRating();
+
+        float totalRate = rate + newRate ;
+        float result = totalRate / numberOfRate;
+        space.setNumberOfRate(numberOfRate);
+        space.setRating(result);
+        return  spaceRepository.save(space);
+    }
+
 
 }
