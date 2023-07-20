@@ -37,10 +37,29 @@ public class ReservationService {
         return reservationRepository.findAll();
     }
 
-    public Reservation updateReservation(Reservation reservation) {
-        return reservationRepository.save(reservation);
-    }
 
+    public Reservation updateReservation(Reservation updatedReservation) {
+        Reservation existingReservation = reservationRepository.findById(updatedReservation.getIdReservation()).orElse(null);
+        if (existingReservation != null) {
+            // Copy the properties from the updatedReservation to the existingReservation
+            existingReservation.setStatus(updatedReservation.getStatus());
+            existingReservation.setEventTitle(updatedReservation.getEventTitle());
+            existingReservation.setNumberOfGuests(updatedReservation.getNumberOfGuests());
+            existingReservation.setBookingDate(updatedReservation.getBookingDate());
+            existingReservation.setCancelDate(updatedReservation.getCancelDate());
+            existingReservation.setStartDate(updatedReservation.getStartDate());
+            existingReservation.setEndDate(updatedReservation.getEndDate());
+            existingReservation.setConfirmedDate(updatedReservation.getConfirmedDate());
+            existingReservation.setDescription(updatedReservation.getDescription());
+
+            reservationRepository.save(existingReservation);
+            return existingReservation;
+        } else {
+            // Handle the case where the reservation doesn't exist in the database
+            // You may throw an exception or handle it based on your use case.
+            return null;
+        }
+    }
     public Reservation findReservationById(Long id) {
         return reservationRepository.findById(id)
                 .orElse(null);

@@ -38,10 +38,24 @@ public class CommandService {
         return commandRepository.findAll();
     }
 
-    public Command updateCommand(Command command) {
-        return commandRepository.save(command);
-    }
-    public Command createCommand(Command command) {
+    public Command updateCommand(Command updatedCommand) {
+        Command existingCommand = commandRepository.findById(updatedCommand.getIdCommand()).orElse(null);
+        if (existingCommand != null) {
+            // Copy the properties from the updatedCommand to the existingCommand
+            existingCommand.setStatus(updatedCommand.getStatus());
+            existingCommand.setLocalDate(updatedCommand.getLocalDate());
+            existingCommand.setSum(updatedCommand.getSum());
+            existingCommand.setUser(updatedCommand.getUser());
+            existingCommand.setServer(updatedCommand.getServer());
+
+            commandRepository.save(existingCommand);
+            return existingCommand;
+        } else {
+            // Handle the case where the command doesn't exist in the database
+            // You may throw an exception or handle it based on your use case.
+            return null;
+        }
+    }    public Command createCommand(Command command) {
         command.setLocalDate(LocalDateTime.now());
         return commandRepository.save(command);
     }

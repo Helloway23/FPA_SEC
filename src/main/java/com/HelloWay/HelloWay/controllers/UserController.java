@@ -57,8 +57,8 @@ public class UserController {
 
     @PutMapping("/update")
     @ResponseBody
-    public void updateUser(@RequestBody User user){
-        userService.updateUser(user); }
+    public User updateUser(@RequestBody User user){
+        return  userService.updateUser(user); }
 
     @DeleteMapping("/delete/{id}")
     @ResponseBody

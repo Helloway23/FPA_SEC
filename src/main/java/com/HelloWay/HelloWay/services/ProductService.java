@@ -34,10 +34,24 @@ public class ProductService {
         return productRepository.findAll();
     }
 
-    public Product updateProduct(Product product) {
-        return productRepository.save(product);
-    }
+    public Product updateProduct(Product updatedProduct) {
+        Product existingProduct = productRepository.findById(updatedProduct.getIdProduct()).orElse(null);
+        if (existingProduct != null) {
+            // Copy the properties from the updatedProduct to the existingProduct
+            existingProduct.setProductTitle(updatedProduct.getProductTitle());
+            existingProduct.setPrice(updatedProduct.getPrice());
+            existingProduct.setDescription(updatedProduct.getDescription());
+            existingProduct.setAvailable(updatedProduct.getAvailable());
+            existingProduct.setCategorie(updatedProduct.getCategorie());
 
+            productRepository.save(existingProduct);
+            return existingProduct;
+        } else {
+            // Handle the case where the product doesn't exist in the database
+            // You may throw an exception or handle it based on your use case.
+            return null;
+        }
+    }
     public Product findProductById(Long id) {
         return productRepository.findById(id)
                 .orElse(null);

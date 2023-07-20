@@ -64,8 +64,8 @@ public class BoardController {
 
     @PutMapping("/update")
     @ResponseBody
-    public void updateBoard(@RequestBody Board board){
-        boardService.updateBoard(board); }
+    public Board updateBoard(@RequestBody Board board){
+      return   boardService.updateBoard(board); }
 
     @DeleteMapping("/delete/{id}")
     @ResponseBody

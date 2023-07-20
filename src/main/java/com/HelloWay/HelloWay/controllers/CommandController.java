@@ -147,8 +147,8 @@ public class CommandController {
         }
         command.setBasket(basket);
         command.setStatus(Status.NOT_YET);
-        commandService.updateCommand(command);
-        return ResponseEntity.ok("command updated");
+        Command updatedCommand = commandService.updateCommand(command);
+        return ResponseEntity.ok(updatedCommand);
     }
 
     @GetMapping("/by/basket/{basketId}")

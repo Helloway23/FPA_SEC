@@ -47,8 +47,8 @@ public class CategorieController {
 
     @PutMapping("/update")
     @ResponseBody
-    public void updateCategorie(@RequestBody Categorie categorie){
-        categorieService.updateCategorie(categorie); }
+    public Categorie updateCategorie(@RequestBody Categorie categorie){
+        return categorieService.updateCategorie(categorie); }
 
     @DeleteMapping("/delete/{id}")
     @ResponseBody

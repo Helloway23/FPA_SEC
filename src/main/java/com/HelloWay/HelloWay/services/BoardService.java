@@ -2,6 +2,7 @@ package com.HelloWay.HelloWay.services;
 
 import com.HelloWay.HelloWay.entities.Board;
 import com.HelloWay.HelloWay.entities.Zone;
+import com.HelloWay.HelloWay.exception.ResourceNotFoundException;
 import com.HelloWay.HelloWay.repos.BoardRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -25,8 +26,20 @@ public class BoardService {
         return boardRepository.findAll();
     }
 
-    public Board updateBoard(Board board) {
-        return boardRepository.save(board);
+    public Board updateBoard(Board updatedBoard) {
+        Board existingBoard = boardRepository.findById(updatedBoard.getIdTable()).orElse(null);
+        if (existingBoard != null) {
+            // Copy the properties from the updatedBoard to the existingBoard
+            existingBoard.setNumTable(updatedBoard.getNumTable());
+            existingBoard.setAvailability(updatedBoard.isAvailability());
+            existingBoard.setPlaceNumber(updatedBoard.getPlaceNumber());
+
+             return  boardRepository.save(existingBoard);
+        } else {
+            // Handle the case where the board doesn't exist in the database
+            // You may throw an exception or handle it based on your use case.
+            throw new ResourceNotFoundException("Board not found");
+        }
     }
 
     public Board findBoardById(Long id) {

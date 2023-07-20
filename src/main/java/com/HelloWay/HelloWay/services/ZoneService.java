@@ -23,10 +23,19 @@ public class ZoneService {
         return zoneRepository.findAll();
     }
 
-    public Zone updateZone(Zone zone) {
-        return zoneRepository.save(zone);
+    public Zone updateZone(Zone updatedZone) {
+        Zone existingZone = zoneRepository.findById(updatedZone.getIdZone()).orElse(null);
+        if (existingZone != null) {
+            // Copy the properties from the updatedZone to the existingZone
+            existingZone.setZoneTitle(updatedZone.getZoneTitle());
+            zoneRepository.save(existingZone);
+            return existingZone;
+        } else {
+            // Handle the case where the zone doesn't exist in the database
+            // You may throw an exception or handle it based on your use case.
+            return null;
+        }
     }
-
     public Zone findZoneById(Long id) {
         return zoneRepository.findById(id)
                 .orElse(null);

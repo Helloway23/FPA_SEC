@@ -39,10 +39,27 @@ public class SpaceService {
         return spaceRepository.findAll();
     }
 
-    public Space updateSpace(Space space) {
-        return spaceRepository.save(space);
-    }
+    public Space updateSpace(Space updatedSpace) {
+        Space existingSpace = spaceRepository.findById(updatedSpace.getId_space()).orElse(null);
+        if (existingSpace != null) {
+            // Copy the properties from the updatedSpace to the existingSpace
+            existingSpace.setTitleSpace(updatedSpace.getTitleSpace());
+            existingSpace.setLatitude(updatedSpace.getLatitude());
+            existingSpace.setLongitude(updatedSpace.getLongitude());
+            existingSpace.setPhoneNumber(updatedSpace.getPhoneNumber());
+            existingSpace.setNumberOfRate(updatedSpace.getNumberOfRate());
+            existingSpace.setDescription(updatedSpace.getDescription());
+            existingSpace.setRating(updatedSpace.getRating());
+            existingSpace.setSurfaceEnM2(updatedSpace.getSurfaceEnM2());
 
+            spaceRepository.save(existingSpace);
+            return existingSpace;
+        } else {
+            // Handle the case where the space doesn't exist in the database
+            // You may throw an exception or handle it based on your use case.
+            return null;
+        }
+    }
     public Space addNewSpace(Space space) throws IOException {
 
         return spaceRepository.save(space);

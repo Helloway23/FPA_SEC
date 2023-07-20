@@ -48,8 +48,8 @@ public class ZoneController {
 
     @PutMapping("/update")
     @ResponseBody
-    public void updateZone(@RequestBody Zone zone){
-        zoneService.updateZone(zone); }
+    public Zone updateZone(@RequestBody Zone zone){
+        return zoneService.updateZone(zone); }
 
     @DeleteMapping("/delete/{id}")
     @ResponseBody

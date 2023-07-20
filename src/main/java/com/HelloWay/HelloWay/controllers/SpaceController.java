@@ -102,8 +102,8 @@ public class SpaceController {
 
     @PutMapping("/update")
     @ResponseBody
-    public void updateSpace(@RequestBody Space space){
-        spaceService.updateSpace(space); }
+    public Space updateSpace(@RequestBody Space space){
+        return spaceService.updateSpace(space); }
 
     @DeleteMapping("/delete/{id}")
     @ResponseBody

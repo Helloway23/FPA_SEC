@@ -34,10 +34,20 @@ public class CategorieService {
         return categorieRepository.findAll();
     }
 
-    public Categorie updateCategorie(Categorie categorie) {
-        return categorieRepository.save(categorie);
-    }
+    public Categorie updateCategorie(Categorie updatedCategorie) {
+        Categorie existingCategorie = categorieRepository.findById(updatedCategorie.getId_category()).orElse(null);
+        if (existingCategorie != null) {
+            // Copy the properties from the updatedCategorie to the existingCategorie
+            existingCategorie.setCategoryTitle(updatedCategorie.getCategoryTitle());
 
+            categorieRepository.save(existingCategorie);
+            return existingCategorie;
+        } else {
+            // Handle the case where the categorie doesn't exist in the database
+            // You may throw an exception or handle it based on your use case.
+            return null;
+        }
+    }
     public Categorie findCategorieById(Long id) {
         return categorieRepository.findById(id)
                 .orElse(null);
