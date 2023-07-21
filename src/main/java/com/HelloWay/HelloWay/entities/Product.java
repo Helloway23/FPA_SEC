@@ -39,17 +39,17 @@ public class Product {
 
     @ToString.Exclude
     @JsonIgnore
-    @OneToMany
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
     List<BasketProduct> basketProducts;
 
     @ToString.Exclude
     @JsonIgnore
-    @ManyToOne
+    @ManyToOne(optional = true)
     @JoinColumn(name = "id_categorie")
     private Categorie categorie;
 
     @ToString.Exclude
-    @OneToMany(mappedBy="product")
+    @OneToMany(mappedBy="product", cascade = CascadeType.ALL)
     private List<Image> images;
 
     public Product(Long idProduct, String productTitle, Float price, String description, Boolean available, Categorie categorie) {
@@ -134,5 +134,12 @@ public class Product {
 
     public void setPromotions(List<Promotion> promotions) {
         this.promotions = promotions;
+    }
+
+    public void removeCategorie() {
+        if (this.categorie != null) {
+            this.categorie.getProducts().remove(this);
+            this.categorie = null;
+        }
     }
 }

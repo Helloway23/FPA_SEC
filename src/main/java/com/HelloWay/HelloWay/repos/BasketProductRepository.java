@@ -20,6 +20,8 @@ public interface BasketProductRepository extends JpaRepository<BasketProduct, Lo
 
     BasketProduct findById_IdBasketAndId_IdProduct(Long idBasket, Long idProduct);
 
+    void deleteAllBasketProductByProduct(Product product);
+
 
 
 

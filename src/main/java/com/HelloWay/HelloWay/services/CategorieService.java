@@ -1,16 +1,15 @@
 package com.HelloWay.HelloWay.services;
 
-import com.HelloWay.HelloWay.entities.Board;
-import com.HelloWay.HelloWay.entities.Categorie;
-import com.HelloWay.HelloWay.entities.Space;
-import com.HelloWay.HelloWay.entities.Zone;
+import com.HelloWay.HelloWay.entities.*;
 import com.HelloWay.HelloWay.repos.CategorieRepository;
+import com.google.zxing.NotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import javax.persistence.EntityNotFoundException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -23,6 +22,8 @@ public class CategorieService {
     SpaceService spaceService;
     @Autowired
     BoardService boardService;
+    @Autowired
+    ProductService productService;
 
     public Optional<Categorie> addCategorie(Categorie categorie) throws Exception{
         if (!categorieRepository.existsByCategoryTitle(categorie.getCategoryTitle()))
@@ -53,9 +54,21 @@ public class CategorieService {
                 .orElse(null);
     }
 
+    //TODO : test this please
     public void deleteCategorie(Long id) {
+        Categorie categorie = categorieRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("categorie Not found"));
+
+        List<Product> products = new ArrayList<>(categorie.getProducts());
+        for (Product product : products) {
+            productService.deleteProduct(product.getIdProduct());
+            categorie.getProducts().remove(product);
+        }
+        categorieRepository.save(categorie);
+
         categorieRepository.deleteById(id);
     }
+
     // exist Exeption
     public Categorie addCategorieByIdSpace(Categorie categorie,Long idSpace)  {
 

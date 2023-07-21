@@ -37,7 +37,7 @@ public class Board {
     private int placeNumber;
 
     @JsonIgnore
-    @OneToMany(mappedBy = "board")
+    @OneToMany(mappedBy = "board", cascade = CascadeType.ALL)
     List<Basket> baskets ;
 
     @JsonIgnore

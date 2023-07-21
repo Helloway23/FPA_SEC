@@ -51,6 +51,8 @@ public class ZoneController {
     public Zone updateZone(@RequestBody Zone zone){
         return zoneService.updateZone(zone); }
 
+
+    //TODO ::
     @DeleteMapping("/delete/{id}")
     @ResponseBody
     public void deleteZone(@PathVariable("id") long id){

@@ -1,8 +1,10 @@
 package com.HelloWay.HelloWay.services;
 
+import com.HelloWay.HelloWay.entities.BasketProduct;
 import com.HelloWay.HelloWay.entities.Categorie;
 import com.HelloWay.HelloWay.entities.Product;
 import com.HelloWay.HelloWay.entities.Space;
+import com.HelloWay.HelloWay.repos.BasketProductRepository;
 import com.HelloWay.HelloWay.repos.ProductRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -10,6 +12,8 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import javax.persistence.EntityNotFoundException;
+import javax.transaction.Transactional;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -22,6 +26,9 @@ public class ProductService {
 
     @Autowired
     CategorieService categorieService ;
+
+    @Autowired
+    BasketProductRepository basketProductRepository;
 
     public Optional<Product> addProduct(Product product){
 
@@ -57,9 +64,33 @@ public class ProductService {
                 .orElse(null);
     }
 
-    public void deleteProduct(Long id) {
-        productRepository.deleteById(id);
+
+    @Transactional
+    public void deleteProduct(Long productId) {
+        // Retrieve the product by ID
+        Product product = productRepository.findById(productId)
+                .orElseThrow(() -> new EntityNotFoundException("Product with ID " + productId + " not found."));
+
+        basketProductRepository.deleteAllBasketProductByProduct(product);
+        // Remove the product from any associated baskets
+       // List<BasketProduct> basketProducts = basketProductService.getBasketProductsByProductId(productId);
+      //  for (BasketProduct basketProduct : basketProducts){
+        //    basketProductService.deleteBasketProduct((Long)basketProduct.getId());
+      //  }
+
+        // Clear the basketProducts list to trigger cascading delete
+        product.getBasketProducts().clear();
+        product.removeCategorie(); // This will remove the association between the product and its categorie
+
+
+        // Save the changes to update the associations
+        productRepository.save(product);
+
+        // Delete the product after disassociating it from baskets
+        productRepository.deleteById(productId);
     }
+
+
 
     // exist exeption
     // generation du code table auto increment

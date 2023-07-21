@@ -35,7 +35,7 @@ public class Categorie {
     private Space space;
 
     @JsonIgnore
-    @OneToMany
+    @OneToMany()
     List<Product> products;
 
 }

@@ -50,6 +50,7 @@ public class CategorieController {
     public Categorie updateCategorie(@RequestBody Categorie categorie){
         return categorieService.updateCategorie(categorie); }
 
+    //TODO ::
     @DeleteMapping("/delete/{id}")
     @ResponseBody
     public void deleteCategorie(@PathVariable("id") long id){

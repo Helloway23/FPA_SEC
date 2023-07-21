@@ -15,7 +15,7 @@ public class BasketProduct {
     @EmbeddedId
     private BasketProductKey id;
 
-    @ManyToOne
+    @ManyToOne()
     @MapsId("idBasket")
     @JoinColumn(name = "id_basket")
     private Basket basket;
