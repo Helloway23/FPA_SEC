@@ -118,14 +118,28 @@ public class CommandService {
     }
 
     public double CalculateSum(Command command) {
-        double result = 0 ;
+        double result = 0;
         Basket basket = command.getBasket();
         Map<Product, QuantitysProduct> products_Quantity = basketProductService.getProductsQuantityByBasketId(basket.getId_basket());
-        for (Product product : products_Quantity.keySet()){
-            result += product.getPrice() * products_Quantity.get(product).getOldQuantity();
+
+        for (Product product : products_Quantity.keySet()) {
+            boolean hasActivePromotion = false;
+            for (Promotion promotion : product.getPromotions()) {
+                if (promotion.getStartDate().isBefore(LocalDateTime.now())
+                        && promotion.getEndDate().isAfter(LocalDateTime.now())) {
+                    result += (product.getPrice() * (1 - (promotion.getPercentage() / 100.0))) * products_Quantity.get(product).getOldQuantity();
+                    hasActivePromotion = true;
+                }
+            }
+
+            if (!hasActivePromotion) {
+                result += product.getPrice() * products_Quantity.get(product).getOldQuantity();
+            }
         }
-        return  result;
+
+        return result;
     }
+
 
     public Map<String, String> getLastServerWithBoardIdForCommand() {
         return lastServerWithBoardIdForCommand;
