@@ -1,15 +1,14 @@
 package com.HelloWay.HelloWay.controllers;
 
-import com.HelloWay.HelloWay.entities.Basket;
-import com.HelloWay.HelloWay.entities.Image;
-import com.HelloWay.HelloWay.entities.Product;
-import com.HelloWay.HelloWay.entities.Space;
+import com.HelloWay.HelloWay.entities.*;
 import com.HelloWay.HelloWay.payload.response.MessageResponse;
+import com.HelloWay.HelloWay.payload.response.ProductDTO;
 import com.HelloWay.HelloWay.repos.ImageRepository;
 import com.HelloWay.HelloWay.services.BasketProductService;
 import com.HelloWay.HelloWay.services.BasketService;
 import com.HelloWay.HelloWay.services.ProductService;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
@@ -17,6 +16,8 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -29,13 +30,17 @@ public class ProductController {
     BasketService   basketService;
     BasketProductService basketProductService;
 
+    private ModelMapper modelMapper;
+
     @Autowired
     public ProductController(ProductService productService, ImageRepository imageRepository,
-                             BasketService   basketService, BasketProductService basketProductService) {
+                             BasketService   basketService, BasketProductService basketProductService,
+                             ModelMapper modelMapper) {
         this.productService = productService;
         this.imageRepository = imageRepository;
         this.basketService = basketService;
         this.basketProductService = basketProductService;
+        this.modelMapper = modelMapper;
     }
 
     @PostMapping("/add")
@@ -87,6 +92,30 @@ public class ProductController {
     @ResponseBody
     public List<Product> getProductsByIDCategory(@PathVariable Long id_categorie) {
         return productService.getProductsByIdCategorie(id_categorie);
+    }
+
+    @GetMapping("/all/dto/id_categorie/{id_categorie}")
+    @ResponseBody
+    public ResponseEntity<?> getProductsDtoByIDCategory(@PathVariable Long id_categorie) {
+        List<Product> products =  productService.getProductsByIdCategorie(id_categorie);
+        if (products.isEmpty()){
+            return ResponseEntity.notFound().build();
+        }
+        List<ProductDTO> productsDto = new ArrayList<>();
+        for (Product product : products){
+            productsDto.add(modelMapper.map(product, ProductDTO.class));
+        }
+
+        for (Product product : products){
+        for (Promotion promotion : product.getPromotions()) {
+            if (promotion.getStartDate().isBefore(LocalDateTime.now())
+                    && promotion.getEndDate().isAfter(LocalDateTime.now())) {
+                productsDto.get(products.indexOf(product)).setHasActivePromotion(true);
+                productsDto.get(products.indexOf(product)).setPercentage(promotion.getPercentage());
+            }
+          }
+        }
+        return ResponseEntity.ok().body(productsDto);
     }
 
     @PostMapping("/{id}/images")
