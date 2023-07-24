@@ -31,7 +31,7 @@ public class Zone {
     @JoinColumn(name="id_space")
     private Space space;
 
-    @OneToMany(mappedBy = "zone", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "zone")
     List<Board> boards ;
 
     @JsonIgnore

@@ -20,7 +20,7 @@ public class Basket {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id_basket ;
 
-    @OneToMany
+    @OneToMany()
     List<BasketProduct> basketProducts;
 
     @JsonIgnore
@@ -29,6 +29,7 @@ public class Basket {
 
     @JsonIgnore
     @ManyToOne
+    @JoinColumn(name = "idTable")
     Board board;
 
 }

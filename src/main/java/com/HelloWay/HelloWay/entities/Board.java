@@ -37,7 +37,7 @@ public class Board {
     private int placeNumber;
 
     @JsonIgnore
-    @OneToMany(mappedBy = "board", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "board")
     List<Basket> baskets ;
 
     @JsonIgnore
@@ -55,6 +55,12 @@ public class Board {
     @ManyToOne
     @JoinColumn(name="id_reservation")
     private Reservation reservation ;
+
+    public void removeBaskets() {
+        if (baskets != null) {
+            baskets.clear();
+        }
+    }
 
 
 }

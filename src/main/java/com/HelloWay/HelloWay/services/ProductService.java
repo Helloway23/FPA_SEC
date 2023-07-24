@@ -72,11 +72,7 @@ public class ProductService {
                 .orElseThrow(() -> new EntityNotFoundException("Product with ID " + productId + " not found."));
 
         basketProductRepository.deleteAllBasketProductByProduct(product);
-        // Remove the product from any associated baskets
-       // List<BasketProduct> basketProducts = basketProductService.getBasketProductsByProductId(productId);
-      //  for (BasketProduct basketProduct : basketProducts){
-        //    basketProductService.deleteBasketProduct((Long)basketProduct.getId());
-      //  }
+
 
         // Clear the basketProducts list to trigger cascading delete
         product.getBasketProducts().clear();

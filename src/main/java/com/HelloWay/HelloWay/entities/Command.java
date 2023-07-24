@@ -25,7 +25,7 @@ public class Command {
     private Status status = Status.NOT_YET;
 
     @Column
-    private LocalDateTime localDate;
+    private LocalDateTime timestamp;
 
     @Column
     private double sum = 0;

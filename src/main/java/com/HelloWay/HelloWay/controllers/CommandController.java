@@ -7,6 +7,8 @@ import com.HelloWay.HelloWay.services.*;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDate;
+import java.time.YearMonth;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -185,6 +187,26 @@ public class CommandController {
             return ResponseEntity.badRequest().body("our user does not have any command");
         }
         return ResponseEntity.ok(commands.get(0));
+    }
+
+    @GetMapping("/sumPerDay")
+    public ResponseEntity<Double> getServerSumCommandsPerDay(
+            @RequestParam Long serverId,
+            @RequestParam String localDate) {
+        User server = userService.findUserById(serverId);
+        LocalDate date = LocalDate.parse(localDate);
+        double sum = commandService.getServerSumCommandsPerDay(server, date);
+        return ResponseEntity.ok(sum);
+    }
+
+    @GetMapping("/sumPerMonth")
+    public ResponseEntity<Double> getServerSumCommandsPerMonth(
+            @RequestParam Long serverId,
+            @RequestParam String yearMonth) {
+        User server = userService.findUserById(serverId);
+        YearMonth month = YearMonth.parse(yearMonth);
+        double sum = commandService.getServerSumCommandsPerMonth(server, month);
+        return ResponseEntity.ok(sum);
     }
 
 }

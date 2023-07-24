@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.time.YearMonth;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -43,7 +44,7 @@ public class CommandService {
         if (existingCommand != null) {
             // Copy the properties from the updatedCommand to the existingCommand
             existingCommand.setStatus(updatedCommand.getStatus());
-            existingCommand.setLocalDate(updatedCommand.getLocalDate());
+            existingCommand.setTimestamp(updatedCommand.getTimestamp());
             existingCommand.setSum(updatedCommand.getSum());
             existingCommand.setUser(updatedCommand.getUser());
             existingCommand.setServer(updatedCommand.getServer());
@@ -56,7 +57,7 @@ public class CommandService {
             return null;
         }
     }    public Command createCommand(Command command) {
-        command.setLocalDate(LocalDateTime.now());
+        command.setTimestamp(LocalDateTime.now());
         return commandRepository.save(command);
     }
 
@@ -156,12 +157,46 @@ public class CommandService {
         List<Command> actualServerCommand = new ArrayList<>();
         for (Command command : serverCommands){
             if (command.getStatus().equals(NOT_YET) || command.getStatus().equals(CONFIRMED)
-                && command.getLocalDate().getHour() >= currentTime.getHour()
-                    && command.getLocalDate().getHour() < currentTime.getHour() + 1){
+                && command.getTimestamp().getHour() >= currentTime.getHour()
+                    && command.getTimestamp().getHour() < currentTime.getHour() + 1){
                 actualServerCommand.add(command);
             }
         }
     return actualServerCommand;
+    }
+
+    public List<Command> getServerPayedCommandsPerDay(User server, LocalDate localDate){
+
+        List<Command> serverCommands = server.getServer_commands();
+        List<Command> perDayServerCommand = new ArrayList<>();
+        for (Command command : serverCommands){
+            if (command.getStatus().equals(PAYED)
+                    && command.getTimestamp().toLocalDate().equals(localDate)){
+                perDayServerCommand.add(command);
+            }
+        }
+        return perDayServerCommand;
+    }
+
+    public double getServerSumCommandsPerDay(User server,LocalDate localDate){
+        double result = 0;
+        List<Command> perDayServerCommand = getServerPayedCommandsPerDay(server, localDate);
+        for (Command command : perDayServerCommand){
+            result += CalculateSum(command);
+        }
+        return result;
+    }
+
+    public double getServerSumCommandsPerMonth(User server, YearMonth yearMonth) {
+        double result = 0;
+        int daysInMonth = yearMonth.lengthOfMonth();
+
+        for (int day = 1; day <= daysInMonth; day++) {
+            LocalDate date = yearMonth.atDay(day);
+            result += getServerSumCommandsPerDay(server, date);
+        }
+
+        return result;
     }
 
 }

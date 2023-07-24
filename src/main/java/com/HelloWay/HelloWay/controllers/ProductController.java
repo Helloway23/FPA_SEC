@@ -93,7 +93,7 @@ public class ProductController {
     public List<Product> getProductsByIDCategory(@PathVariable Long id_categorie) {
         return productService.getProductsByIdCategorie(id_categorie);
     }
-
+//TODO :: add idPromotion in the true case
     @GetMapping("/all/dto/id_categorie/{id_categorie}")
     @ResponseBody
     public ResponseEntity<?> getProductsDtoByIDCategory(@PathVariable Long id_categorie) {
