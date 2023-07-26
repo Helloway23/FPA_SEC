@@ -9,6 +9,7 @@ import com.HelloWay.HelloWay.services.UserService;
 import org.apache.tomcat.util.http.fileupload.IOUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.http.ResponseEntity;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -106,5 +107,12 @@ public class UserController {
         return userService.getUsers(page, size);
     }
 
-
+    @GetMapping("/get/moderators")
+    public ResponseEntity<?> getAllModerators(){
+        List<User> moderators = userService.getAllModerators();
+        if (moderators.isEmpty()){
+            return ResponseEntity.badRequest().body("not found");
+        }
+        return ResponseEntity.ok().body(moderators);
+    }
 }

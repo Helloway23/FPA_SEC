@@ -1,5 +1,6 @@
 package com.HelloWay.HelloWay.services;
 
+import com.HelloWay.HelloWay.entities.Role;
 import com.HelloWay.HelloWay.exception.ResourceNotFoundException;
 import com.HelloWay.HelloWay.exception.UserNotFoundException;
 import com.HelloWay.HelloWay.entities.User;
@@ -15,7 +16,12 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import javax.transaction.Transactional;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
+
+import static com.HelloWay.HelloWay.entities.ERole.ROLE_ADMIN;
+import static com.HelloWay.HelloWay.entities.ERole.ROLE_PROVIDER;
 
 
 @Service
@@ -91,6 +97,20 @@ public class UserService implements UserDetailsService {
     public Page<User> getUsers(int pageNumber, int pageSize) {
         Pageable pageable = PageRequest.of(pageNumber, pageSize);
         return userRepo.findAll(pageable);
+    }
+
+    public List<User> getAllModerators(){
+        List<User> users = userRepo.findAll();
+        List<User> moderators = new ArrayList<>();
+        for (User user : users){
+            Set<Role> roles = user.getRoles();
+                for (Role role : roles){
+                    if (role.getName().equals(ROLE_PROVIDER)){
+                        moderators.add(user);
+                    }
+                }
+        }
+        return moderators;
     }
 
 }
