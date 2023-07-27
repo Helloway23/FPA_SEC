@@ -199,4 +199,9 @@ public class CommandService {
         return result;
     }
 
+    public int getServerCommandsCountPerDay(User server,LocalDate localDate){
+        List<Command> perDayServerCommand = getServerPayedCommandsPerDay(server, localDate);
+        return perDayServerCommand.size();
+    }
+
 }
