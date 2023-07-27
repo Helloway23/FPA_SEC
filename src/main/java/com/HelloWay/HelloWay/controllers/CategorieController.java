@@ -1,6 +1,7 @@
 package com.HelloWay.HelloWay.controllers;
 
 import com.HelloWay.HelloWay.entities.Space;
+import com.HelloWay.HelloWay.entities.Zone;
 import com.HelloWay.HelloWay.payload.response.MessageResponse;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.HelloWay.HelloWay.entities.Categorie;
@@ -49,6 +50,21 @@ public class CategorieController {
     @ResponseBody
     public Categorie updateCategorie(@RequestBody Categorie categorie){
         return categorieService.updateCategorie(categorie); }
+
+    @PutMapping("/update/{categorieId}")
+    @ResponseBody
+    public ResponseEntity<?> updateCategorie(@RequestBody Categorie categorie, @PathVariable long categorieId){
+        Categorie exestingCategorie = categorieService.findCategorieById(categorieId);
+        Space space = categorie.getSpace();
+        List<Categorie> spaceCategories = space.getCategories();
+        spaceCategories.remove(exestingCategorie);
+        for (Categorie c : spaceCategories){
+            if (c.getCategoryTitle().equals(exestingCategorie.getCategoryTitle())){
+                return ResponseEntity.badRequest().body("categorie exist with this title please try with an other");
+            }
+        }
+        return ResponseEntity.ok().body(categorieService.updateCategorie(categorie));
+    }
 
     //TODO ::
     @DeleteMapping("/delete/{id}")

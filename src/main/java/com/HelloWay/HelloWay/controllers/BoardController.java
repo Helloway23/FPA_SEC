@@ -1,9 +1,6 @@
 package com.HelloWay.HelloWay.controllers;
 
-import com.HelloWay.HelloWay.entities.Board;
-import com.HelloWay.HelloWay.entities.Role;
-import com.HelloWay.HelloWay.entities.User;
-import com.HelloWay.HelloWay.entities.Zone;
+import com.HelloWay.HelloWay.entities.*;
 import com.HelloWay.HelloWay.payload.response.MessageResponse;
 import com.HelloWay.HelloWay.repos.RoleRepository;
 import com.HelloWay.HelloWay.repos.UserRepository;
@@ -66,6 +63,21 @@ public class BoardController {
     @ResponseBody
     public Board updateBoard(@RequestBody Board board){
       return   boardService.updateBoard(board); }
+
+    @PutMapping("/update/{boardId}")
+    @ResponseBody
+    public ResponseEntity<?> updateBoard(@RequestBody Board board, @PathVariable long boardId){
+        Board exestingBoard = boardService.findBoardById(boardId);
+        Zone zone = exestingBoard.getZone();
+        List<Board> zoneBoards = zone.getBoards();
+        zoneBoards.remove(exestingBoard);
+        for (Board b : zoneBoards){
+            if (b.getNumTable() == exestingBoard.getNumTable()){
+                return ResponseEntity.badRequest().body("board exist with this num please try with an other");
+            }
+        }
+        return ResponseEntity.ok().body(boardService.updateBoard(board));
+    }
 
     @DeleteMapping("/delete/{id}")
     @ResponseBody

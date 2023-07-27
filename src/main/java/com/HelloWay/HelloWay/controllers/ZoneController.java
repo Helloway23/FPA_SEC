@@ -51,6 +51,20 @@ public class ZoneController {
     public Zone updateZone(@RequestBody Zone zone){
         return zoneService.updateZone(zone); }
 
+    @PutMapping("/update/{zoneId}")
+    @ResponseBody
+    public ResponseEntity<?> updateZone(@RequestBody Zone zone, @PathVariable long zoneId){
+        Zone exestingZone = zoneService.findZoneById(zoneId);
+        Space space = zone.getSpace();
+        List<Zone> spaceZones = space.getZones();
+        spaceZones.remove(exestingZone);
+        for (Zone z : spaceZones){
+            if (z.getZoneTitle().equals(exestingZone.getZoneTitle())){
+                return ResponseEntity.badRequest().body("zone exist with this title please try with an other");
+            }
+        }
+        return ResponseEntity.ok().body(zoneService.updateZone(zone));
+    }
 
     //TODO ::
     @DeleteMapping("/delete/{id}")
@@ -61,18 +75,23 @@ public class ZoneController {
 
     @PostMapping("/add/id_space/{id_space}")
     @ResponseBody
-    public Zone addZoneByIdSpace(@RequestBody Zone zone, @PathVariable Long id_space) {
+    public ResponseEntity<?> addZoneByIdSpace(@RequestBody Zone zone, @PathVariable Long id_space) {
       Space space = spaceService.findSpaceById(id_space);
       Zone zoneObject = new Zone();
       zoneObject = zone;
+        List<Zone> zones = new ArrayList<Zone>();
+        zones = space.getZones();
+      for (Zone zone1 : zones){
+          if (zone1.getZoneTitle().equals(zone.getZoneTitle())){
+              return ResponseEntity.badRequest().body("zone exist with this title please try with an other ");
+          }
+      }
       zoneObject.setSpace(space);
       zoneService.addZone(zoneObject);
-      List<Zone> zones = new ArrayList<Zone>();
-      zones = space.getZones();
       zones.add(zoneObject);
       space.setZones(zones);
       spaceService.updateSpace(space);
-      return zoneObject;
+      return ResponseEntity.ok().body(zoneObject);
 
     }
 

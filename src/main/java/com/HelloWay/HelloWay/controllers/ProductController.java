@@ -70,6 +70,20 @@ public class ProductController {
        return productService.updateProduct(product);
     }
 
+    @PutMapping("/update/{productId}")
+    @ResponseBody
+    public ResponseEntity<?> updateProduct(@RequestBody Product product, @PathVariable long productId){
+        Product exestingProduct = productService.findProductById(productId);
+        Categorie categorie = product.getCategorie();
+        List<Product> categorieProducts = categorie.getProducts();
+        categorieProducts.remove(exestingProduct);
+        for (Product p : categorieProducts){
+            if (p.getProductTitle().equals(exestingProduct.getProductTitle())){
+                return ResponseEntity.badRequest().body("product exist with this title please try with an other");
+            }
+        }
+        return ResponseEntity.ok().body(productService.updateProduct(product));
+    }
     @DeleteMapping("/delete/{id}")
     @ResponseBody
     public void deleteProduct(@PathVariable("id") long id) {
