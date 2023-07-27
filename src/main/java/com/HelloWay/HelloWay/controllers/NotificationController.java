@@ -2,6 +2,7 @@ package com.HelloWay.HelloWay.controllers;
 
 
 import com.HelloWay.HelloWay.entities.Notification;
+import com.HelloWay.HelloWay.entities.User;
 import com.HelloWay.HelloWay.services.NotificationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -16,6 +17,14 @@ public class NotificationController {
 
     @Autowired
     NotificationService notificationService;
+
+    @PostMapping("/create")
+    public ResponseEntity<Notification> createNotification(@RequestParam String title,
+                                                           @RequestParam String message,
+                                                           @RequestBody User user) {
+        Notification notification = notificationService.createNotification(title, message, user);
+        return ResponseEntity.ok(notification);
+    }
     @GetMapping("/all")
     public List<Notification> getAllNotifications() {
         return notificationService.getAllNotifications();
