@@ -1,4 +1,4 @@
 -------------------------------------------------------------------------------
 Test set: com.HelloWay.HelloWay.ConrollersTest.EventControllerTest
 -------------------------------------------------------------------------------
-Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 12.265 s - in com.HelloWay.HelloWay.ConrollersTest.EventControllerTest
+Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 14.493 s - in com.HelloWay.HelloWay.ConrollersTest.EventControllerTest

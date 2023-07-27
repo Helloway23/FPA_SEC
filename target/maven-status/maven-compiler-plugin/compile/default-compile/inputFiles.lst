@@ -9,6 +9,7 @@ C:\Users\alaed\Downloads\FPA_SEC\src\main\java\com\HelloWay\HelloWay\services\Sp
 C:\Users\alaed\Downloads\FPA_SEC\src\main\java\com\HelloWay\HelloWay\controllers\TestController.java
 C:\Users\alaed\Downloads\FPA_SEC\src\main\java\com\HelloWay\HelloWay\entities\Role.java
 C:\Users\alaed\Downloads\FPA_SEC\src\main\java\com\HelloWay\HelloWay\services\ImageServiceImp.java
+C:\Users\alaed\Downloads\FPA_SEC\src\main\java\com\HelloWay\HelloWay\payload\response\ProductDTO.java
 C:\Users\alaed\Downloads\FPA_SEC\src\main\java\com\HelloWay\HelloWay\repos\ImageRepository.java
 C:\Users\alaed\Downloads\FPA_SEC\src\main\java\com\HelloWay\HelloWay\entities\Command.java
 C:\Users\alaed\Downloads\FPA_SEC\src\main\java\com\HelloWay\HelloWay\payload\response\QuantitysProduct.java
@@ -39,6 +40,7 @@ C:\Users\alaed\Downloads\FPA_SEC\src\main\java\com\HelloWay\HelloWay\repos\Prima
 C:\Users\alaed\Downloads\FPA_SEC\src\main\java\com\HelloWay\HelloWay\services\ImageService.java
 C:\Users\alaed\Downloads\FPA_SEC\src\main\java\com\HelloWay\HelloWay\entities\Party.java
 C:\Users\alaed\Downloads\FPA_SEC\src\main\java\com\HelloWay\HelloWay\Security\Jwt\CustomSessionRegistry.java
+C:\Users\alaed\Downloads\FPA_SEC\src\main\java\com\HelloWay\HelloWay\config\MailConfiguration.java
 C:\Users\alaed\Downloads\FPA_SEC\src\main\java\com\HelloWay\HelloWay\exception\ResourceNotFoundException.java
 C:\Users\alaed\Downloads\FPA_SEC\src\main\java\com\HelloWay\HelloWay\entities\ReclamationStatus.java
 C:\Users\alaed\Downloads\FPA_SEC\src\main\java\com\HelloWay\HelloWay\entities\BasketProduct.java
@@ -51,13 +53,17 @@ C:\Users\alaed\Downloads\FPA_SEC\src\main\java\com\HelloWay\HelloWay\entities\Pr
 C:\Users\alaed\Downloads\FPA_SEC\src\main\java\com\HelloWay\HelloWay\entities\SpaceCategorie.java
 C:\Users\alaed\Downloads\FPA_SEC\src\main\java\com\HelloWay\HelloWay\controllers\BasketController.java
 C:\Users\alaed\Downloads\FPA_SEC\src\main\java\com\HelloWay\HelloWay\repos\BoardRepository.java
+C:\Users\alaed\Downloads\FPA_SEC\src\main\java\com\HelloWay\HelloWay\controllers\EmailController.java
 C:\Users\alaed\Downloads\FPA_SEC\src\main\java\com\HelloWay\HelloWay\entities\User.java
 C:\Users\alaed\Downloads\FPA_SEC\src\main\java\com\HelloWay\HelloWay\repos\UserRepository.java
+C:\Users\alaed\Downloads\FPA_SEC\src\main\java\com\HelloWay\HelloWay\payload\request\ResetPasswordRequest.java
 C:\Users\alaed\Downloads\FPA_SEC\src\main\java\com\HelloWay\HelloWay\repos\RoleRepository.java
 C:\Users\alaed\Downloads\FPA_SEC\src\main\java\com\HelloWay\HelloWay\services\CommandService.java
+C:\Users\alaed\Downloads\FPA_SEC\src\main\java\com\HelloWay\HelloWay\services\PdfGenerationService.java
 C:\Users\alaed\Downloads\FPA_SEC\src\main\java\com\HelloWay\HelloWay\entities\Zone.java
 C:\Users\alaed\Downloads\FPA_SEC\src\main\java\com\HelloWay\HelloWay\services\NotificationService.java
 C:\Users\alaed\Downloads\FPA_SEC\src\main\java\com\HelloWay\HelloWay\payload\request\QrCodeAuthenticationRequest.java
+C:\Users\alaed\Downloads\FPA_SEC\src\main\java\com\HelloWay\HelloWay\payload\request\ResetPasswordRequestIntern.java
 C:\Users\alaed\Downloads\FPA_SEC\src\main\java\com\HelloWay\HelloWay\repos\ReclamationRepository.java
 C:\Users\alaed\Downloads\FPA_SEC\src\main\java\com\HelloWay\HelloWay\entities\Notification.java
 C:\Users\alaed\Downloads\FPA_SEC\src\main\java\com\HelloWay\HelloWay\controllers\UserController.java
@@ -74,7 +80,7 @@ C:\Users\alaed\Downloads\FPA_SEC\src\main\java\com\HelloWay\HelloWay\controllers
 C:\Users\alaed\Downloads\FPA_SEC\src\main\java\com\HelloWay\HelloWay\controllers\EventController.java
 C:\Users\alaed\Downloads\FPA_SEC\src\main\java\com\HelloWay\HelloWay\controllers\CategorieController.java
 C:\Users\alaed\Downloads\FPA_SEC\src\main\java\com\HelloWay\HelloWay\repos\CategorieRepository.java
-C:\Users\alaed\Downloads\FPA_SEC\src\main\java\com\HelloWay\HelloWay\services\emailService.java
+C:\Users\alaed\Downloads\FPA_SEC\src\main\java\com\HelloWay\HelloWay\services\EmailService.java
 C:\Users\alaed\Downloads\FPA_SEC\src\main\java\com\HelloWay\HelloWay\entities\Promotion.java
 C:\Users\alaed\Downloads\FPA_SEC\src\main\java\com\HelloWay\HelloWay\payload\request\SignupRequest.java
 C:\Users\alaed\Downloads\FPA_SEC\src\main\java\com\HelloWay\HelloWay\controllers\ZoneController.java
@@ -98,7 +104,9 @@ C:\Users\alaed\Downloads\FPA_SEC\src\main\java\com\HelloWay\HelloWay\services\Us
 C:\Users\alaed\Downloads\FPA_SEC\src\main\java\com\HelloWay\HelloWay\repos\BasketRepository.java
 C:\Users\alaed\Downloads\FPA_SEC\src\main\java\com\HelloWay\HelloWay\payload\response\UserInfoResponse.java
 C:\Users\alaed\Downloads\FPA_SEC\src\main\java\com\HelloWay\HelloWay\repos\BasketProductRepository.java
+C:\Users\alaed\Downloads\FPA_SEC\src\main\java\com\HelloWay\HelloWay\payload\request\ServerData.java
 C:\Users\alaed\Downloads\FPA_SEC\src\main\java\com\HelloWay\HelloWay\Security\Jwt\AuthTokenFilter.java
 C:\Users\alaed\Downloads\FPA_SEC\src\main\java\com\HelloWay\HelloWay\Security\Jwt\QrCodeAuthFilter.java
 C:\Users\alaed\Downloads\FPA_SEC\src\main\java\com\HelloWay\HelloWay\repos\SpaceRepository.java
 C:\Users\alaed\Downloads\FPA_SEC\src\main\java\com\HelloWay\HelloWay\services\ZoneService.java
+C:\Users\alaed\Downloads\FPA_SEC\src\main\java\com\HelloWay\HelloWay\controllers\PdfController.java

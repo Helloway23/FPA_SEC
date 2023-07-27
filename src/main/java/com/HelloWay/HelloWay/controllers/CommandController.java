@@ -209,4 +209,14 @@ public class CommandController {
         return ResponseEntity.ok(sum);
     }
 
+    @GetMapping("/countPerDay")
+    public ResponseEntity<?> getServerCommandsCountPerDay(
+            @RequestParam Long serverId,
+            @RequestParam String localDate) {
+        User server = userService.findUserById(serverId);
+        LocalDate date = LocalDate.parse(localDate);
+        int sum = commandService.getServerCommandsCountPerDay(server, date);
+        return ResponseEntity.ok(sum);
+    }
+
 }
