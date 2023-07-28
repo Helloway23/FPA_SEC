@@ -27,10 +27,23 @@ public class UserDetailsImpl implements UserDetails {
     @JsonIgnore
     private String password;
 
+    private boolean activated;
+
+
+
 
     private Collection<? extends GrantedAuthority> authorities;
 
-    public UserDetailsImpl(Long id, String name, String lastname, LocalDate birthday, String phone, String username, String email, String password, Collection<? extends GrantedAuthority> authorities) {
+    public UserDetailsImpl(Long id,
+                           String name,
+                           String lastname,
+                           LocalDate birthday,
+                           String phone,
+                           String username,
+                           String email,
+                           String password,
+                           Collection<? extends GrantedAuthority> authorities,
+                           boolean activated) {
         this.id = id;
         this.name = name;
         this.lastname = lastname;
@@ -40,6 +53,7 @@ public class UserDetailsImpl implements UserDetails {
         this.email = email;
         this.password = password;
         this.authorities = authorities;
+        this.activated = activated;
     }
 
     public UserDetailsImpl(Long id, String username, String password, Collection<? extends GrantedAuthority> authorities) {
@@ -53,6 +67,8 @@ public class UserDetailsImpl implements UserDetails {
         List<GrantedAuthority> authorities = user.getRoles().stream()
                 .map(role -> new SimpleGrantedAuthority(role.getName().name()))
                 .collect(Collectors.toList());
+        boolean activated = user.isActivated(); // Get the account activation status
+
 
         return new UserDetailsImpl(
                 user.getId(),
@@ -63,7 +79,8 @@ public class UserDetailsImpl implements UserDetails {
                 user.getUsername(),
                 user.getEmail(),
                 user.getPassword(),
-                authorities);
+                authorities,
+                activated);
     }
 
     @Override
@@ -135,5 +152,13 @@ public class UserDetailsImpl implements UserDetails {
 
     public void setPhone(String phone) {
         this.phone = phone;
+    }
+
+    public boolean isActivated() {
+        return activated;
+    }
+
+    public void setActivated(boolean activated) {
+        this.activated = activated;
     }
 }

@@ -53,7 +53,8 @@ public class JwtUtils {
 
 
     public ResponseCookie generateJwtCookie(UserDetailsImpl userPrincipal) {
-        String jwt = generateTokenFromUsername(userPrincipal.getUsername());
+        boolean activated = userPrincipal.isActivated(); // Get the account activation status
+        String jwt = generateTokenFromUsername(userPrincipal.getUsername(), activated);
         ResponseCookie cookie = ResponseCookie.from(jwtCookie, jwt).path("/api").maxAge(24 * 60 * 60).httpOnly(true).build();
         return cookie;
     }
@@ -86,13 +87,30 @@ public class JwtUtils {
         return false;
     }
 
-    public String generateTokenFromUsername(String username) {
+    public String generateTokenFromUsername(String username, boolean activated) {
         return Jwts.builder()
                 .setSubject(username)
+                .claim("activated", activated) // Include the account activation status as a claim
                 .setIssuedAt(new Date())
                 .setExpiration(new Date((new Date()).getTime() + jwtExpirationMs))
                 .signWith(SignatureAlgorithm.HS512, jwtSecret)
                 .compact();
+    }
+
+
+    private UserDetailsImpl setUserActivationStatus(UserDetailsImpl userDetails, String jwt) {
+        if (jwt != null) {
+            try {
+                Claims claims = Jwts.parser().setSigningKey(jwtSecret).parseClaimsJws(jwt).getBody();
+                boolean activated = (boolean) claims.getOrDefault("activated", false);
+                userDetails.setActivated(activated); // Set the account activation status in UserDetailsImpl
+            } catch (ExpiredJwtException e) {
+                // Handle expired token exception, if needed
+            } catch (UnsupportedJwtException | MalformedJwtException | SignatureException | IllegalArgumentException e) {
+                // Handle other token-related exceptions, if needed
+            }
+        }
+        return userDetails;
     }
 
   /*  public String generateTemporaryToken(String username, String tableIdentifier) {

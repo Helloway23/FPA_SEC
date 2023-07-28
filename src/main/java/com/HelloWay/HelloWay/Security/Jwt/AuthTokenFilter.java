@@ -1,5 +1,6 @@
 package com.HelloWay.HelloWay.Security.Jwt;
 
+import com.HelloWay.HelloWay.services.UserDetailsImpl;
 import com.HelloWay.HelloWay.services.UserService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -43,6 +44,12 @@ public class AuthTokenFilter extends OncePerRequestFilter {
                 String username = jwtUtils.getUserNameFromJwtToken(jwt);
 
                 UserDetails userDetails = userDetailsService.loadUserByUsername(username);
+
+                // Check if the user account is activated
+                if (!isAccountActivated(userDetails)) {
+                    response.sendError(HttpServletResponse.SC_FORBIDDEN, "Account not activated");
+                    return;
+                }
 
                 UsernamePasswordAuthenticationToken authentication =
                         new UsernamePasswordAuthenticationToken(userDetails,
@@ -115,4 +122,9 @@ public class AuthTokenFilter extends OncePerRequestFilter {
         }
         return jwt;
     }
+    private boolean isAccountActivated(UserDetails userDetails) {
+        // Assuming the UserDetailsImpl class has a method to check if the account is activated
+        return ((UserDetailsImpl) userDetails).isActivated();
+    }
+
 }

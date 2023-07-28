@@ -2,6 +2,7 @@ package com.HelloWay.HelloWay.services;
 
 import com.HelloWay.HelloWay.entities.*;
 import com.HelloWay.HelloWay.exception.ResourceNotFoundException;
+import com.HelloWay.HelloWay.payload.response.SpaceDTO;
 import com.HelloWay.HelloWay.repos.SpaceRepository;
 import com.HelloWay.HelloWay.repos.ZoneRepository;
 import com.google.zxing.NotFoundException;
@@ -12,9 +13,9 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
+
+import static com.HelloWay.HelloWay.DistanceLogic.DistanceCalculator.calculateDistance;
 
 @Service
 public class SpaceService {
@@ -245,5 +246,45 @@ public class SpaceService {
         return  spaceRepository.save(space);
     }
 
+    public List<Space> getTheNearestSpacesByDistance(String userLatitude,
+                                                        String userLongitude,
+                                                        double threshold){
+        Map<Space, Double> spaceDistanceMap = new HashMap<>();
+        Map<Space, Double> sortedSpaceDistanceMap = new HashMap<>();
+        List<Space> allSpaces = spaceRepository.findAll();
+        List<Space> sortedSpaces = new ArrayList<>();
+        for (Space space : allSpaces){
+            double distance = calculateDistance(Double.parseDouble(userLatitude), Double.parseDouble(userLongitude),
+                    Double.parseDouble(space.getLatitude()), Double.parseDouble(space.getLongitude()));
+            if (distance <= threshold){
+                spaceDistanceMap.put(space, distance);
+            }
+        }
+        sortedSpaceDistanceMap = sortByValue(spaceDistanceMap);
+        sortedSpaces.addAll(sortedSpaceDistanceMap.keySet());
+
+
+        return sortedSpaces;
+    }
+
+    public static Map<Space, Double> sortByValue(Map<Space, Double> map) {
+        List<Map.Entry<Space, Double>> list = new ArrayList<>(map.entrySet());
+
+        // Sort the list of entries using a custom comparator for values
+        Collections.sort(list, new Comparator<Map.Entry<Space, Double>>() {
+            @Override
+            public int compare(Map.Entry<Space, Double> o1, Map.Entry<Space, Double> o2) {
+                return o1.getValue().compareTo(o2.getValue());
+            }
+        });
+
+        // Create a LinkedHashMap to maintain the insertion order of sorted entries
+        Map<Space, Double> sortedMap = new LinkedHashMap<>();
+        for (Map.Entry<Space, Double> entry : list) {
+            sortedMap.put(entry.getKey(), entry.getValue());
+        }
+
+        return sortedMap;
+    }
 
 }

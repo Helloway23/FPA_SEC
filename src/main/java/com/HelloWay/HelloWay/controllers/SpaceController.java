@@ -358,5 +358,24 @@ public class SpaceController {
         return  ResponseEntity.ok().body(space);
     }
 
+    @GetMapping("/nearest")
+    public ResponseEntity<?> getTheNearestSpacesByDistance(@RequestParam("userLatitude") String userLatitude,
+                                                     @RequestParam("userLongitude") String userLongitude,
+                                                     @RequestParam("threshold") double threshold){
+        List<Space> spaces = spaceService.getTheNearestSpacesByDistance(userLatitude, userLongitude,
+                threshold);
+        List<SpaceDTO> spaceDtos = new ArrayList<>();
+
+        for (Space space : spaces) {
+
+            // Map other properties as needed
+
+            spaceDtos.add(modelMapper.map(space, SpaceDTO.class));
+        }
+
+        return ResponseEntity.ok().body(spaceDtos);
+
+    }
+
 
 }

@@ -39,6 +39,8 @@ public  class User implements Serializable {
     //  @Column(nullable = false)
     private String password ;
 
+    private boolean activated;
+
     @OneToOne(cascade = CascadeType.ALL)
     Image image;
 
@@ -260,5 +262,31 @@ public  class User implements Serializable {
 
     public Set<Role> getRoles() {
         return roles;
+    }
+
+    public User(String name,
+                String lastname,
+                LocalDate birthday,
+                String phone,
+                String email,
+                String username,
+                String password,
+                boolean activated) {
+        this.name = name;
+        this.lastname = lastname;
+        this.birthday = birthday;
+        this.phone = phone;
+        this.email = email;
+        this.username = username;
+        this.password = password;
+        this.activated = activated;
+    }
+
+    public boolean isActivated() {
+        return activated;
+    }
+
+    public void setActivated(boolean activated) {
+        this.activated = activated;
     }
 }
