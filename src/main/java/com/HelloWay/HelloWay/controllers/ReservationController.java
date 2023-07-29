@@ -10,6 +10,7 @@ import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
@@ -30,12 +31,14 @@ public class ReservationController {
     }
 
     @GetMapping
+    @PreAuthorize("hasAnyRole('ADMIN')")
     public ResponseEntity<List<Reservation>> getAllReservations() {
         List<Reservation> reservations = reservationService.findAllReservations();
         return ResponseEntity.ok(reservations);
     }
 
     @GetMapping("/{id}")
+    @PreAuthorize("hasAnyRole('PROVIDER','USER')")
     public ResponseEntity<?> getReservationById(@PathVariable Long id) {
         Reservation reservation = reservationService.findReservationById(id);
         if (reservation == null) {
@@ -49,6 +52,7 @@ public class ReservationController {
     }
 
     @GetMapping("/tables/{id}")
+    @PreAuthorize("hasAnyRole('PROVIDER','USER')")
     public ResponseEntity<?> getTablesByIdReservation(@PathVariable Long id) {
         Reservation reservation = reservationService.findReservationById(id);
         if (reservation == null) {
@@ -59,6 +63,7 @@ public class ReservationController {
     }
 
     @GetMapping("/availability/{spaceId}")
+    @PreAuthorize("hasAnyRole('PROVIDER')")
     public ResponseEntity<?> getTablesByDisponibilitiesDate(@RequestParam("date") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date, @PathVariable long spaceId) {
         List<Board> availableTables = reservationService.getTablesByDisponibilitiesDate(date, spaceId);
         if (availableTables.isEmpty()){
@@ -68,6 +73,7 @@ public class ReservationController {
     }
 
     @PostMapping("/space/{spaceId}/user/{userId}")
+    @PreAuthorize("hasAnyRole('PROVIDER')")
     public ResponseEntity<Reservation> createReservation(
             @RequestBody Reservation reservation,
             @PathVariable Long spaceId,
@@ -78,6 +84,7 @@ public class ReservationController {
     }
 
     @PostMapping("/space/{spaceId}/user/{userId}/board/boardId")
+    @PreAuthorize("hasAnyRole('PROVIDER')")
     public ResponseEntity<Reservation> createReservationWithBoard(
             @RequestBody Reservation reservation,
             @PathVariable Long spaceId,
@@ -89,6 +96,7 @@ public class ReservationController {
     }
 
     @PostMapping("/assign/reservation/{reservationId}")
+    @PreAuthorize("hasAnyRole('PROVIDER')")
     public ResponseEntity<Reservation> assignReservationToTables(
             @RequestBody List<Long> boardIds,
             @PathVariable long reservationId) {
@@ -101,6 +109,7 @@ public class ReservationController {
     }
 
     @PutMapping("/{id}")
+    @PreAuthorize("hasAnyRole('PROVIDER','USER')")
     public ResponseEntity<Reservation> updateReservation(
             @PathVariable Long id,
             @RequestBody Reservation reservation
@@ -115,6 +124,7 @@ public class ReservationController {
     }
 
     @DeleteMapping("/{id}")
+    @PreAuthorize("hasAnyRole('PROVIDER')")
     public ResponseEntity<?> deleteReservation(@PathVariable Long id) {
         Reservation reservation = reservationService.findReservationById(id);
         if (reservation == null) {
@@ -125,18 +135,21 @@ public class ReservationController {
     }
 
     @GetMapping("/space/{spaceId}")
+    @PreAuthorize("hasAnyRole('PROVIDER')")
     public ResponseEntity<List<Reservation>> getReservationsBySpaceId(@PathVariable Long spaceId) {
         List<Reservation> reservations = reservationService.findReservationsBySpaceId(spaceId);
         return ResponseEntity.ok(reservations);
     }
 
     @GetMapping("/user/{userId}")
+    @PreAuthorize("hasAnyRole('PROVIDER','USER')")
     public ResponseEntity<List<Reservation>> getReservationsByUserId(@PathVariable Long userId) {
         List<Reservation> reservations = reservationService.findReservationsByUserId(userId);
         return ResponseEntity.ok(reservations);
     }
 
     @PostMapping("/{id}/accept")
+    @PreAuthorize("hasAnyRole('PROVIDER')")
     public ResponseEntity<Reservation> acceptReservation(@PathVariable Long id) {
         Reservation reservation = reservationService.findReservationById(id);
         if (reservation == null) {
@@ -160,6 +173,7 @@ public class ReservationController {
 
 
     @PostMapping("/{id}/refuse")
+    @PreAuthorize("hasAnyRole('PROVIDER')")
     public ResponseEntity<Reservation> refuseReservation(@PathVariable Long id) {
         Reservation reservation = reservationService.findReservationById(id);
         if (reservation == null) {
@@ -180,6 +194,7 @@ public class ReservationController {
     }
 
     @PostMapping("/{id}/cancel")
+    @PreAuthorize("hasAnyRole('PROVIDER','USER')")
     public ResponseEntity<Reservation> cancelReservation(@PathVariable Long id) {
         Reservation reservation = reservationService.findReservationById(id);
         if (reservation == null) {
@@ -202,6 +217,7 @@ public class ReservationController {
     }
 
     @GetMapping("/date-range")
+    @PreAuthorize("hasAnyRole('PROVIDER')")
     public ResponseEntity<List<Reservation>> getReservationsByDateRange(
             @RequestParam("startDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startDate,
             @RequestParam("endDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate endDate) {
@@ -210,6 +226,7 @@ public class ReservationController {
     }
 
     @GetMapping("/upcoming")
+    @PreAuthorize("hasAnyRole('PROVIDER')")
     public ResponseEntity<List<Reservation>> getUpcomingReservations(@RequestParam("limit") int limit) {
         List<Reservation> reservations = reservationService.findUpcomingReservations(limit);
         return ResponseEntity.ok(reservations);

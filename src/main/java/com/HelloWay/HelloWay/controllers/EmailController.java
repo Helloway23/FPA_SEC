@@ -2,6 +2,7 @@ package com.HelloWay.HelloWay.controllers;
 
 import com.HelloWay.HelloWay.entities.EmailDetails;
 import com.HelloWay.HelloWay.services.EmailService;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -14,6 +15,7 @@ public class EmailController {
     }
 
     @PostMapping("/send-email")
+    @PreAuthorize("hasAnyRole('ADMIN')")
     public void sendEmail(@RequestParam("to") String to,
                           @RequestParam("subject") String subject,
                           @RequestParam("body") String body) {

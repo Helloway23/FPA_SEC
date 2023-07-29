@@ -15,6 +15,7 @@ import org.springframework.data.crossstore.ChangeSetPersister;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -59,6 +60,7 @@ public class SpaceController {
     }
 
     @PostMapping("/add")
+    @PreAuthorize("hasAnyRole('ADMIN')")
     @ResponseBody
     public Space addNewSpace(@RequestBody Space space) throws IOException {
         return spaceService.addNewSpace(space);
@@ -66,6 +68,7 @@ public class SpaceController {
 
     @JsonIgnore
     @GetMapping("/all")
+    @PreAuthorize("hasAnyRole('ADMIN')")
     @ResponseBody
     public List<Space> allSpaces(){
 
@@ -94,6 +97,7 @@ public class SpaceController {
 
 
     @GetMapping("/id/{id}")
+    @PreAuthorize("hasAnyRole('WAITER', 'USER', 'GUEST','PROVIDER')")
     @ResponseBody
     public Space findSpaceById(@PathVariable("id") long id){
         return spaceService.findSpaceById(id);
@@ -101,34 +105,40 @@ public class SpaceController {
 
 
     @PutMapping("/update")
+    @PreAuthorize("hasAnyRole('ADMIN','PROVIDER')")
     @ResponseBody
     public Space updateSpace(@RequestBody Space space){
         return spaceService.updateSpace(space); }
 
     @DeleteMapping("/delete/{id}")
+    @PreAuthorize("hasAnyRole('ADMIN','PROVIDER')")
     @ResponseBody
     public void deleteSpace(@PathVariable("id") long id){
         spaceService.deleteSpace(id); }
     //Pas encore tester : Que apres les crud de categorie Controller
     @PostMapping("/add/idModerator/{idModerator}/idCategory/{idCategory}")
+    @PreAuthorize("hasAnyRole('ADMIN','PROVIDER')")
     @ResponseBody
     public Space addNewSpaceByIdModeratorAndIdCategory(@RequestBody Space space, @PathVariable Long idModerator, @PathVariable Long idCategory) {
         return spaceService.addSpaceByIdModeratorAndIdSpaceCategory(space, idModerator, idCategory);
     }
 
     @PostMapping("/add/idModerator/{idModerator}/idSpaceCategory/{idSpaceCategory}")
+    @PreAuthorize("hasAnyRole('ADMIN','PROVIDER')")
     @ResponseBody
     public Space addNewSpaceByIdModeratorAndIdSpaceCategory(@RequestBody Space space, @PathVariable Long idModerator, @PathVariable Long idSpaceCategory) {
         return spaceService.addSpaceByIdModeratorAndSpaceCategory(space, idModerator, idSpaceCategory);
     }
 
     @GetMapping("/idModerator/{idModerator}")
+    @PreAuthorize("hasAnyRole('ADMIN','PROVIDER')")
     @ResponseBody
     public Space getSpaceByIdModerator( @PathVariable Long idModerator) {
         return spaceService.getSpaceByIdModerator(idModerator);
     }
 
     @GetMapping("/idCategory/{idCategory}")
+    @PreAuthorize("hasAnyRole('ADMIN','PROVIDER', 'WAITER', 'USER', 'GUEST')")
     @ResponseBody
     public Space getSpaceByIdCategory( @PathVariable Long idCategory) {
         // get spaceByIdSpaceCategorie
@@ -138,6 +148,7 @@ public class SpaceController {
 
     // Done without testing
     @GetMapping("/idSpaceCategory/{idSpaceCategory}")
+    @PreAuthorize("hasAnyRole('ADMIN','PROVIDER')")
     @ResponseBody
     public List<Space> getSpacesByIdSpaceCategory( @PathVariable Long idSpaceCategory) {
 
@@ -145,6 +156,7 @@ public class SpaceController {
     }
 
     @PostMapping("/images")
+    @PreAuthorize("hasAnyRole('ADMIN','PROVIDER')")
     public ResponseEntity<?> addSpaceWithImages(@RequestParam("titleSpace") String titleSpace,
                                                 @RequestParam("latitude") String latitude,
                                                 @RequestParam("longitude") String longitude,
@@ -179,6 +191,7 @@ public class SpaceController {
     }
 
     @PostMapping("/{id}/images")
+    @PreAuthorize("hasAnyRole('ADMIN','PROVIDER')")
     public ResponseEntity<String> addImage(@PathVariable("id") Long id,
                                            @RequestParam("file") MultipartFile file) {
         try {
@@ -202,6 +215,7 @@ public class SpaceController {
         }
     }
     @DeleteMapping("{idImage}/images/{idSpace}")
+    @PreAuthorize("hasAnyRole('ADMIN','PROVIDER')")
     public ResponseEntity<?> deleteImage(@PathVariable String idImage, @PathVariable Long idSpace){
         Image image = imageService.getImage(idImage);
         if (image == null){
@@ -219,6 +233,7 @@ public class SpaceController {
 
 
     @PostMapping("/{idSpace}/images/{idProduct}")
+    @PreAuthorize("hasAnyRole('ADMIN','PROVIDER','WAITER')")
     public ResponseEntity<String> addImageBySpaceIdAndProductId(@PathVariable("idSpace") Long id,
                                                                 @RequestParam("file") MultipartFile file, @PathVariable Long idProduct) {
         try {
@@ -245,6 +260,7 @@ public class SpaceController {
 
 
     @PostMapping("/moderatorUserId/{moderatorUserId}/{spaceId}/servers/{serverId}/zones/{zoneId}")
+    @PreAuthorize("hasAnyRole('ADMIN','PROVIDER')")
     public ResponseEntity<String> setServerInZone(
             @PathVariable Long spaceId,
             @PathVariable Long moderatorUserId,
@@ -262,6 +278,7 @@ public class SpaceController {
     }
 
     @PostMapping("/moderatorUserId/{moderatorUserId}/{spaceId}/servers/{serverId}")
+    @PreAuthorize("hasAnyRole('ADMIN','PROVIDER')")
     public ResponseEntity<String> addServerInSpace(
             @PathVariable Long spaceId,
             @PathVariable Long moderatorUserId,
@@ -278,6 +295,7 @@ public class SpaceController {
     }
 
     @PostMapping("/moderatorUserId/{moderatorUserId}/{spaceId}/servers")
+    @PreAuthorize("hasAnyRole('ADMIN','PROVIDER')")
     @ResponseBody
     public ResponseEntity<?> createServerForSpace(
             @PathVariable Long spaceId,
@@ -319,6 +337,7 @@ public class SpaceController {
     }
 
     @GetMapping("/all/paging")
+    @PreAuthorize("hasAnyRole('ADMIN','PROVIDER', 'WAITER', 'USER', 'GUEST')")
     public Page<Space> getSpaces(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size
@@ -327,6 +346,8 @@ public class SpaceController {
     }
 
     @GetMapping("/servers/{spaceId}")
+    @PreAuthorize("hasAnyRole('ADMIN','PROVIDER')")
+
     @ResponseBody
     public ResponseEntity<?> getServersByIdSpace(@PathVariable long spaceId){
         Space space = spaceService.findSpaceById(spaceId);
@@ -337,6 +358,7 @@ public class SpaceController {
     }
 
     @GetMapping("/server/{serverId}")
+    @PreAuthorize("hasAnyRole('ADMIN','PROVIDER')")
     @ResponseBody
     public ResponseEntity<?> getSpaceByIdServer(@PathVariable long serverId){
         User waiter = userRepository.findById(serverId).orElse(null);
@@ -347,8 +369,9 @@ public class SpaceController {
     }
 
     @PostMapping("/add/rate/{spaceId}")
+    @PreAuthorize("hasAnyRole('USER')")
     @ResponseBody
-    public ResponseEntity<?> addNewSpace( float rate, @PathVariable long spaceId)  {
+    public ResponseEntity<?> addRateToSpace( float rate, @PathVariable long spaceId)  {
 
         Space space = spaceService.findSpaceById(spaceId);
         if (space == null){
@@ -359,6 +382,7 @@ public class SpaceController {
     }
 
     @GetMapping("/nearest")
+    @PreAuthorize("hasAnyRole('USER')")
     public ResponseEntity<?> getTheNearestSpacesByDistance(@RequestParam("userLatitude") String userLatitude,
                                                      @RequestParam("userLongitude") String userLongitude,
                                                      @RequestParam("threshold") double threshold){

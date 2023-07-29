@@ -2,6 +2,7 @@ package com.HelloWay.HelloWay.controllers;
 
 import com.HelloWay.HelloWay.Security.Jwt.CustomSessionRegistry;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.session.SessionInformation;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -20,6 +21,7 @@ public class SessionController {
     private CustomSessionRegistry sessionRegistry;
 
     @GetMapping("/validate-session")
+    @PreAuthorize("hasAnyRole('WAITER', 'USER', 'GUEST')")
     public String validateSession() {
         String username = getUsername();
         String sessionId = getSessionId();
@@ -34,6 +36,7 @@ public class SessionController {
     }
 
     @GetMapping("/validate-session/for_our_user/{tableId}")
+    @PreAuthorize("hasAnyRole('WAITER', 'USER', 'GUEST', 'PROVIDER')")
     public String validateSessionLatest(@PathVariable String tableId) {
         String sessionId = getSessionId();
 
@@ -47,6 +50,7 @@ public class SessionController {
     }
 
     @GetMapping("/validate-session/latest/{tableId}")
+    @PreAuthorize("hasAnyRole('WAITER', 'USER', 'GUEST')")
     public String validateSessionLatestWithRole(@PathVariable String tableId) {
         String sessionId = getSessionId();
 

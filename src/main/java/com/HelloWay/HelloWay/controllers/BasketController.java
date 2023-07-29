@@ -8,6 +8,7 @@ import com.HelloWay.HelloWay.services.*;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
@@ -47,6 +48,7 @@ public class BasketController {
     }
 
     @PostMapping("/add")
+    @PreAuthorize("hasAnyRole('PROVIDER')")
     @ResponseBody
     public Basket addNewBasket(@RequestBody Basket basket) {
         return basketService.addNewBasket(basket);
@@ -54,6 +56,7 @@ public class BasketController {
 
 
     @PostMapping("/tables/{boardId}/baskets")
+    @PreAuthorize("hasAnyRole('PROVIDER')")
     public ResponseEntity<?> addBasketToBoard(@PathVariable Long boardId, @RequestBody Basket basket) {
         Board table = boardService.findBoardById(boardId);
         if (table == null) {
@@ -69,6 +72,7 @@ public class BasketController {
 
     @JsonIgnore
     @GetMapping("/all")
+    @PreAuthorize("hasAnyRole('PROVIDER')")
     @ResponseBody
     public List<Basket> allBaskets(){
         return basketService.findAllBaskets();
@@ -76,6 +80,7 @@ public class BasketController {
 
 
     @GetMapping("/id/{id}")
+    @PreAuthorize("hasAnyRole('PROVIDER')")
     @ResponseBody
     public Basket findBasketById(@PathVariable("id") long id){
         return basketService.findBasketById(id);
@@ -83,16 +88,19 @@ public class BasketController {
 
 
     @PutMapping("/update")
+    @PreAuthorize("hasAnyRole('PROVIDER')")
     @ResponseBody
     public void updateBasket(@RequestBody Basket basket){
         basketService.updateBasket(basket); }
 
     @DeleteMapping("/delete/{id}")
+    @PreAuthorize("hasAnyRole('PROVIDER')")
     @ResponseBody
     public void deleteBasket(@PathVariable("id") long id){
         basketService.deleteBasket(id); }
 
     @PostMapping("/add/product/{productId}/to_basket/{basketId}/quantity/{quantity}")
+    @PreAuthorize("hasAnyRole('GUEST','USER')")
     public ResponseEntity<?> addProductToBasket(@PathVariable long basketId, @PathVariable long productId, @PathVariable int quantity) {
         Basket basket = basketService.findBasketById(basketId);
         if (basket == null){
@@ -113,6 +121,7 @@ public class BasketController {
 
     // with update of the quantity
     @PostMapping("/delete/one/product/{productId}/from_basket/{basketId}")
+    @PreAuthorize("hasAnyRole('GUEST','USER')")
     public ResponseEntity<?> deleteOneProductFromBasket(@PathVariable long basketId, @PathVariable long productId) {
         basketProductService.deleteProductFromBasket(basketId, productId);
         return ResponseEntity.ok().body("product deleted with success");
@@ -120,12 +129,14 @@ public class BasketController {
 
     // delete the product from the basket what ever the quantity
     @PostMapping("/delete/product/{productId}/from_basket/{basketId}")
+    @PreAuthorize("hasAnyRole('GUEST','USER')")
     public ResponseEntity<?> deleteProductFromBasket(@PathVariable long basketId, @PathVariable long productId) {
         basketProductService.deleteProductFromBasketV2(basketId, productId);
         return ResponseEntity.ok().body("product deleted with success");
     }
 
     @PostMapping("/{basketId}/commands")
+    @PreAuthorize("hasAnyRole('GUEST','USER')")
     public ResponseEntity<Command> createCommand(@PathVariable Long basketId) {
         Basket basket = basketService.findBasketById(basketId);
         Command command = commandService.createCommand(new Command());
@@ -134,6 +145,7 @@ public class BasketController {
     }
 
     @PostMapping("/{basketId}/commands/add/user/{userId}")
+    @PreAuthorize("hasAnyRole('GUEST','USER')")
     public ResponseEntity<Command> createCommandWithServer(@PathVariable Long basketId, @PathVariable long userId) {
         Basket basket = basketService.findBasketById(basketId);
        /* List<BasketProduct> basketProducts = basketProductService.getBasketProductsByBasketId(basketId);
@@ -171,6 +183,7 @@ public class BasketController {
 
     //Get products by id basket : done
     @GetMapping("/products/by_basket/{basketId}")
+    @PreAuthorize("hasAnyRole('GUEST','USER','WAITER')")
     public ResponseEntity<?> getProductsByIdBasket(@PathVariable long basketId){
         Basket basket = basketService.findBasketById(basketId);
         if (basket == null){
@@ -185,6 +198,7 @@ public class BasketController {
     }
 
     @GetMapping("/latest/basket/by_table/{tableId}")
+    @PreAuthorize("hasAnyRole('GUEST','USER','WAITER')")
     public ResponseEntity<?> getLatestBasketByIdTable(@PathVariable long tableId){
         Board board = boardService.findBoardById(tableId);
         if (board == null){
@@ -197,6 +211,7 @@ public class BasketController {
     }
 
     @GetMapping("/product/quantity/{productId}/by_basket/{basketId}")
+    @PreAuthorize("hasAnyRole('GUEST','USER','WAITER')")
     public ResponseEntity<?> getProductQuantityByIdBasketAndIdProduct(@PathVariable long basketId, @PathVariable long productId){
         Basket basket = basketService.findBasketById(basketId);
         QuantitysProduct quantity = new QuantitysProduct(0, 0) ;
@@ -219,6 +234,7 @@ public class BasketController {
 
     //TODO : getProductsByIdCommand() : product , oldQuantity , Quantity :: Done
     @GetMapping("/products/by_command/{commandId}")
+    @PreAuthorize("hasAnyRole('GUEST','USER','WAITER')")
     public ResponseEntity<?> getProductsByIdCommand(@PathVariable long commandId){
         Command command = commandService.findCommandById(commandId);
         if (command == null){

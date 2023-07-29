@@ -72,6 +72,7 @@
                     .antMatchers("/api/test/**").permitAll()
                     .antMatchers(HttpMethod.POST, "/api/auth/login-qr").permitAll() // Allow QR code authentication endpoint
                     .antMatchers(HttpMethod.GET, "/api/spaces/all/dto").permitAll() // Allow QR code authentication endpoint
+            //        .antMatchers("/api/users").hasRole("ADMIN") // Allow access for users with ROLE_ADMIN
                     .anyRequest().authenticated();
 
             http.addFilterBefore(authenticationJwtTokenFilter(), UsernamePasswordAuthenticationFilter.class);

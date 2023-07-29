@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/api/test")
 public class TestController {
     @GetMapping("/all")
+    @PreAuthorize("hasAnyRole('ADMIN','PROVIDER', 'WAITER', 'USER', 'GUEST')")
     public String allAccess() {
         return "Public Content.";
     }

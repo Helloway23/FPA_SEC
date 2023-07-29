@@ -5,6 +5,7 @@ import com.HelloWay.HelloWay.entities.*;
 import com.HelloWay.HelloWay.payload.response.Command_NumTableDTO;
 import com.HelloWay.HelloWay.services.*;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
@@ -41,6 +42,7 @@ public class CommandController {
     }
 
     @PostMapping("/{commandId}/accept")
+    @PreAuthorize("hasAnyRole('WAITER')")
     public ResponseEntity<String> acceptCommand(@PathVariable Long commandId) {
         Command command = commandService.findCommandById(commandId);
         Basket basket = command.getBasket();
@@ -61,6 +63,7 @@ public class CommandController {
 
 
     @PostMapping("/{commandId}/refuse")
+    @PreAuthorize("hasAnyRole('WAITER')")
     public ResponseEntity<String> refuseCommand(@PathVariable Long commandId) {
         Command command = commandService.findCommandById(commandId);
         if (command == null){
@@ -80,6 +83,7 @@ public class CommandController {
     // we must remove they from the list of connected users in this table :: done
     // then we must implement the creation of a new basket with this fucking table :: done
     @PostMapping("/{commandId}/pay")
+    @PreAuthorize("hasAnyRole('WAITER')")
     public ResponseEntity<String> payCommand(@PathVariable Long commandId) {
         Command command = commandService.findCommandById(commandId);
         if (command == null){
@@ -111,6 +115,7 @@ public class CommandController {
 
 
     @GetMapping("/calculate/sum/{commandId}")
+    @PreAuthorize("hasAnyRole('WAITER', 'GUEST', 'USER')")
     public ResponseEntity<?> getSumOfCommand(@PathVariable long commandId){
         Command command = commandService.findCommandById(commandId);
         if (command == null){
@@ -123,6 +128,7 @@ public class CommandController {
     // output : command : num table  : list<Command,numTable> :: Done
     // wissal will test (my dataBase effected) TODO ::
     @GetMapping("/for/server/{serverId}")
+    @PreAuthorize("hasAnyRole('PROVIDER')")
     public ResponseEntity<?> getServersCommand(@PathVariable long serverId){
         User server = userService.findUserById(serverId);
         if (server == null){
@@ -138,6 +144,7 @@ public class CommandController {
 
     // we will use this after update the basket (after adding a product to the basket)
     @PutMapping("/update/{commandId}/basket/{basketId}")
+    @PreAuthorize("hasAnyRole('WAITER', 'USER', 'GUEST')")
     public ResponseEntity<?> updateCommand(@PathVariable long basketId, @PathVariable long commandId){
         Command command = commandService.findCommandById(commandId);
         if (command == null){
@@ -154,6 +161,7 @@ public class CommandController {
     }
 
     @GetMapping("/by/basket/{basketId}")
+    @PreAuthorize("hasAnyRole('WAITER', 'USER', 'GUEST')")
     public ResponseEntity<?> getCommandByBasketId(@PathVariable long basketId){
         Basket basket = basketService.findBasketById(basketId);
         if (basket == null){
@@ -164,6 +172,7 @@ public class CommandController {
     }
 
     @GetMapping("/by/user/{userId}")
+    @PreAuthorize("hasAnyRole('PROVIDER')")
     public ResponseEntity<?> getCommandsByUserId(@PathVariable long userId){
         User user = userService.findUserById(userId);
         if (user == null){
@@ -177,6 +186,7 @@ public class CommandController {
     }
 
     @GetMapping("/latest/by/user/{userId}")
+    @PreAuthorize("hasAnyRole('PROVIDER','USER')")
     public ResponseEntity<?> getLatestCommandByUserId(@PathVariable long userId){
         User user = userService.findUserById(userId);
         if (user == null){
@@ -190,6 +200,7 @@ public class CommandController {
     }
 
     @GetMapping("/sumPerDay")
+    @PreAuthorize("hasAnyRole('PROVIDER')")
     public ResponseEntity<Double> getServerSumCommandsPerDay(
             @RequestParam Long serverId,
             @RequestParam String localDate) {
@@ -200,6 +211,7 @@ public class CommandController {
     }
 
     @GetMapping("/sumPerMonth")
+    @PreAuthorize("hasAnyRole('PROVIDER')")
     public ResponseEntity<Double> getServerSumCommandsPerMonth(
             @RequestParam Long serverId,
             @RequestParam String yearMonth) {
@@ -210,6 +222,7 @@ public class CommandController {
     }
 
     @GetMapping("/countPerDay")
+    @PreAuthorize("hasAnyRole('PROVIDER')")
     public ResponseEntity<?> getServerCommandsCountPerDay(
             @RequestParam Long serverId,
             @RequestParam String localDate) {

@@ -56,6 +56,7 @@ public class UserService implements UserDetailsService {
             existingUser.setPhone(updatedUser.getPhone());
             existingUser.setEmail(updatedUser.getEmail());
             existingUser.setUsername(updatedUser.getUsername());
+            existingUser.setActivated(updatedUser.isActivated());
             existingUser.setPassword(updatedUser.getPassword());
 
             userRepo.save(existingUser);

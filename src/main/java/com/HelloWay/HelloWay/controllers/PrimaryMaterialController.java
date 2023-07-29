@@ -7,6 +7,7 @@ import com.HelloWay.HelloWay.services.SpaceService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -25,12 +26,14 @@ public class PrimaryMaterialController {
     }
 
     @GetMapping
+    @PreAuthorize("hasAnyRole('PROVIDER')")
     public ResponseEntity<List<PrimaryMaterial>> getAllPrimaryMaterials() {
         List<PrimaryMaterial> primaryMaterials = primaryMaterialService.getAllPrimaryMaterials();
         return ResponseEntity.ok(primaryMaterials);
     }
 
     @GetMapping("/{id}")
+    @PreAuthorize("hasAnyRole('PROVIDER')")
     public ResponseEntity<PrimaryMaterial> getPrimaryMaterialById(@PathVariable("id") Long id) {
         PrimaryMaterial primaryMaterial = primaryMaterialService.getPrimaryMaterialById(id);
         if (primaryMaterial != null) {
@@ -41,12 +44,14 @@ public class PrimaryMaterialController {
     }
 
     @PostMapping
+    @PreAuthorize("hasAnyRole('PROVIDER')")
     public ResponseEntity<PrimaryMaterial> createPrimaryMaterial(@RequestBody PrimaryMaterial primaryMaterial) {
         PrimaryMaterial createdPrimaryMaterial = primaryMaterialService.createPrimaryMaterial(primaryMaterial);
         return ResponseEntity.status(HttpStatus.CREATED).body(createdPrimaryMaterial);
     }
 
     @PutMapping("/{id}")
+    @PreAuthorize("hasAnyRole('PROVIDER')")
     public ResponseEntity<PrimaryMaterial> updatePrimaryMaterial(
             @PathVariable("id") Long id,
             @RequestBody PrimaryMaterial updatedPrimaryMaterial
@@ -60,12 +65,14 @@ public class PrimaryMaterialController {
     }
 
     @DeleteMapping("/{id}")
+    @PreAuthorize("hasAnyRole('PROVIDER')")
     public ResponseEntity<Void> deletePrimaryMaterial(@PathVariable("id") Long id) {
         primaryMaterialService.deletePrimaryMaterial(id);
         return ResponseEntity.noContent().build();
     }
 
     @GetMapping("/space/{spaceId}")
+    @PreAuthorize("hasAnyRole('PROVIDER')")
     public ResponseEntity<List<PrimaryMaterial>> getPrimaryMaterialsBySpaceId(@PathVariable("spaceId") Long spaceId) {
         Space space = spaceService.findSpaceById(spaceId);
         List<PrimaryMaterial> primaryMaterials = primaryMaterialService.getPrimaryMaterialsBySpace(space);
@@ -73,6 +80,7 @@ public class PrimaryMaterialController {
     }
 
     @PostMapping("/space/{spaceId}")
+    @PreAuthorize("hasAnyRole('PROVIDER')")
     public ResponseEntity<PrimaryMaterial> addPrimaryMaterialToSpace(
             @PathVariable("spaceId") Long spaceId,
             @RequestBody PrimaryMaterial primaryMaterial
@@ -86,6 +94,7 @@ public class PrimaryMaterialController {
     }
 
     @PutMapping("/space/{spaceId}/{primaryMaterialId}")
+    @PreAuthorize("hasAnyRole('PROVIDER')")
     public ResponseEntity<PrimaryMaterial> updatePrimaryMaterialInSpace(
             @PathVariable("spaceId") Long spaceId,
             @PathVariable("primaryMaterialId") Long primaryMaterialId,
@@ -100,6 +109,7 @@ public class PrimaryMaterialController {
     }
 
     @DeleteMapping("/space/{spaceId}/{primaryMaterialId}")
+    @PreAuthorize("hasAnyRole('PROVIDER')")
     public ResponseEntity<Void> removePrimaryMaterialFromSpace(
             @PathVariable("spaceId") Long spaceId,
             @PathVariable("primaryMaterialId") Long primaryMaterialId
@@ -109,6 +119,7 @@ public class PrimaryMaterialController {
     }
 
    @GetMapping("/space/{spaceId}/expiration")
+   @PreAuthorize("hasAnyRole('PROVIDER')")
     public ResponseEntity<List<PrimaryMaterial>> getExpiredPrimaryMaterialsBySpaceId(@PathVariable("spaceId") Long spaceId) {
         Space space = spaceService.findSpaceById(spaceId);
         List<PrimaryMaterial> expiredPrimaryMaterials = primaryMaterialService.getExpiredPrimaryMaterialsBySpace(space);
@@ -116,6 +127,7 @@ public class PrimaryMaterialController {
     }
 
     @GetMapping("/space/{spaceId}/expiration/expired")
+    @PreAuthorize("hasAnyRole('PROVIDER')")
     public ResponseEntity<List<PrimaryMaterial>> getExpiredPrimaryMaterialsBySpaceIdLatestVersion(@PathVariable("spaceId") Long spaceId) {
         Space space = spaceService.findSpaceById(spaceId);
         List<PrimaryMaterial> expiredPrimaryMaterials = primaryMaterialService.getExpiredPrimaryMaterialsBySpaceLatestVersion(space);
@@ -123,6 +135,7 @@ public class PrimaryMaterialController {
     }
 
     @PatchMapping("/{primaryMaterialId}/quantity")
+    @PreAuthorize("hasAnyRole('PROVIDER')")
     public ResponseEntity<PrimaryMaterial> updatePrimaryMaterialQuantity(
             @PathVariable("primaryMaterialId") Long primaryMaterialId,
             @RequestParam("quantity") double quantity
@@ -136,6 +149,7 @@ public class PrimaryMaterialController {
     }
 
     @GetMapping("/space/{spaceId}/name/{name}")
+    @PreAuthorize("hasAnyRole('PROVIDER')")
     public ResponseEntity<List<PrimaryMaterial>> getPrimaryMaterialsBySpaceIdAndName(
             @PathVariable("spaceId") Long spaceId,
             @PathVariable("name") String name

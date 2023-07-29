@@ -10,6 +10,7 @@ import org.apache.tomcat.util.http.fileupload.IOUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -36,6 +37,7 @@ public class UserController {
     }
 
     @PostMapping("/add")
+    @PreAuthorize("hasAnyRole('ADMIN')")
     @ResponseBody
     public User add_New_User(@RequestBody User user) {
         return userService.addUser(user);
@@ -43,6 +45,7 @@ public class UserController {
 
     @JsonIgnore
     @GetMapping("/all")
+    @PreAuthorize("hasRole('ADMIN')") // Protect this endpoint for users with ROLE_ADMIN
     @ResponseBody
     public List<User> all_users(){
         return userService.findAllUsers();
@@ -50,6 +53,7 @@ public class UserController {
 
 
     @GetMapping("/id/{id}")
+    @PreAuthorize("hasAnyRole('ADMIN')")
     @ResponseBody
     public User user_id(@PathVariable("id") long id){
         return userService.findUserById(id);
@@ -57,11 +61,16 @@ public class UserController {
 
 
     @PutMapping("/update")
+    @PreAuthorize("hasAnyRole('ADMIN')")
     @ResponseBody
-    public User updateUser(@RequestBody User user){
-        return  userService.updateUser(user); }
+    public ResponseEntity<?> updateUser(@RequestBody User user){
+        if (userService.loadUserByUsername(user.getUsername()) != null){
+            return ResponseEntity.badRequest().body("username exist please try again with an other");
+        }
+        return ResponseEntity.ok().body( userService.updateUser(user)); }
 
     @DeleteMapping("/delete/{id}")
+    @PreAuthorize("hasAnyRole('ADMIN')")
     @ResponseBody
     public void supp_user(@PathVariable("id") long id){
         userService.deleteUser(id); }
@@ -100,6 +109,8 @@ public class UserController {
     }
 
     @GetMapping("/all/paging")
+    @PreAuthorize("hasAnyRole('ADMIN')")
+
     public Page<User> getUsers(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size
@@ -108,6 +119,7 @@ public class UserController {
     }
 
     @GetMapping("/get/moderators")
+    @PreAuthorize("hasRole('ADMIN')") // Protect this endpoint for users with ROLE_ADMIN
     public ResponseEntity<?> getAllModerators(){
         List<User> moderators = userService.getAllModerators();
         if (moderators.isEmpty()){

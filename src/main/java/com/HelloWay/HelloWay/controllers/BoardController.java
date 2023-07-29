@@ -9,6 +9,7 @@ import com.HelloWay.HelloWay.services.ZoneService;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
@@ -39,6 +40,7 @@ public class BoardController {
     }
 
     @PostMapping("/add")
+    @PreAuthorize("hasRole('PROVIDER')")
     @ResponseBody
     public Board addNewBoard(@RequestBody Board board) {
         return boardService.addNewBoard(board);
@@ -46,6 +48,7 @@ public class BoardController {
 
     @JsonIgnore
     @GetMapping("/all")
+    @PreAuthorize("hasAnyRole('PROVIDER')")
     @ResponseBody
     public List<Board> allBoards(){
         return boardService.findAllBoards();
@@ -53,6 +56,7 @@ public class BoardController {
 
 
     @GetMapping("/id/{id}")
+    @PreAuthorize("hasAnyRole('PROVIDER')")
     @ResponseBody
     public Board findBoardById(@PathVariable("id") long id){
         return boardService.findBoardById(id);
@@ -60,11 +64,13 @@ public class BoardController {
 
 
     @PutMapping("/update")
+    @PreAuthorize("hasAnyRole('PROVIDER')")
     @ResponseBody
     public Board updateBoard(@RequestBody Board board){
       return   boardService.updateBoard(board); }
 
     @PutMapping("/update/{boardId}")
+    @PreAuthorize("hasAnyRole('PROVIDER')")
     @ResponseBody
     public ResponseEntity<?> updateBoard(@RequestBody Board board, @PathVariable long boardId){
         Board exestingBoard = boardService.findBoardById(boardId);
@@ -80,6 +86,7 @@ public class BoardController {
     }
 
     @DeleteMapping("/delete/{id}")
+    @PreAuthorize("hasAnyRole('PROVIDER')")
     @ResponseBody
     public void deleteBoard(@PathVariable("id") long id){
         boardService.deleteBoard(id); }
@@ -87,6 +94,7 @@ public class BoardController {
 
     // exist exeption for num table
     @PostMapping("/add/id_zone/{id_zone}")
+    @PreAuthorize("hasAnyRole('PROVIDER')")
     @ResponseBody
     public ResponseEntity<?> addNewBoardByIdZone(@RequestBody Board board, @PathVariable Long id_zone) {
         if (boardService.boardExistsByNumInZone(board, id_zone)){
@@ -111,6 +119,7 @@ public class BoardController {
     }
 
     @GetMapping("/id_zone/{id_zone}")
+    @PreAuthorize("hasAnyRole('PROVIDER')")
     @ResponseBody
     public List<Board> getBoardsByIdZone( @PathVariable Long id_zone) {
         return boardService.getBoardsByIdZone( id_zone);

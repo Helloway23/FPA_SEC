@@ -9,6 +9,7 @@ import com.HelloWay.HelloWay.services.SpaceService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -38,22 +39,26 @@ public class EventController {
     NotificationService notificationService;
 
     @GetMapping
+    @PreAuthorize("hasAnyRole('ADMIN')")
     public List<Event> getAllEvents() {
         return eventService.findAllEvents();
     }
 
     @GetMapping("/{eventId}")
+    @PreAuthorize("hasAnyRole('PROVIDER', 'ADMIN')")
     public ResponseEntity<Event> getEventById(@PathVariable Long eventId) {
         Event event = eventService.findEventById(eventId);
         return ResponseEntity.ok(event);
     }
 
     @PostMapping
+    @PreAuthorize("hasAnyRole('PROVIDER', 'ADMIN')")
     public Event createEvent(@RequestBody Event event) {
         return eventService.createEvent(event);
     }
 
     @PostMapping("/space/{spaceId}")
+    @PreAuthorize("hasAnyRole('PROVIDER')")
     public ResponseEntity<?> createEventForSpace(@RequestBody Event event, @PathVariable long spaceId) {
         Space space = spaceService.findSpaceById(spaceId);
         if (space == null){
@@ -70,6 +75,7 @@ public class EventController {
     }
 
     @PostMapping("/promotion/space/{spaceId}/{productId}")
+    @PreAuthorize("hasAnyRole('PROVIDER')")
     public ResponseEntity<?> createPromotionForSpaceAndProduct(@RequestBody Promotion promotion,
                                                      @PathVariable long spaceId,
                                                      @PathVariable long productId) {
@@ -116,11 +122,13 @@ public class EventController {
     }
 
     @PostMapping("/promotion")
+    @PreAuthorize("hasAnyRole('PROVIDER')")
     public Promotion createPromotion(@RequestBody Promotion promotion) {
         return eventService.createPromotion(promotion);
     }
 
     @PostMapping("/party/space/{spaceId}")
+    @PreAuthorize("hasAnyRole('PROVIDER')")
     public ResponseEntity<Party> createParty(@PathVariable Long spaceId, @RequestBody Party party) {
         // Retrieve the space
         Space space = spaceService.findSpaceById(spaceId);
@@ -170,31 +178,37 @@ public class EventController {
 
 
     @PostMapping("/party")
+    @PreAuthorize("hasAnyRole('PROVIDER')")
     public Party createParty(@RequestBody Party party) {
         return eventService.createParty(party);
     }
 
     @GetMapping("/promotions")
+    @PreAuthorize("hasAnyRole('PROVIDER')")
     public List<Promotion> getAllPromotions() {
         return eventService.getAllPromotions();
     }
 
     @GetMapping("/parties")
+    @PreAuthorize("hasAnyRole('PROVIDER')")
     public List<Party> getAllParties() {
         return eventService.getAllParties();
     }
 
     @PutMapping("/{eventId}")
+    @PreAuthorize("hasAnyRole('PROVIDER')")
     public Event updateEvent(@PathVariable Long eventId, @RequestBody Event updatedEvent) {
         return eventService.updateEvent(eventId, updatedEvent);
     }
 
     @GetMapping("/spaces/{spaceId}")
+    @PreAuthorize("hasAnyRole('PROVIDER')")
     public List<Event> getEventsBySpaceId(@PathVariable Long spaceId) {
         return eventService.getEventsBySpaceId(spaceId);
     }
 
     @GetMapping("/promotions/product/{productId}")
+    @PreAuthorize("hasAnyRole('PROVIDER', 'USER', 'GUEST')")
     public ResponseEntity<?> getPromotionsByProductId(@PathVariable Long productId) {
         Product product = productService.findProductById(productId);
         if (product == null){
@@ -205,6 +219,7 @@ public class EventController {
     }
 
     @GetMapping("/date-range")
+    @PreAuthorize("hasAnyRole('PROVIDER', 'USER', 'GUEST')")
     public List<Event> getEventsByDateRange(
             @RequestParam("startDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startDate,
             @RequestParam("endDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate endDate) {
@@ -212,11 +227,13 @@ public class EventController {
     }
 
     @GetMapping("/upcoming")
+    @PreAuthorize("hasAnyRole('PROVIDER', 'USER', 'GUEST')")
     public List<Event> getUpcomingEvents(@RequestParam("limit") int limit) {
         return eventService.getUpcomingEvents(limit);
     }
 
     @PostMapping("/{id}/images")
+    @PreAuthorize("hasAnyRole('PROVIDER')")
     public ResponseEntity<String> addImage(@PathVariable("id") Long id,
                                            @RequestParam("file") MultipartFile file) {
         try {
