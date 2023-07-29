@@ -61,7 +61,7 @@ public class CategorieController {
     @ResponseBody
     public ResponseEntity<?> updateCategorie(@RequestBody Categorie categorie, @PathVariable long categorieId){
         Categorie exestingCategorie = categorieService.findCategorieById(categorieId);
-        Space space = categorie.getSpace();
+        Space space = exestingCategorie.getSpace();
         List<Categorie> spaceCategories = space.getCategories();
         spaceCategories.remove(exestingCategorie);
         for (Categorie c : spaceCategories){

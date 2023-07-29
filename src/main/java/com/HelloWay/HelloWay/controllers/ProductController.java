@@ -135,6 +135,7 @@ public class ProductController {
                     && promotion.getEndDate().isAfter(LocalDateTime.now())) {
                 productsDto.get(products.indexOf(product)).setHasActivePromotion(true);
                 productsDto.get(products.indexOf(product)).setPercentage(promotion.getPercentage());
+                productsDto.get(products.indexOf(product)).setPromotionId(promotion.getIdEvent());
             }
           }
         }

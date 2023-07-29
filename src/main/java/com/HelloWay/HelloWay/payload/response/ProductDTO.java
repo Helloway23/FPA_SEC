@@ -15,6 +15,28 @@ public class ProductDTO {
     private  boolean hasActivePromotion = false ;
     private int percentage ;
 
+    private long promotionId;
+
+    public ProductDTO(Long idProduct,
+                      String productTitle,
+                      Float price,
+                      String description,
+                      Boolean available,
+                      List<Image> images,
+                      boolean hasActivePromotion,
+                      int percentage,
+                      int promotionId) {
+        this.idProduct = idProduct;
+        this.productTitle = productTitle;
+        this.price = price;
+        this.description = description;
+        this.available = available;
+        this.images = images;
+        this.hasActivePromotion = hasActivePromotion;
+        this.percentage = percentage;
+        this.promotionId = promotionId;
+    }
+
     public ProductDTO(Long idProduct,
                       String productTitle,
                       Float price,
@@ -98,5 +120,13 @@ public class ProductDTO {
 
     public void setPercentage(int percentage) {
         this.percentage = percentage;
+    }
+
+    public long getPromotionId() {
+        return promotionId;
+    }
+
+    public void setPromotionId(long promotionId) {
+        this.promotionId = promotionId;
     }
 }

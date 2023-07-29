@@ -69,7 +69,7 @@ public class ZoneController {
     @ResponseBody
     public ResponseEntity<?> updateZone(@RequestBody Zone zone, @PathVariable long zoneId){
         Zone exestingZone = zoneService.findZoneById(zoneId);
-        Space space = zone.getSpace();
+        Space space = exestingZone.getSpace();
         List<Zone> spaceZones = space.getZones();
         spaceZones.remove(exestingZone);
         for (Zone z : spaceZones){

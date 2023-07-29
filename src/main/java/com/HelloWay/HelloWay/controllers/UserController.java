@@ -64,9 +64,15 @@ public class UserController {
     @PreAuthorize("hasAnyRole('ADMIN')")
     @ResponseBody
     public ResponseEntity<?> updateUser(@RequestBody User user){
-        if (userService.loadUserByUsername(user.getUsername()) != null){
-            return ResponseEntity.badRequest().body("username exist please try again with an other");
-        }
+        List<User> existingUsers = userService.findAllUsers();
+        User existingUser = userService.findUserById(user.getId());
+         existingUsers.remove(existingUser);
+         for (User u : existingUsers){
+             if (u.getUsername().equals(user.getUsername())){
+                 return ResponseEntity.badRequest().body("username exist please try again with an other");
+
+             }
+         }
         return ResponseEntity.ok().body( userService.updateUser(user)); }
 
     @DeleteMapping("/delete/{id}")
