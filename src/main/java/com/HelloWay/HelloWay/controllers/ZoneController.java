@@ -73,7 +73,7 @@ public class ZoneController {
         List<Zone> spaceZones = space.getZones();
         spaceZones.remove(exestingZone);
         for (Zone z : spaceZones){
-            if (z.getZoneTitle().equals(exestingZone.getZoneTitle())){
+            if (z.getZoneTitle().equals(zone.getZoneTitle())){
                 return ResponseEntity.badRequest().body("zone exist with this title please try with an other");
             }
         }

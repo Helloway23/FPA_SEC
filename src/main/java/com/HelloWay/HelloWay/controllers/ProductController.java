@@ -84,7 +84,7 @@ public class ProductController {
         List<Product> categorieProducts = categorie.getProducts();
         categorieProducts.remove(exestingProduct);
         for (Product p : categorieProducts){
-            if (p.getProductTitle().equals(exestingProduct.getProductTitle())){
+            if (p.getProductTitle().equals(product.getProductTitle())){
                 return ResponseEntity.badRequest().body("product exist with this title please try with an other");
             }
         }

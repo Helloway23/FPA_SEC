@@ -53,7 +53,7 @@ public class UserController {
 
 
     @GetMapping("/id/{id}")
-    @PreAuthorize("hasAnyRole('ADMIN')")
+    @PreAuthorize("hasAnyRole('ADMIN', 'PR0VIDER', 'USER', 'WAITER')")
     @ResponseBody
     public User user_id(@PathVariable("id") long id){
         return userService.findUserById(id);
@@ -61,7 +61,7 @@ public class UserController {
 
 
     @PutMapping("/update")
-    @PreAuthorize("hasAnyRole('ADMIN')")
+    @PreAuthorize("hasAnyRole('ADMIN', 'PR0VIDER', 'USER', 'WAITER')")
     @ResponseBody
     public ResponseEntity<?> updateUser(@RequestBody User user){
         List<User> existingUsers = userService.findAllUsers();
@@ -76,7 +76,7 @@ public class UserController {
         return ResponseEntity.ok().body( userService.updateUser(user)); }
 
     @DeleteMapping("/delete/{id}")
-    @PreAuthorize("hasAnyRole('ADMIN')")
+    @PreAuthorize("hasAnyRole('ADMIN', 'PROVIDER')")
     @ResponseBody
     public void supp_user(@PathVariable("id") long id){
         userService.deleteUser(id); }

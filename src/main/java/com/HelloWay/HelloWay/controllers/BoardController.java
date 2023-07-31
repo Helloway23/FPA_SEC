@@ -78,7 +78,7 @@ public class BoardController {
         List<Board> zoneBoards = zone.getBoards();
         zoneBoards.remove(exestingBoard);
         for (Board b : zoneBoards){
-            if (b.getNumTable() == exestingBoard.getNumTable()){
+            if (b.getNumTable() == board.getNumTable()){
                 return ResponseEntity.badRequest().body("board exist with this num please try with an other");
             }
         }

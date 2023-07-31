@@ -57,8 +57,6 @@ public class UserService implements UserDetailsService {
             existingUser.setEmail(updatedUser.getEmail());
             existingUser.setUsername(updatedUser.getUsername());
             existingUser.setActivated(updatedUser.isActivated());
-            existingUser.setPassword(updatedUser.getPassword());
-
             userRepo.save(existingUser);
             return existingUser;
         } else {

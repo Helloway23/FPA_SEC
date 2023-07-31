@@ -40,7 +40,7 @@ public class NotificationController {
     }
 
     @GetMapping("/providers/{userId}/notifications")
-    @PreAuthorize("hasAnyRole('PROVIDER')")
+    @PreAuthorize("hasAnyRole('PROVIDER', 'USER', 'GUEST')")
     public List<Notification> getNotificationsForProvider(@PathVariable Long userId) {
         return notificationService.getNotificationsForRecipient(userId);
     }

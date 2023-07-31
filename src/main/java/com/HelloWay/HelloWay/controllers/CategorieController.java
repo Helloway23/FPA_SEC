@@ -65,7 +65,7 @@ public class CategorieController {
         List<Categorie> spaceCategories = space.getCategories();
         spaceCategories.remove(exestingCategorie);
         for (Categorie c : spaceCategories){
-            if (c.getCategoryTitle().equals(exestingCategorie.getCategoryTitle())){
+            if (c.getCategoryTitle().equals(categorie.getCategoryTitle())){
                 return ResponseEntity.badRequest().body("categorie exist with this title please try with an other");
             }
         }
@@ -94,7 +94,7 @@ public class CategorieController {
     }
 
     @GetMapping("/id_space/{id_space}")
-    @PreAuthorize("hasAnyRole('PROVIDER')")
+    @PreAuthorize("hasAnyRole('PROVIDER','USER', 'GUEST')")
     @ResponseBody
     public List<Categorie> getCategoriesByIdSpace( @PathVariable Long id_space) {
         return categorieService.getCategoriesByIdSpace( id_space);

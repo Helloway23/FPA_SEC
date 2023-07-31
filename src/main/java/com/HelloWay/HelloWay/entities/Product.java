@@ -125,7 +125,7 @@ public class Product {
         this.images = images;
     }
 
-    @OneToMany(mappedBy="product")
+    @OneToMany(mappedBy="product", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Promotion> promotions;
 
     public List<Promotion> getPromotions() {
