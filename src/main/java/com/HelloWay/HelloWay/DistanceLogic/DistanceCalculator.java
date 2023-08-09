@@ -39,6 +39,7 @@ public class DistanceCalculator {
      */
     public static  Boolean isTheUserInTheSpaCe(String userLatitude,
                                                String userLongitude,
+                                               double accuracy,
                                                Space space
                                                ){
         String spaceLatitude = space.getLatitude();
@@ -50,7 +51,7 @@ public class DistanceCalculator {
         // Smaller spaces will have smaller thresholds,
         // requiring users to be closer to be considered near the space.
          double cast = space.getSurfaceEnM2()/Math.pow(10,6); //from m2 to km2 for the Rayon
-        double threshold = sqrt(cast/Math.PI);
+        double threshold = sqrt(cast/Math.PI) + accuracy;
         // double threshold = 5.0; // Threshold distance in kilometers
         double distance = calculateDistance(Double.parseDouble(userLatitude), Double.parseDouble(userLongitude), Double.parseDouble(spaceLatitude), Double.parseDouble(spaceLongitude));
         if (distance <= threshold) {

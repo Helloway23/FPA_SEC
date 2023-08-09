@@ -281,8 +281,8 @@ public class AuthController {
     }
 
 
-    @PostMapping("/signin/qr_Code/{qr_Code}/userLatitude/{userLatitude}/userLongitude/{userLongitude}")
-    public ResponseEntity<?> authenticateUser(@PathVariable String qr_Code, @PathVariable String userLatitude, @PathVariable String userLongitude, HttpServletRequest request) {
+    @PostMapping("/signin/qr_Code/{qr_Code}/userLatitude/{userLatitude}/userLongitude/{userLongitude}/{accuracy}")
+    public ResponseEntity<?> authenticateUser(@PathVariable String qr_Code, @PathVariable String userLatitude, @PathVariable String userLongitude, HttpServletRequest request, @PathVariable String accuracy) {
         String[] splitArray = qr_Code.split("-"); // Splitting using the hyphen character "-"
 
         String idTable = splitArray[0];
@@ -290,7 +290,7 @@ public class AuthController {
 
         Space space = zoneService.findZoneById(Long.parseLong(idZone)).getSpace();
 
-        if (DistanceCalculator.isTheUserInTheSpaCe(userLatitude, userLongitude, space))
+        if (DistanceCalculator.isTheUserInTheSpaCe(userLatitude, userLongitude, Double.parseDouble(accuracy) , space))
         {
             String userName = "Board"+ idTable;
             String password = "Pass"+ idTable +"*"+idZone;
@@ -337,8 +337,8 @@ public class AuthController {
         }
     }
 
-    @PostMapping("/qr_Code_for_app_user/{qr_Code}/userLatitude/{userLatitude}/userLongitude/{userLongitude}")
-    public ResponseEntity<?> setUserInTable(@PathVariable String qr_Code, @PathVariable String userLatitude, @PathVariable String userLongitude) {
+    @PostMapping("/qr_Code_for_app_user/{qr_Code}/userLatitude/{userLatitude}/userLongitude/{userLongitude}/{accuracy}")
+    public ResponseEntity<?> setUserInTable(@PathVariable String qr_Code, @PathVariable String userLatitude, @PathVariable String userLongitude, @PathVariable String accuracy) {
         String[] splitArray = qr_Code.split("-"); // Splitting using the hyphen character "-"
 
         String idTable = splitArray[0];
@@ -346,7 +346,7 @@ public class AuthController {
 
         Space space = zoneService.findZoneById(Long.parseLong(idZone)).getSpace();
 
-        if (DistanceCalculator.isTheUserInTheSpaCe(userLatitude, userLongitude, space))
+        if (DistanceCalculator.isTheUserInTheSpaCe(userLatitude, userLongitude, Double.parseDouble(accuracy), space))
         {
 
             String sessionId =  RequestContextHolder.currentRequestAttributes().getSessionId();

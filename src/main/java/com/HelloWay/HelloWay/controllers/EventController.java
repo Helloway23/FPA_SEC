@@ -255,4 +255,19 @@ public class EventController {
         }
     }
 
+    @PutMapping("/update/promotion")
+    @ResponseBody
+    public Event updatePromotion(@RequestBody Promotion promotion){
+        Promotion existedPromotion = (Promotion) eventService.findEventById(promotion.getIdEvent());
+        promotion.setProduct(existedPromotion.getProduct());
+        promotion.setSpace(existedPromotion.getSpace());
+        return eventService.updateEvent(promotion); }
+
+    @PutMapping("/update")
+    @ResponseBody
+    public Event updateEvent(@RequestBody Event event){
+        Event existedEvent = eventService.findEventById(event.getIdEvent());
+        event.setSpace(existedEvent.getSpace());
+        return eventService.updateEvent(event); }
+
 }
