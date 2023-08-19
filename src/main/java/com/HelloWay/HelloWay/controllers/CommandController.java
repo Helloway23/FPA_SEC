@@ -128,7 +128,7 @@ public class CommandController {
     // output : command : num table  : list<Command,numTable> :: Done
     // wissal will test (my dataBase effected) TODO ::
     @GetMapping("/for/server/{serverId}")
-    @PreAuthorize("hasAnyRole('PROVIDER')")
+    @PreAuthorize("hasAnyRole('PROVIDER','WAITER')")
     public ResponseEntity<?> getServersCommand(@PathVariable long serverId){
         User server = userService.findUserById(serverId);
         if (server == null){
@@ -224,6 +224,17 @@ public class CommandController {
     @GetMapping("/countPerDay")
     @PreAuthorize("hasAnyRole('PROVIDER')")
     public ResponseEntity<?> getServerCommandsCountPerDay(
+            @RequestParam Long serverId,
+            @RequestParam String localDate) {
+        User server = userService.findUserById(serverId);
+        LocalDate date = LocalDate.parse(localDate);
+        int sum = commandService.getServerCommandsCountPerDay(server, date);
+        return ResponseEntity.ok(sum);
+    }
+
+    @GetMapping("/command_id/{command_id}")
+    @PreAuthorize("hasAnyRole('PROVIDER','USER')")
+    public ResponseEntity<?> getCommandServers(
             @RequestParam Long serverId,
             @RequestParam String localDate) {
         User server = userService.findUserById(serverId);

@@ -7,6 +7,7 @@ import com.HelloWay.HelloWay.services.NotificationService;
 import com.HelloWay.HelloWay.services.ProductService;
 import com.HelloWay.HelloWay.services.SpaceService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.crossstore.ChangeSetPersister;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -269,5 +270,22 @@ public class EventController {
         Event existedEvent = eventService.findEventById(event.getIdEvent());
         event.setSpace(existedEvent.getSpace());
         return eventService.updateEvent(event); }
+
+    @DeleteMapping("{idImage}/images/{idEvent}")
+    @PreAuthorize("hasAnyRole('ADMIN','PROVIDER')")
+    public ResponseEntity<?> deleteImage(@PathVariable String idImage, @PathVariable Long idEvent){
+        Image image = imageRepository.findById(idImage).orElse(null);
+        if (image == null){
+            return ResponseEntity.notFound().build();
+        }
+        Event event = eventService.findEventById(idEvent);
+        if (event == null){
+            return ResponseEntity.notFound().build();
+        }
+        event.getImages().remove(image);
+        eventService.updateEvent(event);
+        imageRepository.delete(image);
+        return ResponseEntity.ok("image deleted successfully for the event");
+    }
 
 }

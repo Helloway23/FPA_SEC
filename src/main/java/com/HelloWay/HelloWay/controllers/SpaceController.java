@@ -324,6 +324,7 @@ public class SpaceController {
                 .orElseThrow(() -> new RuntimeException("Error: Role is not found."));
         roles.add(assistantRole);
         user.setRoles(roles);
+        user.setActivated(true);
         User userSaved = userRepository.save(user);
         try {
             spaceService.addServerInSpace(spaceId, moderatorUserId, userSaved.getId());
@@ -358,7 +359,7 @@ public class SpaceController {
     }
 
     @GetMapping("/server/{serverId}")
-    @PreAuthorize("hasAnyRole('ADMIN','PROVIDER')")
+    @PreAuthorize("hasAnyRole('ADMIN','PROVIDER','WAITER')")
     @ResponseBody
     public ResponseEntity<?> getSpaceByIdServer(@PathVariable long serverId){
         User waiter = userRepository.findById(serverId).orElse(null);

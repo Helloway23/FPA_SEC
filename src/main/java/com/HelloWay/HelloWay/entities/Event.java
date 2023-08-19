@@ -46,7 +46,7 @@ public class Event {
     @JoinColumn(name="idSpace")
     private Space space;
 
-    @ToString.Exclude
+
     @OneToMany(mappedBy="event")
     private List<Image> images;
 

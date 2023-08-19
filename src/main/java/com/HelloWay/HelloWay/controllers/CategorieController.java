@@ -94,7 +94,7 @@ public class CategorieController {
     }
 
     @GetMapping("/id_space/{id_space}")
-    @PreAuthorize("hasAnyRole('PROVIDER','USER', 'GUEST')")
+    @PreAuthorize("hasAnyRole('PROVIDER','USER', 'GUEST','WAITER')")
     @ResponseBody
     public List<Categorie> getCategoriesByIdSpace( @PathVariable Long id_space) {
         return categorieService.getCategoriesByIdSpace( id_space);

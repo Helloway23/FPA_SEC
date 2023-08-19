@@ -53,7 +53,7 @@ public class DistanceCalculator {
          double cast = space.getSurfaceEnM2()/Math.pow(10,6); //from m2 to km2 for the Rayon
         double threshold = sqrt(cast/Math.PI) + accuracy;
         // double threshold = 5.0; // Threshold distance in kilometers
-        double distance = calculateDistance(Double.parseDouble(userLatitude), Double.parseDouble(userLongitude), Double.parseDouble(spaceLatitude), Double.parseDouble(spaceLongitude));
+        double distance = 1000 * calculateDistance(Double.parseDouble(userLatitude), Double.parseDouble(userLongitude), Double.parseDouble(spaceLatitude), Double.parseDouble(spaceLongitude));
         if (distance <= threshold) {
             System.out.println("User is near the space.");
             return true;

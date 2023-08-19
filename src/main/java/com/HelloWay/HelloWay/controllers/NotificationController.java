@@ -40,13 +40,13 @@ public class NotificationController {
     }
 
     @GetMapping("/providers/{userId}/notifications")
-    @PreAuthorize("hasAnyRole('PROVIDER', 'USER', 'GUEST')")
+    @PreAuthorize("hasAnyRole('PROVIDER', 'USER', 'GUEST','WAITER')")
     public List<Notification> getNotificationsForProvider(@PathVariable Long userId) {
         return notificationService.getNotificationsForRecipient(userId);
     }
 
     @PutMapping("/{notificationId}")
-    @PreAuthorize("hasAnyRole('PROVIDER')")
+    @PreAuthorize("hasAnyRole('PROVIDER','WAITER')")
     public ResponseEntity<Notification> updateNotification(
             @PathVariable Long notificationId,
             @RequestParam String title,
