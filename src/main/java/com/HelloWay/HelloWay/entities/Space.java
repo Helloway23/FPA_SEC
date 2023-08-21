@@ -38,7 +38,7 @@ public class Space {
     private String longitude;
 
 
-    @NotNull
+
     private Long phoneNumber;
 
     @NotNull

@@ -80,7 +80,7 @@ public class ProductController {
     @ResponseBody
     public ResponseEntity<?> updateProduct(@RequestBody Product product, @PathVariable long productId){
         Product exestingProduct = productService.findProductById(productId);
-        Categorie categorie = product.getCategorie();
+        Categorie categorie = exestingProduct.getCategorie();
         List<Product> categorieProducts = categorie.getProducts();
         categorieProducts.remove(exestingProduct);
         for (Product p : categorieProducts){

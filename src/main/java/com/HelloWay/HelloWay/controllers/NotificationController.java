@@ -46,7 +46,7 @@ public class NotificationController {
     }
 
     @PutMapping("/{notificationId}")
-    @PreAuthorize("hasAnyRole('PROVIDER','WAITER')")
+    @PreAuthorize("hasAnyRole('PROVIDER','WAITER','notification')")
     public ResponseEntity<Notification> updateNotification(
             @PathVariable Long notificationId,
             @RequestParam String title,

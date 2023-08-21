@@ -172,7 +172,7 @@ public class CommandController {
     }
 
     @GetMapping("/by/user/{userId}")
-    @PreAuthorize("hasAnyRole('PROVIDER')")
+    @PreAuthorize("hasAnyRole('PROVIDER', 'USER')")
     public ResponseEntity<?> getCommandsByUserId(@PathVariable long userId){
         User user = userService.findUserById(userId);
         if (user == null){
@@ -234,13 +234,16 @@ public class CommandController {
 
     @GetMapping("/command_id/{command_id}")
     @PreAuthorize("hasAnyRole('PROVIDER','USER')")
-    public ResponseEntity<?> getCommandServers(
-            @RequestParam Long serverId,
-            @RequestParam String localDate) {
-        User server = userService.findUserById(serverId);
-        LocalDate date = LocalDate.parse(localDate);
-        int sum = commandService.getServerCommandsCountPerDay(server, date);
-        return ResponseEntity.ok(sum);
+    public ResponseEntity<?> getCommandServer(@PathVariable long command_id) {
+        Command command = commandService.findCommandById(command_id);
+        if (command == null){
+            return ResponseEntity.badRequest().body("\"command doesn't exist with this command_id\"");
+        }
+         User server = command.getServer();
+        if (server == null){
+            return ResponseEntity.badRequest().body("this command doesn't have a server yet !");
+        }
+        return ResponseEntity.ok(server);
     }
 
 }

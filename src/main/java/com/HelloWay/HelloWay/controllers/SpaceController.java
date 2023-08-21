@@ -369,16 +369,16 @@ public class SpaceController {
         return ResponseEntity.ok().body(spaceService.getSpaceByWaiterId(waiter));
     }
 
-    @PostMapping("/add/rate/{spaceId}")
+    @PostMapping("/add/rate/{spaceId}/{rate}")
     @PreAuthorize("hasAnyRole('USER')")
     @ResponseBody
-    public ResponseEntity<?> addRateToSpace( float rate, @PathVariable long spaceId)  {
+    public ResponseEntity<?> addRateToSpace(@PathVariable long spaceId, @PathVariable long rate)  {
 
         Space space = spaceService.findSpaceById(spaceId);
         if (space == null){
             return ResponseEntity.notFound().build();
         }
-        space = spaceService.addNewRate(space, rate);
+        space = spaceService.addNewRate(space, (float)rate);
         return  ResponseEntity.ok().body(space);
     }
 

@@ -63,7 +63,7 @@ public class ReservationController {
     }
 
     @GetMapping("/availability/{spaceId}")
-    @PreAuthorize("hasAnyRole('PROVIDER')")
+    @PreAuthorize("hasAnyRole('PROVIDER','USER')")
     public ResponseEntity<?> getTablesByDisponibilitiesDate(@RequestParam("date") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date, @PathVariable long spaceId) {
         List<Board> availableTables = reservationService.getTablesByDisponibilitiesDate(date, spaceId);
         if (availableTables.isEmpty()){

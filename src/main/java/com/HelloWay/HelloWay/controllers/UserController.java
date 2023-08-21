@@ -53,7 +53,7 @@ public class UserController {
 
 
     @GetMapping("/id/{id}")
-    @PreAuthorize("hasAnyRole('ADMIN', 'PR0VIDER', 'USER', 'WAITER')")
+    @PreAuthorize("hasAnyRole('ADMIN', 'PROVIDER', 'USER', 'WAITER')")
     @ResponseBody
     public User user_id(@PathVariable("id") long id){
         return userService.findUserById(id);
@@ -61,7 +61,7 @@ public class UserController {
 
 
     @PutMapping("/update")
-    @PreAuthorize("hasAnyRole('ADMIN', 'PR0VIDER', 'USER', 'WAITER')")
+    @PreAuthorize("hasAnyRole('ADMIN', 'PROVIDER', 'USER', 'WAITER')")
     @ResponseBody
     public ResponseEntity<?> updateUser(@RequestBody User user){
         List<User> existingUsers = userService.findAllUsers();
