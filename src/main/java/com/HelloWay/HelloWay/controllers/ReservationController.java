@@ -208,7 +208,7 @@ public class ReservationController {
 
         // Create in-app notification for users
 
-        String messageForTheUser = "HI" + reservation.getUser().getName()+ " your reservation have been Canceled  , To  :   " + reservation.getStartDate()  + " , for your : " + reservation.getEventTitle() ;
+        String messageForTheUser = "HI " + reservation.getUser().getName()+ " your reservation have been Canceled  , To  :   " + reservation.getStartDate()  + " , for your : " + reservation.getEventTitle() ;
         notificationService.createNotification("Reservation Notification",messageForTheUser, reservation.getUser());
 
 

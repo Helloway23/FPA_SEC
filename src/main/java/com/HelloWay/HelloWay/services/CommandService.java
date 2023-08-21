@@ -157,8 +157,7 @@ public class CommandService {
         List<Command> actualServerCommand = new ArrayList<>();
         for (Command command : serverCommands){
             if (command.getStatus().equals(NOT_YET) || command.getStatus().equals(CONFIRMED)
-                && command.getTimestamp().getHour() >= currentTime.getHour()
-                    && command.getTimestamp().getHour() < currentTime.getHour() + 1){
+                    && command.getTimestamp().getHour() < currentTime.getHour() + 13){
                 actualServerCommand.add(command);
             }
         }
