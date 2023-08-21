@@ -80,6 +80,7 @@ com\HelloWay\HelloWay\services\BasketService.class
 com\HelloWay\HelloWay\DistanceLogic\DistanceCalculator.class
 com\HelloWay\HelloWay\entities\Notification.class
 com\HelloWay\HelloWay\payload\response\ProductDTO.class
+com\HelloWay\HelloWay\services\SpaceService$1.class
 com\HelloWay\HelloWay\payload\response\InformationAfterScan.class
 com\HelloWay\HelloWay\entities\ERole.class
 com\HelloWay\HelloWay\controllers\ZoneController.class
